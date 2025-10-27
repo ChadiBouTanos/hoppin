@@ -10,11 +10,11 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          target: 'http://51.91.109.69',
           changeOrigin: true,
         },
         '/admin': {
-          target: 'http://localhost:8000',
+          target: 'http://51.91.109.69',
           changeOrigin: true,
         }
       }
