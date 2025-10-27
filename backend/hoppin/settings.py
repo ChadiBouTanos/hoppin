@@ -13,7 +13,8 @@ DEBUG =  default=False
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'hoppin.cloud'
+    'hoppin.cloud',
+    '51.91.109.69'
 ]
 
 # Application definition
