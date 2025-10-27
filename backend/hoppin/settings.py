@@ -7,9 +7,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG =  default=False
 
-ALLOWED_HOSTS = 'localhost,127.0.0.1'.split(',')
+# Updated ALLOWED_HOSTS to read from environment
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'hoppin.cloud'
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -19,19 +24,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    
     # Local apps
     'accounts',
     'trips',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Must be at the topf
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -43,9 +46,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'hoppin.urls'
 
-
-
-#For SQLite (simpler option for development)
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -71,19 +72,19 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
+# CORS Settings - Updated for production
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:5173",  # Vite default
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
-    # Add your production frontend URL here:
-    # "https://hoppin.yourdomain.com",
 ]
 
+# In production, also allow requests from the same origin
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL', default=False, cast=bool)
 CORS_ALLOW_CREDENTIALS = True
 
 AUTH_PASSWORD_VALIDATORS = []
 
-# Allow these headers
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -105,7 +106,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -121,3 +121,5 @@ TEMPLATES = [
         },
     },
 ]
+
+WSGI_APPLICATION = 'hoppin.wsgi.application'
