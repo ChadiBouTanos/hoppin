@@ -140,7 +140,7 @@ if [ ! -f "backend/.env" ]; then
     cat > backend/.env << EOF
 SECRET_KEY=${SECRET_KEY}
 DEBUG=False
-ALLOWED_HOSTS=${VPS_HOST},localhost,127.0.0.1
+ALLOWED_HOSTS=${VPS_HOST},localhost,127.0.0.1,51.91.109.69
 CORS_ALLOW_ALL=True
 EOF
     check_success "Backend .env file created"

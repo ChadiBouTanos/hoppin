@@ -78,6 +78,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://hoppin.cloud",
+    "https://www.hoppin.cloud",
+    "http://51.91.109.69",
+    "https://51.91.109.69",
+    
 ]
 
 # In production, also allow requests from the same origin
