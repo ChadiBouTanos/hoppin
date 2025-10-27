@@ -1,0 +1,5 @@
+{
+  "name": "GitHub Project Analyzer",
+  "description": "An application that imports a public GitHub repository, analyzes its structure and key files using the Gemini API, and provides a summary, technology stack, and improvement suggestions.",
+  "requestFramePermissions": []
+}
