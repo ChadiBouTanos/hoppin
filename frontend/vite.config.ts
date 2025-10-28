@@ -10,11 +10,11 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'http://51.91.109.69',
+          target: 'https://51.91.109.69',
           changeOrigin: true,
         },
         '/admin': {
-          target: 'http://51.91.109.69',
+          target: 'https://51.91.109.69',
           changeOrigin: true,
         }
       }
