@@ -1,7 +1,7 @@
 import { User, Trip } from './types';
 
 // Use environment variable or default to localhost
-const API_URL = import.meta.env.VITE_API_URL || 'https://51.91.109.69/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://hoppin.cloud/api';
 
 const handleResponse = async (response: Response) => {
   if (!response.ok) {

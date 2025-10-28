@@ -10,11 +10,11 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: 'https://51.91.109.69',
+          target: 'https://hoppin.cloud',
           changeOrigin: true,
         },
         '/admin': {
-          target: 'https://51.91.109.69',
+          target: 'https://hoppin.cloud',
           changeOrigin: true,
         }
       }
