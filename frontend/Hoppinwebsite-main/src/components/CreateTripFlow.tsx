@@ -63,7 +63,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
     }
 
     if (formData.role && formData.departureLocation && formData.arrivalLocation && formData.date && formData.arrivalTime) {
-      setShowSuccess(true);
+      onComplete(formData as any); // Call the backend handler
+      setShowSuccess(true); // Then show success UI
     } else {
       alert('Please fill in all required fields');
     }
