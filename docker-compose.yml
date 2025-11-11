@@ -33,6 +33,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - static_volume:/static
+      - ./frontend/dist:/usr/share/nginx/html:ro 
       - frontend_build:/usr/share/nginx/html
     depends_on:
       - backend
