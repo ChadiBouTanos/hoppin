@@ -30,15 +30,15 @@ export function LoginPage({ onLogin, onBack }: LoginPageProps) {
           className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          Indietro
         </button>
 
         <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
           <h1 className="mb-2">
-            Sign In
+            Accedi
           </h1>
           <p className="text-gray-600 mb-8">
-            Access your Hoppin account
+            Accedi al tuo account Hoppin
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -72,7 +72,7 @@ export function LoginPage({ onLogin, onBack }: LoginPageProps) {
               type="submit"
               className="w-full py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sign In
+              Accedi
             </button>
           </form>
         </div>

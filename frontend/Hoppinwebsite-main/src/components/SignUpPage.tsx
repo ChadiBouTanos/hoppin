@@ -7,7 +7,7 @@ type SignUpPageProps = {
     phone: string;
     firstName: string;
     lastName: string;
-    password: string;  // Added password
+    password: string;
     whatsappConsent: boolean;
   }) => void;
   onBack: () => void;
@@ -27,7 +27,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      alert('Le password non corrispondono');
       return;
     }
     onSignUp({
@@ -35,7 +35,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
       phone: formData.phone,
       firstName: formData.firstName,
       lastName: formData.lastName,
-      password: formData.password,  // NOW SENDING PASSWORD!
+      password: formData.password,
       whatsappConsent: formData.whatsappConsent
     });
   };
@@ -63,22 +63,22 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
           className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          Indietro
         </button>
 
         <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Create Account
+            Crea Account
           </h1>
           <p className="text-gray-600 mb-8">
-            Join the Hoppin community
+            Unisciti alla comunità Hoppin
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name
+                  Nome
                 </label>
                 <input
                   type="text"
@@ -91,7 +91,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name
+                  Cognome
                 </label>
                 <input
                   type="text"
@@ -120,14 +120,14 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone
+                Telefono
               </label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+1 234 567 8900"
+                placeholder="+39 123 456 7890"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 required
               />
@@ -150,7 +150,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+                Conferma Password
               </label>
               <input
                 type="password"
@@ -173,7 +173,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                 className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
               <label htmlFor="whatsappConsent" className="text-sm text-gray-700 cursor-pointer">
-                I agree to be contacted via WhatsApp to match my trips with other users
+                Acconsento ad essere contattato via WhatsApp per abbinare i miei viaggi con altri utenti
               </label>
             </div>
 
@@ -181,7 +181,7 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
               type="submit"
               className="w-full py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
             >
-              Create My Account
+              Crea il Mio Account
             </button>
           </form>
         </div>

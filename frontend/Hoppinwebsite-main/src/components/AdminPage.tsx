@@ -19,9 +19,9 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
   };
 
   const getRoleLabel = (role: string) => {
-    if (role === 'driver') return 'Driver';
-    if (role === 'passenger') return 'Passenger';
-    return 'Both';
+    if (role === 'driver') return 'Conducente';
+    if (role === 'passenger') return 'Passeggero';
+    return 'Entrambi';
   };
 
   const getRoleColor = (role: string) => {
@@ -31,12 +31,12 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
   };
 
   const getRecurrenceLabel = (trip: Trip) => {
-    if (trip.recurrence === 'once') return 'Once';
-    if (trip.recurrence === 'weekly') return 'Weekly';
+    if (trip.recurrence === 'once') return 'Una volta';
+    if (trip.recurrence === 'weekly') return 'Settimanale';
     if (trip.recurrence === 'custom' && trip.recurringDays) {
       return trip.recurringDays.map(d => d.slice(0, 3)).join(', ');
     }
-    return 'Once';
+    return 'Una volta';
   };
 
   const filteredTrips = trips
@@ -71,9 +71,9 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="mb-2 text-gray-900">Admin Panel</h1>
+          <h1 className="mb-2 text-gray-900">Pannello Amministratore</h1>
           <p className="text-gray-600">
-            Manage all trips and match routes
+            Gestisci tutti i viaggi e abbina i percorsi
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search by name, location, email, or phone..."
+                placeholder="Cerca per nome, località, email o telefono..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -98,10 +98,10 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                 onChange={(e) => setFilterRole(e.target.value as any)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
               >
-                <option value="all">All Roles</option>
-                <option value="driver">Drivers Only</option>
-                <option value="passenger">Passengers Only</option>
-                <option value="both">Both</option>
+                <option value="all">Tutti i Ruoli</option>
+                <option value="driver">Solo Conducenti</option>
+                <option value="passenger">Solo Passeggeri</option>
+                <option value="both">Entrambi</option>
               </select>
             </div>
 
@@ -111,9 +111,9 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
               >
-                <option value="datetime">Sort by Date & Time</option>
-                <option value="arrival">Sort by Arrival Location</option>
-                <option value="departure">Sort by Departure Location</option>
+                <option value="datetime">Ordina per Data e Ora</option>
+                <option value="arrival">Ordina per Località di Arrivo</option>
+                <option value="departure">Ordina per Località di Partenza</option>
               </select>
             </div>
           </div>
@@ -122,23 +122,23 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-6 mb-6">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-gray-600 mb-1">Total Trips</p>
+            <p className="text-gray-600 mb-1">Viaggi Totali</p>
             <p className="text-primary">{trips.length}</p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-gray-600 mb-1">Drivers</p>
+            <p className="text-gray-600 mb-1">Conducenti</p>
             <p className="text-green-600">
               {trips.filter(t => t.role === 'driver' || t.role === 'both').length}
             </p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-gray-600 mb-1">Passengers</p>
+            <p className="text-gray-600 mb-1">Passeggeri</p>
             <p className="text-purple-600">
               {trips.filter(t => t.role === 'passenger' || t.role === 'both').length}
             </p>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p className="text-gray-600 mb-1">Matched</p>
+            <p className="text-gray-600 mb-1">Abbinati</p>
             <p className="text-gray-900">{trips.filter(t => t.isMatched).length}</p>
           </div>
         </div>
@@ -149,14 +149,14 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-gray-700">User</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Contact</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Role</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Departure</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Arrival</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Date & Time</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Recurrence</th>
-                  <th className="px-6 py-4 text-left text-gray-700">Matched</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Utente</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Contatto</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Ruolo</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Partenza</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Arrivo</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Data e Ora</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Ricorrenza</th>
+                  <th className="px-6 py-4 text-left text-gray-700">Abbinato</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -203,7 +203,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400" />
                           <span className="text-gray-900">
-                            {new Date(trip.date).toLocaleDateString('en-US')}
+                            {new Date(trip.date).toLocaleDateString('it-IT')}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                           onChange={() => onToggleMatched(trip.id)}
                           className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                         />
-                        <span className="text-sm text-gray-600">Matched</span>
+                        <span className="text-sm text-gray-600">Abbinato</span>
                       </label>
                     </td>
                   </tr>
@@ -237,7 +237,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
 
           {filteredTrips.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No trips found</p>
+              <p className="text-gray-500">Nessun viaggio trovato</p>
             </div>
           )}
         </div>

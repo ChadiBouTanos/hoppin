@@ -14,9 +14,9 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
   };
 
   const getRoleLabel = (role: string) => {
-    if (role === 'driver') return 'Driver';
-    if (role === 'passenger') return 'Passenger';
-    return 'Driver / Passenger';
+    if (role === 'driver') return 'Conducente';
+    if (role === 'passenger') return 'Passeggero';
+    return 'Conducente / Passeggero';
   };
 
   const getRoleColor = (role: string) => {
@@ -26,12 +26,12 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
   };
 
   const getRecurrenceLabel = (trip: Trip) => {
-    if (trip.recurrence === 'once') return 'One time';
-    if (trip.recurrence === 'weekly') return 'Weekly';
+    if (trip.recurrence === 'once') return 'Una volta';
+    if (trip.recurrence === 'weekly') return 'Settimanale';
     if (trip.recurrence === 'custom' && trip.recurringDays) {
       return trip.recurringDays.map(d => d.slice(0, 3)).join(', ');
     }
-    return 'One time';
+    return 'Una volta';
   };
 
   return (
@@ -39,9 +39,9 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="mb-2 text-gray-900">My Trips</h1>
+            <h1 className="mb-2 text-gray-900">I Miei Viaggi</h1>
             <p className="text-gray-600">
-              Manage and view your posted trips
+              Gestisci e visualizza i tuoi viaggi pubblicati
             </p>
           </div>
           <button
@@ -49,7 +49,7 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
             className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg w-full sm:w-auto"
           >
             <Plus className="w-5 h-5" />
-            New Trip
+            Nuovo Viaggio
           </button>
         </div>
 
@@ -58,15 +58,15 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Car className="w-8 h-8 text-gray-400" />
             </div>
-            <h2 className="mb-2 text-gray-900">No Trips Yet</h2>
+            <h2 className="mb-2 text-gray-900">Nessun Viaggio Ancora</h2>
             <p className="text-gray-600 mb-6">
-              You haven't posted any trips yet. Create your first trip to get started.
+              Non hai ancora pubblicato viaggi. Crea il tuo primo viaggio per iniziare.
             </p>
             <button
               onClick={onCreateTrip}
               className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
             >
-              Create My First Trip
+              Crea il Mio Primo Viaggio
             </button>
           </div>
         ) : (
@@ -88,12 +88,12 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
                     </div>
                     {trip.isMatched && (
                       <div className="px-3 py-1 rounded-full bg-green-100 text-green-700">
-                        <span className="text-sm">Matched</span>
+                        <span className="text-sm">Abbinato</span>
                       </div>
                     )}
                   </div>
                   <span className="text-gray-500">
-                    Posted on {new Date(trip.createdAt).toLocaleDateString('en-US')}
+                    Pubblicato il {new Date(trip.createdAt).toLocaleDateString('it-IT')}
                   </span>
                 </div>
 
@@ -102,14 +102,14 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
                     <div className="flex items-start gap-3 mb-3">
                       <MapPin className="w-5 h-5 text-gray-400 mt-1" />
                       <div>
-                        <p className="text-gray-500">Departure</p>
+                        <p className="text-gray-500">Partenza</p>
                         <p className="text-gray-900">{trip.departureLocation}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-primary mt-1" />
                       <div>
-                        <p className="text-gray-500">Arrival</p>
+                        <p className="text-gray-500">Arrivo</p>
                         <p className="text-gray-900">{trip.arrivalLocation}</p>
                       </div>
                     </div>
@@ -119,9 +119,9 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
                     <div className="flex items-start gap-3 mb-3">
                       <Calendar className="w-5 h-5 text-gray-400 mt-1" />
                       <div>
-                        <p className="text-gray-500">Date</p>
+                        <p className="text-gray-500">Data</p>
                         <p className="text-gray-900">
-                          {new Date(trip.date).toLocaleDateString('en-US', {
+                          {new Date(trip.date).toLocaleDateString('it-IT', {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
@@ -133,7 +133,7 @@ export function MyTripsPage({ trips, onCreateTrip }: MyTripsPageProps) {
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 text-gray-400 mt-1" />
                       <div>
-                        <p className="text-gray-500">Arrival Time</p>
+                        <p className="text-gray-500">Orario di Arrivo</p>
                         <p className="text-gray-900">{trip.arrivalTime}</p>
                       </div>
                     </div>

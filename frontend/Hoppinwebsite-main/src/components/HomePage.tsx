@@ -34,13 +34,13 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
                 onClick={onLogin}
                 className="px-6 py-2 text-gray-700 hover:text-gray-900 transition-colors"
               >
-                Sign In
+                Accedi
               </button>
               <button
                 onClick={onSignUp}
                 className="px-6 py-2 bg-primary text-white rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap"
               >
-                Sign Up
+                Registrati
               </button>
             </div>
           </div>
@@ -50,25 +50,25 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
         <div className="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-16">
           <div className="max-w-3xl">
             <h1 className="text-white mb-6 text-4xl md:text-5xl leading-tight">
-              We create <span className="text-blue-200">carpooling</span> that makes your{' '}
-              <span className="text-blue-200">daily commute</span> easier
+              Creiamo <span className="text-blue-200">carpooling</span> che rende il tuo{' '}
+              <span className="text-blue-200">tragitto quotidiano</span> più facile
             </h1>
             <p className="text-[#fefbf2] text-lg md:text-xl mb-12 max-w-2xl">
-              Share your daily trips to work or school. Save money, reduce your carbon footprint, 
-              and travel in good company with our smart matching system.
+              Condividi i tuoi viaggi quotidiani per lavoro o università. Risparmia denaro, riduci la tua impronta di carbonio 
+              e viaggia in buona compagnia con il nostro sistema di abbinamento intelligente.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={onSignUp}
                 className="px-8 py-4 bg-white text-primary rounded-full hover:bg-blue-50 transition-colors"
               >
-                Get Started
+                Inizia Ora
               </button>
               <button
                 onClick={onLearnMore}
                 className="px-8 py-4 bg-blue-500/20 text-white rounded-full hover:bg-blue-500/30 transition-colors backdrop-blur-sm border border-white/20"
               >
-                Learn More
+                Scopri di Più
               </button>
             </div>
           </div>
@@ -81,9 +81,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                 <Users className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-white mb-2">Create Profile</h3>
+              <h3 className="text-white mb-2">Crea Profilo</h3>
               <p className="text-[#fefbf2]">
-                Sign up in seconds with your basic information.
+                Registrati in pochi secondi con le tue informazioni di base.
               </p>
             </div>
 
@@ -91,9 +91,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                 <Car className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-white mb-2">Post Your Route</h3>
+              <h3 className="text-white mb-2">Pubblica il Tuo Percorso</h3>
               <p className="text-[#fefbf2]">
-                Specify if you're a driver, passenger, or both.
+                Specifica se sei conducente, passeggero o entrambi.
               </p>
             </div>
 
@@ -101,9 +101,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-white mb-2">Add Details</h3>
+              <h3 className="text-white mb-2">Aggiungi Dettagli</h3>
               <p className="text-[#fefbf2]">
-                Departure, arrival, date and time of your daily route.
+                Partenza, arrivo, data e ora del tuo percorso quotidiano.
               </p>
             </div>
 
@@ -111,9 +111,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                 <Clock className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-white mb-2">Get Matched</h3>
+              <h3 className="text-white mb-2">Trova Corrispondenze</h3>
               <p className="text-[#fefbf2]">
-                Our team will connect you with compatible routes.
+                Il nostro team ti metterà in contatto con percorsi compatibili.
               </p>
             </div>
           </div>
@@ -129,17 +129,17 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
           <h1 className="text-primary mb-6">
-            Welcome Back!
+            Bentornato!
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-            Ready to create a new route or manage your existing trips?
+            Pronto a creare un nuovo percorso o gestire i tuoi viaggi esistenti?
           </p>
           <button
             onClick={onCreateRoute}
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
           >
             <Plus className="w-5 h-5" />
-            Create Route
+            Crea Percorso
           </button>
         </div>
       </div>
@@ -151,9 +151,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
             <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
               <Car className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="mb-3">Economical</h2>
+            <h2 className="mb-3">Economico</h2>
             <p className="text-gray-600">
-              Share fuel and toll costs with other travelers on your route.
+              Condividi i costi di carburante e pedaggi con altri viaggiatori sul tuo percorso.
             </p>
           </div>
 
@@ -161,9 +161,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
             <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
               <MapPin className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="mb-3">Ecological</h2>
+            <h2 className="mb-3">Ecologico</h2>
             <p className="text-gray-600">
-              Reduce your carbon footprint by limiting vehicles on the road.
+              Riduci la tua impronta di carbonio limitando i veicoli sulla strada.
             </p>
           </div>
 
@@ -171,9 +171,9 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
             <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
               <Users className="w-8 h-8 text-purple-600" />
             </div>
-            <h2 className="mb-3">Social</h2>
+            <h2 className="mb-3">Sociale</h2>
             <p className="text-gray-600">
-              Meet colleagues and build connections during your daily commute.
+              Incontra colleghi e costruisci connessioni durante il tuo tragitto quotidiano.
             </p>
           </div>
         </div>

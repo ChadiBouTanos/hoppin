@@ -6,52 +6,52 @@ type QAPageProps = {
 
 const faqs = [
   {
-    question: "What is Hoppin?",
-    answer: "Hoppin is a carpooling platform designed to connect people who share similar daily commutes. Whether you're driving to work or looking for a ride, Hoppin helps you find compatible travel companions to share costs and reduce environmental impact."
+    question: "Cos'è Hoppin?",
+    answer: "Hoppin è una piattaforma di carpooling progettata per connettere persone che condividono tragitti quotidiani simili. Che tu stia guidando per andare al lavoro o cerchi un passaggio, Hoppin ti aiuta a trovare compagni di viaggio compatibili per condividere i costi e ridurre l'impatto ambientale."
   },
   {
-    question: "How do I create a trip?",
-    answer: "After signing up and logging in, click on 'Create Route' from the navigation menu or home page. You'll be guided through a simple 2-step process where you select your role (driver, passenger, or both) and then enter your trip details including departure location, arrival location, date, time, and recurrence options."
+    question: "Come creo un viaggio?",
+    answer: "Dopo la registrazione e l'accesso, clicca su 'Crea Percorso' dal menu di navigazione o dalla home page. Sarai guidato attraverso un semplice processo in 2 passaggi dove selezioni il tuo ruolo (conducente, passeggero o entrambi) e poi inserisci i dettagli del viaggio inclusi luogo di partenza, luogo di arrivo, data, ora e opzioni di ricorrenza."
   },
   {
-    question: "What are the recurrence options?",
-    answer: "You can choose from three recurrence types: 'One Time' for single trips, 'Repeat Every Week' for trips that happen on the same day each week, or 'Custom Days' where you can select specific days of the week (e.g., Monday, Wednesday, Friday) for your regular commute."
+    question: "Quali sono le opzioni di ricorrenza?",
+    answer: "Puoi scegliere tra tre tipi di ricorrenza: 'Una Volta' per viaggi singoli, 'Ripeti Ogni Settimana' per viaggi che avvengono lo stesso giorno ogni settimana, o 'Giorni Personalizzati' dove puoi selezionare giorni specifici della settimana (es. Lunedì, Mercoledì, Venerdì) per il tuo tragitto regolare."
   },
   {
-    question: "How does trip matching work?",
-    answer: "Our admin team manually reviews all posted trips and matches drivers with passengers based on compatible routes, schedules, and locations. When a match is found, we'll contact you via WhatsApp (if you've provided consent) or through your registered contact information."
+    question: "Come funziona l'abbinamento dei viaggi?",
+    answer: "Il nostro team amministrativo esamina manualmente tutti i viaggi pubblicati e abbina conducenti con passeggeri in base a percorsi, orari e località compatibili. Quando viene trovata una corrispondenza, ti contatteremo via WhatsApp (se hai fornito il consenso) o tramite le informazioni di contatto registrate."
   },
   {
-    question: "Why do you need WhatsApp consent?",
-    answer: "WhatsApp consent allows our team to quickly contact you when we find compatible trip matches. This enables faster communication and easier coordination with potential carpool partners. You can opt out of WhatsApp notifications during signup if you prefer email contact only."
+    question: "Perché avete bisogno del consenso per WhatsApp?",
+    answer: "Il consenso per WhatsApp consente al nostro team di contattarti rapidamente quando troviamo corrispondenze di viaggio compatibili. Questo permette una comunicazione più veloce e un coordinamento più facile con potenziali partner di carpooling. Puoi disattivare le notifiche WhatsApp durante la registrazione se preferisci il contatto solo via email."
   },
   {
-    question: "Is my contact information secure?",
-    answer: "Yes! Your email and phone number are only visible to our admin team for matching purposes. Other users won't see your contact details unless a match is made and both parties agree to share information."
+    question: "Le mie informazioni di contatto sono sicure?",
+    answer: "Sì! La tua email e numero di telefono sono visibili solo al nostro team amministrativo per scopi di abbinamento. Gli altri utenti non vedranno i tuoi dettagli di contatto a meno che non venga effettuato un abbinamento e entrambe le parti accettino di condividere le informazioni."
   },
   {
-    question: "Can I be both a driver and a passenger?",
-    answer: "Absolutely! When creating a trip, you can select 'Both' as your role. This is perfect for people who have access to a vehicle but are flexible about driving or riding with others."
+    question: "Posso essere sia conducente che passeggero?",
+    answer: "Assolutamente! Quando crei un viaggio, puoi selezionare 'Entrambi' come tuo ruolo. Questo è perfetto per persone che hanno accesso a un veicolo ma sono flessibili sul guidare o viaggiare con altri."
   },
   {
-    question: "How do I view my posted trips?",
-    answer: "Click on 'My Trips' in the navigation menu to see all your active trips. You can view details including departure/arrival locations, dates, times, recurrence settings, and match status."
+    question: "Come visualizzo i miei viaggi pubblicati?",
+    answer: "Clicca su 'I Miei Viaggi' nel menu di navigazione per vedere tutti i tuoi viaggi attivi. Puoi visualizzare i dettagli inclusi luoghi di partenza/arrivo, date, orari, impostazioni di ricorrenza e stato di abbinamento."
   },
   {
-    question: "What does 'Matched' status mean?",
-    answer: "When a trip shows 'Matched' status, it means our admin team has found a compatible carpool partner for you. You should expect to be contacted soon with the details of your match."
+    question: "Cosa significa lo stato 'Abbinato'?",
+    answer: "Quando un viaggio mostra lo stato 'Abbinato', significa che il nostro team amministrativo ha trovato un partner di carpooling compatibile per te. Dovresti aspettarti di essere contattato presto con i dettagli del tuo abbinamento."
   },
   {
-    question: "Can I edit or delete a trip after posting?",
-    answer: "Currently, trip editing is not available in the app. If you need to modify or cancel a trip, please contact our admin team directly, and they'll help you update your information."
+    question: "Posso modificare o eliminare un viaggio dopo la pubblicazione?",
+    answer: "Attualmente, la modifica dei viaggi non è disponibile nell'app. Se hai bisogno di modificare o cancellare un viaggio, contatta direttamente il nostro team amministrativo e ti aiuteranno ad aggiornare le tue informazioni."
   },
   {
-    question: "Is there a cost to use Hoppin?",
-    answer: "Hoppin is free to use! We don't charge any fees for posting trips or being matched. Any cost sharing arrangements (fuel, tolls, etc.) are agreed upon directly between carpool partners."
+    question: "C'è un costo per usare Hoppin?",
+    answer: "Hoppin è gratuito! Non addebitiamo commissioni per pubblicare viaggi o essere abbinati. Eventuali accordi di condivisione dei costi (carburante, pedaggi, ecc.) vengono concordati direttamente tra i partner di carpooling."
   },
   {
-    question: "How do I contact support?",
-    answer: "For any questions or support needs, you can reach out to our admin team through your registered contact information. We're here to help make your carpooling experience smooth and efficient!"
+    question: "Come contatto l'assistenza?",
+    answer: "Per qualsiasi domanda o necessità di supporto, puoi contattare il nostro team amministrativo tramite le informazioni di contatto registrate. Siamo qui per rendere la tua esperienza di carpooling fluida ed efficiente!"
   }
 ];
 
@@ -71,7 +71,7 @@ export function QAPage({ onBack }: QAPageProps) {
           className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+          Indietro
         </button>
 
         <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
@@ -79,10 +79,10 @@ export function QAPage({ onBack }: QAPageProps) {
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <HelpCircle className="w-6 h-6 text-primary" />
             </div>
-            <h1 className="text-gray-900">Frequently Asked Questions</h1>
+            <h1 className="text-gray-900">Domande Frequenti</h1>
           </div>
           <p className="text-gray-600 mb-8">
-            Everything you need to know about using Hoppin
+            Tutto ciò che devi sapere sull'utilizzo di Hoppin
           </p>
 
           <div className="space-y-6">
@@ -99,9 +99,9 @@ export function QAPage({ onBack }: QAPageProps) {
           </div>
 
           <div className="mt-10 p-6 bg-blue-50 rounded-xl">
-            <h3 className="text-gray-900 mb-2">Still have questions?</h3>
+            <h3 className="text-gray-900 mb-2">Hai ancora domande?</h3>
             <p className="text-gray-600">
-              Contact our support team and we'll be happy to help you get started with Hoppin!
+              Contatta il nostro team di supporto e saremo felici di aiutarti a iniziare con Hoppin!
             </p>
           </div>
         </div>

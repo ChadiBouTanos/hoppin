@@ -15,13 +15,13 @@ type CreateTripFlowProps = {
 };
 
 const DAYS_OF_WEEK = [
-  { value: 'monday', label: 'Monday' },
-  { value: 'tuesday', label: 'Tuesday' },
-  { value: 'wednesday', label: 'Wednesday' },
-  { value: 'thursday', label: 'Thursday' },
-  { value: 'friday', label: 'Friday' },
-  { value: 'saturday', label: 'Saturday' },
-  { value: 'sunday', label: 'Sunday' }
+  { value: 'monday', label: 'Lunedì' },
+  { value: 'tuesday', label: 'Martedì' },
+  { value: 'wednesday', label: 'Mercoledì' },
+  { value: 'thursday', label: 'Giovedì' },
+  { value: 'friday', label: 'Venerdì' },
+  { value: 'saturday', label: 'Sabato' },
+  { value: 'sunday', label: 'Domenica' }
 ];
 
 export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
@@ -58,15 +58,15 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
 
   const handleSubmit = () => {
     if (formData.recurrence === 'custom' && formData.recurringDays.length === 0) {
-      alert('Please select at least one day for custom recurrence');
+      alert('Seleziona almeno un giorno per la ricorrenza personalizzata');
       return;
     }
 
     if (formData.role && formData.departureLocation && formData.arrivalLocation && formData.date && formData.arrivalTime) {
-      onComplete(formData as any); // Call the backend handler
-      setShowSuccess(true); // Then show success UI
+      onComplete(formData as any);
+      setShowSuccess(true);
     } else {
-      alert('Please fill in all required fields');
+      alert('Compila tutti i campi obbligatori');
     }
   };
 
@@ -83,14 +83,14 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               </div>
-              <h1 className="text-3xl font-bold mb-3">🎉 Your trip is published!</h1>
+              <h1 className="text-3xl font-bold mb-3">🎉 Il tuo viaggio è pubblicato!</h1>
               <p className="text-xl text-gray-600">
-                Welcome to Hoppin, the carpooling app for PoliMi students
+                Benvenuto su Hoppin, l'app di carpooling per gli studenti del PoliMi
               </p>
             </div>
 
             <div className="bg-blue-50 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">What happens next?</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">Cosa succede adesso?</h2>
               
               <div className="space-y-6">
                 <div className="flex gap-4">
@@ -100,9 +100,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">You've completed registration</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">Hai completato la registrazione</h3>
                     <p className="text-gray-600">
-                      You've indicated your role and route — perfect!
+                      Hai indicato il tuo ruolo e percorso — perfetto!
                     </p>
                   </div>
                 </div>
@@ -114,9 +114,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">We'll analyze your route</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">Analizzeremo il tuo percorso</h3>
                     <p className="text-gray-600">
-                      In the next few days, we'll find PoliMi students on the same route and schedule (going or returning).
+                      Nei prossimi giorni, troveremo studenti del PoliMi con lo stesso percorso e orario (andata o ritorno).
                     </p>
                   </div>
                 </div>
@@ -128,9 +128,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">We'll contact you via WhatsApp</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">Ti contatteremo via WhatsApp</h3>
                     <p className="text-gray-600">
-                      When we find a compatible match, we'll reach out directly on WhatsApp to connect you and help organize the ride.
+                      Quando troveremo una corrispondenza compatibile, ti contatteremo direttamente su WhatsApp per metterti in contatto e aiutarti a organizzare il viaggio.
                     </p>
                   </div>
                 </div>
@@ -140,32 +140,32 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
             <div className="bg-purple-50 rounded-xl p-6 mb-8">
               <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                 <span className="text-xl">🎯</span>
-                Our Goal
+                Il Nostro Obiettivo
               </h3>
               <p className="text-gray-700">
-                Help you reach PoliMi faster, spending less, and reducing the chaos of public transport.
+                Aiutarti a raggiungere il PoliMi più velocemente, spendendo meno e riducendo il caos dei mezzi pubblici.
               </p>
             </div>
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
               <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                 <span className="text-xl">💡</span>
-                Quick Tip
+                Suggerimento Rapido
               </h3>
               <p className="text-gray-700">
-                The more complete your route details (times, stops, days), the faster we'll find you a perfect match.
+                Più completi sono i dettagli del tuo percorso (orari, fermate, giorni), più velocemente troveremo una corrispondenza perfetta.
               </p>
             </div>
 
             <div className="text-center">
               <p className="text-gray-600 mb-6">
-                Thank you for being one of the first Hoppin users! Your feedback will help us grow and improve the experience for all PoliMi students.
+                Grazie per essere uno dei primi utenti di Hoppin! Il tuo feedback ci aiuterà a crescere e migliorare l'esperienza per tutti gli studenti del PoliMi.
               </p>
               <button
                 onClick={() => window.location.href = 'mailto:hello@hoppinapp.com'}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
               >
-                Contact Us
+                Contattaci
               </button>
               <p className="text-sm text-gray-500 mt-4">
                 hello@hoppinapp.com
@@ -173,20 +173,20 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
             </div>
 
             <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-              <p className="text-gray-600 mb-2">See you on the road! 🚀</p>
-              <p className="text-sm text-gray-500">– The Hoppin Team</p>
+              <p className="text-gray-600 mb-2">Ci vediamo sulla strada! 🚀</p>
+              <p className="text-sm text-gray-500">– Il Team di Hoppin</p>
             </div>
           </div>
         ) : (
           <>
             <div className="mb-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white">Step {step} of 2</span>
+                <span className="text-white">Passaggio {step} di 2</span>
                 <button
                   onClick={onCancel}
                   className="text-white hover:text-gray-200"
                 >
-                  Cancel
+                  Annulla
                 </button>
               </div>
               <div className="h-2 bg-white/20 rounded-full overflow-hidden">
@@ -199,9 +199,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
 
             {step === 1 && (
               <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
-                <h1 className="text-3xl font-bold mb-2">What is your role?</h1>
+                <h1 className="text-3xl font-bold mb-2">Qual è il tuo ruolo?</h1>
                 <p className="text-gray-600 mb-8">
-                  Select if you're a driver, passenger, or both
+                  Seleziona se sei conducente, passeggero o entrambi
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -212,9 +212,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
                       <Car className="w-8 h-8 text-green-600" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Driver</h3>
+                    <h3 className="text-xl font-semibold mb-2">Conducente</h3>
                     <p className="text-gray-600">
-                      I'm offering seats in my vehicle
+                      Offro posti nel mio veicolo
                     </p>
                   </button>
 
@@ -225,9 +225,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
                       <Users className="w-8 h-8 text-purple-600" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Passenger</h3>
+                    <h3 className="text-xl font-semibold mb-2">Passeggero</h3>
                     <p className="text-gray-600">
-                      I'm looking for a ride
+                      Cerco un passaggio
                     </p>
                   </button>
 
@@ -238,9 +238,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
                       <Car className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Both</h3>
+                    <h3 className="text-xl font-semibold mb-2">Entrambi</h3>
                     <p className="text-gray-600">
-                      I can be either driver or passenger
+                      Posso essere sia conducente che passeggero
                     </p>
                   </button>
                 </div>
@@ -254,25 +254,25 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Back
+                  Indietro
                 </button>
 
-                <h1 className="text-3xl font-bold mb-2">Trip Details</h1>
+                <h1 className="text-3xl font-bold mb-2">Dettagli del Viaggio</h1>
                 <p className="text-gray-600 mb-8">
-                  Enter your daily trip information
+                  Inserisci le informazioni del tuo viaggio quotidiano
                 </p>
 
                 <div className="space-y-6">
                   <div>
                     <label className="block text-gray-700 mb-2 flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-gray-400" />
-                      Departure Location
+                      Località di Partenza
                     </label>
                     <input
                       type="text"
                       value={formData.departureLocation}
                       onChange={(e) => setFormData({ ...formData, departureLocation: e.target.value })}
-                      placeholder="e.g. New York, NY 10001"
+                      placeholder="es. Milano, Via Roma 1"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                     />
                   </div>
@@ -280,13 +280,13 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   <div>
                     <label className="block text-gray-700 mb-2 flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-blue-600" />
-                      Arrival Location
+                      Località di Arrivo
                     </label>
                     <input
                       type="text"
                       value={formData.arrivalLocation}
                       onChange={(e) => setFormData({ ...formData, arrivalLocation: e.target.value })}
-                      placeholder="e.g. Boston, MA 02101"
+                      placeholder="es. Politecnico di Milano, Piazza Leonardo da Vinci"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                     />
                   </div>
@@ -295,7 +295,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div>
                       <label className="block text-gray-700 mb-2 flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-gray-400" />
-                        Trip Date
+                        Data del Viaggio
                       </label>
                       <input
                         type="date"
@@ -308,7 +308,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div>
                       <label className="block text-gray-700 mb-2 flex items-center gap-2">
                         <Clock className="w-5 h-5 text-gray-400" />
-                        Arrival Time
+                        Orario di Arrivo
                       </label>
                       <input
                         type="time"
@@ -322,7 +322,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   <div>
                     <label className="block text-gray-700 mb-3 flex items-center gap-2">
                       <Repeat className="w-5 h-5 text-gray-400" />
-                      Recurrence
+                      Ricorrenza
                     </label>
                     <div className="space-y-3">
                       <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
@@ -335,8 +335,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                           className="w-4 h-4 text-blue-600"
                         />
                         <div>
-                          <p className="text-gray-900 font-medium">One Time</p>
-                          <p className="text-sm text-gray-500">This trip happens only once</p>
+                          <p className="text-gray-900 font-medium">Una Volta</p>
+                          <p className="text-sm text-gray-500">Questo viaggio avviene solo una volta</p>
                         </div>
                       </label>
 
@@ -350,8 +350,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                           className="w-4 h-4 text-blue-600"
                         />
                         <div>
-                          <p className="text-gray-900 font-medium">Repeat Every Week</p>
-                          <p className="text-sm text-gray-500">This trip repeats on the same day every week</p>
+                          <p className="text-gray-900 font-medium">Ripeti Ogni Settimana</p>
+                          <p className="text-sm text-gray-500">Questo viaggio si ripete lo stesso giorno ogni settimana</p>
                         </div>
                       </label>
 
@@ -365,8 +365,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                           className="w-4 h-4 text-blue-600"
                         />
                         <div className="flex-1">
-                          <p className="text-gray-900 font-medium">Custom Days</p>
-                          <p className="text-sm text-gray-500 mb-3">Select specific days of the week</p>
+                          <p className="text-gray-900 font-medium">Giorni Personalizzati</p>
+                          <p className="text-sm text-gray-500 mb-3">Seleziona giorni specifici della settimana</p>
                           
                           {formData.recurrence === 'custom' && (
                             <div className="grid grid-cols-4 gap-2">
@@ -397,14 +397,14 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                       onClick={onCancel}
                       className="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                      Cancel
+                      Annulla
                     </button>
                     <button
                       type="button"
                       onClick={handleSubmit}
                       className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                      Publish Trip
+                      Pubblica Viaggio
                       <ArrowRight className="w-5 h-5" />
                     </button>
                   </div>
