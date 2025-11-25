@@ -22,6 +22,8 @@ export type Trip = {
   arrivalTime: string;
   recurrence: 'once' | 'weekly' | 'custom';
   recurringDays?: string[]; // ['monday', 'wednesday', 'friday']
+  availableSeats?: number;
+  rules?: string;
   isMatched: boolean;
   createdAt: string;
 };

@@ -9,6 +9,18 @@ import { QAPage } from './components/QAPage';
 import { User, Trip } from './types';
 import { api } from './services/api';
 
+export type CreateTripPayload = {
+  role: 'driver' | 'passenger' | 'both';
+  departureLocation: string;
+  arrivalLocation: string;
+  date: string;
+  arrivalTime: string;
+  recurrence: 'once' | 'weekly' | 'custom';
+  recurringDays?: string[];
+  availableSeats?: number;
+  rules?: string;
+};
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'signup' | 'login' | 'mytrips' | 'create' | 'admin' | 'qa'>('home');
   const [user, setUser] = useState<User | null>(() => {
@@ -94,7 +106,7 @@ export default function App() {
     setCurrentPage('home');
   };
 
-  const handleCreateTrip = async (tripData: Omit<Trip, 'id' | 'userId' | 'userName' | 'userEmail' | 'userPhone' | 'createdAt' | 'isMatched'>) => {
+  const handleCreateTrip = async (tripData: CreateTripPayload) => {
     if (!user?.token) {
       setError("You must be logged in to create a trip.");
       return;
@@ -192,13 +204,50 @@ export default function App() {
         </div>
       ) : (
         <>
-          {currentPage === 'home' && <HomePage onSignUp={() => setCurrentPage('signup')} onLogin={() => setCurrentPage('login')} onCreateRoute={() => setCurrentPage('create')} onLearnMore={() => setCurrentPage('qa')} isLoggedIn={!!user} />}
-          {currentPage === 'signup' && <SignUpPage onSignUp={handleSignUp} onBack={() => setCurrentPage('home')} />}
-          {currentPage === 'login' && <LoginPage onLogin={handleLogin} onBack={() => setCurrentPage('home')} />}
-          {currentPage === 'mytrips' && user && <MyTripsPage trips={getUserTrips()} onCreateTrip={() => setCurrentPage('create')} />}
-          {currentPage === 'create' && user && <CreateTripFlow onComplete={handleCreateTrip} onCancel={() => setCurrentPage('mytrips')} />}
-          {currentPage === 'admin' && user?.isAdmin && <AdminPage trips={trips} onToggleMatched={handleToggleMatched} />}
-          {currentPage === 'qa' && <QAPage onBack={() => setCurrentPage(user ? 'home' : 'home')} />}
+          {currentPage === 'home' && (
+            <HomePage 
+              onSignUp={() => setCurrentPage('signup')} 
+              onLogin={() => setCurrentPage('login')} 
+              onCreateRoute={() => setCurrentPage('create')} 
+              onLearnMore={() => setCurrentPage('qa')} 
+              isLoggedIn={!!user} 
+            />
+          )}
+          {currentPage === 'signup' && (
+            <SignUpPage 
+              onSignUp={handleSignUp} 
+              onBack={() => setCurrentPage('home')} 
+            />
+          )}
+          {currentPage === 'login' && (
+            <LoginPage 
+              onLogin={handleLogin} 
+              onBack={() => setCurrentPage('home')} 
+            />
+          )}
+          {currentPage === 'mytrips' && user && (
+            <MyTripsPage 
+              trips={getUserTrips()} 
+              onCreateTrip={() => setCurrentPage('create')} 
+            />
+          )}
+          {currentPage === 'create' && user && (
+            <CreateTripFlow 
+              onComplete={handleCreateTrip} 
+              onCancel={() => setCurrentPage('mytrips')} 
+            />
+          )}
+          {currentPage === 'admin' && user?.isAdmin && (
+            <AdminPage 
+              trips={trips} 
+              onToggleMatched={handleToggleMatched} 
+            />
+          )}
+          {currentPage === 'qa' && (
+            <QAPage 
+              onBack={() => setCurrentPage(user ? 'home' : 'home')} 
+            />
+          )}
         </>
       )}
     </div>

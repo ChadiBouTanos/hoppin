@@ -1,6 +1,6 @@
-import { User, Trip } from './types';
+import { CreateTripPayload } from "../App";
+import { Trip, User } from "../types";
 
-// Use environment variable or default to localhost
 const API_URL = import.meta.env.VITE_API_URL || 'https://hoppin.cloud/api';
 
 const handleResponse = async (response: Response) => {
@@ -38,7 +38,7 @@ export const api = {
     return handleResponse(response);
   },
 
-  createTrip: async (tripData: Omit<Trip, 'id' | 'userId' | 'userName' | 'userEmail' | 'userPhone' | 'createdAt' | 'isMatched'>, token: string): Promise<Trip> => {
+  createTrip: async (tripData: CreateTripPayload, token: string): Promise<Trip> => {
     const response = await fetch(`${API_URL}/trips/`, {  // Added trailing slash
       method: 'POST',
       headers: {

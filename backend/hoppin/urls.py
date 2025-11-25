@@ -40,12 +40,6 @@ def serve_logo(request):
     except IOError:
         raise Http404("Image not found")
 
-
-
-
-
-
-
 urlpatterns = [
     path('images/logo.png', serve_logo, name='logo'),
     path('admin/', admin.site.urls),
