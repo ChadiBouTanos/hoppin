@@ -38,6 +38,7 @@ staticfiles/
 # Node / React ignores
 #############################
 node_modules/
+**/node_modules/
 dist/
 build/
 .cache/

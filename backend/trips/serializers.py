@@ -67,6 +67,7 @@ class TripSerializer(serializers.ModelSerializer):
         Validazione logica:
         - se role è driver/both → available_seats obbligatorio e > 0
         - se recurrence è custom → recurring_days non vuoto
+        - se è passenger → puliamo available_seats e rules
         """
         role = attrs.get('role', getattr(self.instance, 'role', None))
         available_seats = attrs.get(
