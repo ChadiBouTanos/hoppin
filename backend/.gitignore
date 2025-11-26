@@ -18,6 +18,8 @@ env/
 # Django stuff
 *.log
 db.sqlite3
+backend/db.sqlite3
+backend/db.sqlite3-journal
 media/
 staticfiles/
 
