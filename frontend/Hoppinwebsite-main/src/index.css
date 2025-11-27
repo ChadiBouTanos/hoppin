@@ -1886,6 +1886,13 @@ html {
   background-color: rgb(0, 0, 0, 0.3);
 }
 
+.delete-trip-button {
+  background-color: rgb(226, 0, 0);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+}
+
 .line-h-1 {
   line-height: 100%;
 }

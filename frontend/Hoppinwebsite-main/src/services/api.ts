@@ -50,6 +50,20 @@ export const api = {
     return handleResponse(response);
   },
 
+  deleteTrip: async (tripId: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/trips/${tripId}/`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+  },
+
   toggleMatched: async (tripId: string, token: string): Promise<Trip> => {
     const response = await fetch(`${API_URL}/trips/${tripId}/match/`, {  // Added trailing slash
       method: 'PATCH',

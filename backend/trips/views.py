@@ -58,3 +58,19 @@ def toggle_trip_match(request, pk):
             {'message': 'Trip not found'}, 
             status=status.HTTP_404_NOT_FOUND
         )
+    
+class TripDetailView(generics.RetrieveDestroyAPIView):
+    """
+    GET /api/trips/<id>/  - 
+    DELETE /api/trips/<id>/ - 
+      - l'utente può cancellare solo i propri viaggi
+      - l'admin può cancellare qualsiasi viaggio
+    """
+    serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_admin:
+            return Trip.objects.all().select_related('user')
+        return Trip.objects.filter(user=user).select_related('user')

@@ -5,12 +5,13 @@ import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repea
 type AdminPageProps = {
   trips: Trip[];
   onToggleMatched: (tripId: string) => void;
+  onDeleteTrip: (tripId: string) => void;
 };
 
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 type SortBy = "datetime" | "arrival" | "departure";
 
-export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
+export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<RoleFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("datetime");
@@ -267,7 +268,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-gray-900">{isDriverLike(trip) ? trip.availableSeats ?? "—" : "N/A"}</td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 flex gap-2">
                           <button
                             type="button"
                             onClick={(e) => {
@@ -277,6 +278,17 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                             className="px-3 py-1-5 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
                           >
                             Dettagli
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm("Sei sicuro di voler cancellare questo viaggio?")) {
+                                onDeleteTrip(trip.id);
+                              }
+                            }}
+                            className="px-3 py-1-5 text-xs rounded-lg border transition-colors delete-trip-button"
+                          >
+                            Elimina
                           </button>
                         </td>
                       </tr>
@@ -331,7 +343,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
 
                     <div className="grid md:grid-cols-2 gap-3">
                       {groupTrips.map((trip) => (
-                        <div key={trip.id} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2 hover:bg-gray-50">
+                        <div key={trip.id} className="flex items-center justify-between flex-wrap gap-3 rounded-xl border border-gray-100 px-3 py-2 hover:bg-gray-50">
                           <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-gray-900">{trip.userName}</span>
@@ -349,7 +361,7 @@ export function AdminPage({ trips, onToggleMatched }: AdminPageProps) {
                           <button
                             type="button"
                             onClick={() => onToggleMatched(trip.id)}
-                            className="text-[11px] px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                            className="text-[11px] px-3 py-2 rounded-md border border-gray-300 delete-trip-button"
                           >
                             Elimina Abbinamento
                           </button>
