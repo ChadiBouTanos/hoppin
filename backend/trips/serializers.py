@@ -1,5 +1,5 @@
+from .models import Trip, TripMatch, update_trip_matched_flags
 from rest_framework import serializers
-from .models import Trip
 
 class TripSerializer(serializers.ModelSerializer):
     userId = serializers.IntegerField(source='user.id', read_only=True)
@@ -26,37 +26,33 @@ class TripSerializer(serializers.ModelSerializer):
         allow_blank=True
     )
 
+    flexibilityBefore = serializers.IntegerField(
+        source='flexibility_before_minutes',
+        required=False,
+        allow_null=True
+    )
+    flexibilityAfter = serializers.IntegerField(
+        source='flexibility_after_minutes',
+        required=False,
+        allow_null=True
+    )
+
     isMatched = serializers.BooleanField(source='is_matched', read_only=True)
     createdAt = serializers.DateTimeField(source='created_at', read_only=True)
     
     class Meta:
         model = Trip
         fields = [
-            'id',
-            'userId',
-            'userName',
-            'userEmail',
-            'userPhone',
-            'role',
-            'departureLocation',
-            'arrivalLocation',
-            'date',
-            'arrivalTime',
-            'recurrence',
-            'recurringDays',
-            'availableSeats',
-            'rules',
-            'isMatched',
-            'createdAt',
+            'id', 'userId', 'userName', 'userEmail', 'userPhone',
+            'role', 'departureLocation', 'arrivalLocation',
+            'date', 'arrivalTime', 'recurrence', 'recurringDays',
+            'availableSeats', 'rules',            
+            'flexibilityBefore', 'flexibilityAfter', 
+            'isMatched', 'createdAt',
         ]
         read_only_fields = [
-            'id',
-            'userId',
-            'userName',
-            'userEmail',
-            'userPhone',
-            'isMatched',
-            'createdAt',
+            'id', 'userId', 'userName', 'userEmail', 'userPhone',
+            'isMatched', 'createdAt'
         ]
     
     def get_userName(self, obj):
@@ -111,3 +107,74 @@ class TripSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+class TripMatchSerializer(serializers.ModelSerializer):
+    """
+    Serializer minimal per la UI:
+    - lato frontend lavoriamo solo con gli ID (driverTripId, passengerTripId)
+    - niente Trip annidati
+    """
+    driverTripId = serializers.PrimaryKeyRelatedField(
+        source='driver_trip',
+        queryset=Trip.objects.all()
+    )
+    passengerTripId = serializers.PrimaryKeyRelatedField(
+        source='passenger_trip',
+        queryset=Trip.objects.all()
+    )
+
+    isArchived = serializers.BooleanField(source='is_archived', read_only=True)
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+
+    class Meta:
+        model = TripMatch
+        fields = [
+            'id',
+            'driverTripId',
+            'passengerTripId',
+            'isArchived',
+            'createdAt',
+        ]
+        read_only_fields = ['id', 'isArchived', 'createdAt']
+
+    def to_representation(self, instance):
+        """
+        Representation finale:
+        driverTripId / passengerTripId come numeri, niente oggetti annidati.
+        """
+        rep = super().to_representation(instance)
+        # PrimaryKeyRelatedField di default rende già il PK, quindi rep['driverTripId'] è l'id
+        return rep
+
+    def validate(self, attrs):
+        driver: Trip = attrs['driver_trip']
+        passenger: Trip = attrs['passenger_trip']
+
+        # 1) Ruoli coerenti
+        if driver.role not in ['driver', 'both']:
+            raise serializers.ValidationError("Il viaggio selezionato come driver non è un conducente.")
+        if passenger.role not in ['passenger', 'both']:
+            raise serializers.ValidationError("Il viaggio selezionato come passeggero non è un passeggero.")
+
+        # 2) Driver e passenger non devono essere lo stesso trip
+        if driver.id == passenger.id:
+            raise serializers.ValidationError("Driver e passeggero non possono essere lo stesso viaggio.")
+
+        # 3) capacità: rispetto available_seats
+        if driver.available_seats is not None and driver.available_seats > 0:
+            active_matches = TripMatch.objects.filter(
+                driver_trip=driver,
+                is_archived=False
+            ).count()
+            if active_matches >= driver.available_seats:
+                raise serializers.ValidationError("Questo conducente ha già raggiunto il numero massimo di passeggeri.")
+
+        return attrs
+
+    def create(self, validated_data):
+        match = super().create(validated_data)
+
+        # aggiorna flag is_matched per driver+passenger
+        update_trip_matched_flags([match.driver_trip_id, match.passenger_trip_id])
+
+        return match

@@ -1,5 +1,5 @@
 import { CreateTripPayload } from "../App";
-import { Trip, User } from "../types";
+import { Trip, TripMatch, User } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://hoppin.cloud/api';
 
@@ -73,4 +73,64 @@ export const api = {
     });
     return handleResponse(response);
   },
+
+  getMatches: async (token: string, includeArchived = false): Promise<TripMatch[]> => {
+    const url = new URL(`${API_URL}/trips/matches/`);
+    if (includeArchived) {
+      url.searchParams.set('include_archived', '1');
+    }
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return handleResponse(response);
+  },
+
+  createMatch: async (
+    driverTripId: string | number,
+    passengerTripId: string | number,
+    token: string
+  ): Promise<TripMatch> => {
+    const response = await fetch(`${API_URL}/trips/matches/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        driverTripId,
+        passengerTripId,
+      }),
+    });
+
+    return handleResponse(response);
+  },
+
+  archiveMatch: async (matchId: string | number, token: string): Promise<TripMatch> => {
+    const response = await fetch(`${API_URL}/trips/matches/${matchId}/archive/`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return handleResponse(response);
+  },
+
+  deleteMatch: async (matchId: string | number, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/trips/matches/${matchId}/`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+  }
 };

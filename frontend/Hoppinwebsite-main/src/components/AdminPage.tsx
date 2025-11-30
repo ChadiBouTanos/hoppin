@@ -1,22 +1,27 @@
-import { useState } from "react";
-import { Trip } from "../types";
-import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X } from "lucide-react";
+﻿import { useMemo, useState } from "react";
+import { Trip, TripMatch } from "../types";
+import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2 } from "lucide-react";
+import { FLEXIBILITY_OPTIONS } from "./CreateTripFlow";
 
 type AdminPageProps = {
   trips: Trip[];
-  onToggleMatched: (tripId: string) => void;
+  matches: TripMatch[];
+  onCreateMatch: (driverTripId: string, passengerTripId: string) => void;
+  onArchiveMatch: (matchId: string) => void;
+  onDeleteMatch: (matchId: string) => void;
   onDeleteTrip: (tripId: string) => void;
 };
 
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 type SortBy = "datetime" | "arrival" | "departure";
 
-export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPageProps) {
+export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip }: AdminPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<RoleFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("datetime");
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [showMatchCandidates, setShowMatchCandidates] = useState(false);
+  const [showAllCandidates, setShowAllCandidates] = useState(false);
 
   const getRoleIcon = (role: string) => {
     if (role === "driver") return <Car className="w-4 h-4" />;
@@ -46,6 +51,30 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
   };
 
   const isDriverLike = (trip: Trip) => trip.role === "driver" || trip.role === "both";
+
+  // Mappa per velocizzare ricerche per id
+  const tripMap = useMemo(() => {
+    const map = new Map<string, Trip>();
+    trips.forEach((t) => map.set(t.id, t));
+    return map;
+  }, [trips]);
+
+  const activeMatches = matches.filter((m) => !m.isArchived);
+  const archivedMatches = matches.filter((m) => m.isArchived);
+
+  // invece di activeMatches, usiamo TUTTI i matches (attivi + archiviati)
+  const isTripMatched = (tripId: string) => matches.some((m) => m.driverTripId === tripId || m.passengerTripId === tripId);
+
+  // conteggio passeggeri per driver SOLO sui match attivi
+  const driverPassengersCount: Record<string, number> = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const m of activeMatches) {
+      counts[m.driverTripId] = (counts[m.driverTripId] || 0) + 1;
+    }
+    return counts;
+  }, [activeMatches]);
+
+  const getPassengersCountForDriver = (tripId: string) => driverPassengersCount[tripId] || 0;
 
   const filteredTrips = trips
     .filter((trip) => {
@@ -77,56 +106,120 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
       }
     });
 
-  const unmatchedTrips = filteredTrips.filter((t) => !t.isMatched);
-  const matchedTrips = filteredTrips.filter((t) => t.isMatched);
+  // viaggi NON ancora coinvolti in nessun match (attivo o archiviato)
+  const unmatchedTrips = filteredTrips.filter((t) => !isTripMatched(t.id));
 
-  const matchedGroups = (() => {
-    const groups: Record<string, Trip[]> = {};
-    for (const trip of matchedTrips) {
-      const key = [trip.departureLocation, trip.arrivalLocation, trip.date, trip.arrivalTime].join("|");
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(trip);
+  // 🔹 Abbinamenti attivi raggruppati per CONDUCENTE
+  const activeMatchGroups = useMemo(() => {
+    type Group = {
+      driver: Trip;
+      items: { match: TripMatch; passenger: Trip }[];
+    };
+    const byDriver = new Map<string, Group>();
+
+    for (const m of activeMatches) {
+      const driver = tripMap.get(m.driverTripId);
+      const passenger = tripMap.get(m.passengerTripId);
+      if (!driver || !passenger) continue;
+
+      const existing = byDriver.get(driver.id) || { driver, items: [] };
+      existing.items.push({ match: m, passenger });
+      byDriver.set(driver.id, existing);
     }
-    return Object.entries(groups);
-  })();
+
+    return Array.from(byDriver.values());
+  }, [activeMatches, tripMap]);
+
+  // Abbinamenti archiviati (mostrati uno per riga come prima)
+  const archivedMatchCards = archivedMatches
+    .map((m) => {
+      const driver = tripMap.get(m.driverTripId);
+      const passenger = tripMap.get(m.passengerTripId);
+      if (!driver || !passenger) return null;
+      return { match: m, driver, passenger };
+    })
+    .filter(Boolean) as {
+    match: TripMatch;
+    driver: Trip;
+    passenger: Trip;
+  }[];
 
   const closeDetails = () => {
     setSelectedTrip(null);
     setShowMatchCandidates(false);
+    setShowAllCandidates(false);
   };
 
   const handleRowClick = (trip: Trip) => {
     setSelectedTrip(trip);
     setShowMatchCandidates(false);
+    setShowAllCandidates(false);
   };
 
-  const getMatchCandidates = (trip: Trip): Trip[] => {
+  // Helpers per candidati abbinamento
+  const getAllCandidates = (trip: Trip): Trip[] => {
     const isDriver = isDriverLike(trip);
 
-    return trips.filter((t) => {
-      if (t.id === trip.id) return false;
-      if (t.isMatched) return false;
+    return trips.filter((candidate) => {
+      if (candidate.id === trip.id) return false;
 
+      // Se il selezionato è driver → cerchiamo passeggeri non ancora abbinati
       if (isDriver) {
-        return t.role === "passenger" || t.role === "both";
-      } else {
-        const isDriverCandidate = isDriverLike(t);
-        if (!isDriverCandidate) return false;
-        const seats = t.availableSeats ?? 0;
-        return seats > 0;
+        const candidateIsPassenger = candidate.role === "passenger" || candidate.role === "both";
+        if (!candidateIsPassenger) return false;
+
+        // passeggero può essere abbinato ad un solo driver (attivo o archiviato)
+        const alreadyMatchedAsPassenger = matches.some((m) => m.passengerTripId === candidate.id);
+        if (alreadyMatchedAsPassenger) return false;
+
+        return true;
       }
+
+      // Se il selezionato è passeggero → cerchiamo driver con posti liberi
+      const candidateIsDriver = isDriverLike(candidate);
+      if (!candidateIsDriver) return false;
+
+      const totalSeats = candidate.availableSeats ?? 0;
+      const usedSeats = getPassengersCountForDriver(candidate.id);
+      if (totalSeats <= usedSeats) return false;
+
+      return true;
     });
+  };
+
+  const getSuggestedReason = (trip: Trip, candidate: Trip): string | null => {
+    // Per ora consideriamo "consigliato" solo se ha la stessa data
+    if (trip.date === candidate.date) {
+      return `Stessa data (${new Date(trip.date).toLocaleDateString("it-IT")})`;
+    }
+    return null;
+  };
+
+  const getSuggestedCandidates = (trip: Trip): { trip: Trip; reason: string }[] => {
+    const all = getAllCandidates(trip);
+    return all
+      .map((c) => {
+        const reason = getSuggestedReason(trip, c);
+        return reason ? { trip: c, reason } : null;
+      })
+      .filter(Boolean) as { trip: Trip; reason: string }[];
   };
 
   const handleStartMatch = () => {
     if (!selectedTrip) return;
     setShowMatchCandidates(true);
+    setShowAllCandidates(false);
   };
 
-  const handlePerformMatch = (candidate: Trip) => {
-    if (!selectedTrip) return;
-    onToggleMatched(selectedTrip.id);
-    onToggleMatched(candidate.id);
+  const handlePerformMatch = (selected: Trip, candidate: Trip) => {
+    const selectedIsDriver = isDriverLike(selected);
+
+    if (selectedIsDriver) {
+      onCreateMatch(selected.id, candidate.id);
+    } else {
+      onCreateMatch(candidate.id, selected.id);
+    }
+
     closeDetails();
   };
 
@@ -197,8 +290,8 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
               <p className="text-purple-600 text-xl font-semibold">{trips.filter((t) => t.role === "passenger" || t.role === "both").length}</p>
             </div>
             <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <p className="text-gray-600 mb-1">Abbinati</p>
-              <p className="text-gray-900 text-xl font-semibold">{trips.filter((t) => t.isMatched).length}</p>
+              <p className="text-gray-600 mb-1">Abbinamenti attivi</p>
+              <p className="text-gray-900 text-xl font-semibold">{activeMatches.length}</p>
             </div>
           </div>
 
@@ -216,7 +309,7 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                       <th className="px-6 py-4 text-left text-gray-700">Utente</th>
                       <th className="px-6 py-4 text-left text-gray-700">Ruolo</th>
                       <th className="px-6 py-4 text-left text-gray-700">Percorso</th>
-                      <th className="px-6 py-4 text-left text-gray-700">Data & Ora</th>
+                      <th className="px-6 py-4 text-left text-gray-700">Data &amp; Ora</th>
                       <th className="px-6 py-4 text-left text-gray-700">Ricorrenza</th>
                       <th className="px-6 py-4 text-left text-gray-700">Posti disp.</th>
                       <th className="px-6 py-4 text-left text-gray-700">Azioni</th>
@@ -275,19 +368,21 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                               e.stopPropagation();
                               handleRowClick(trip);
                             }}
-                            className="px-3 py-1-5 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                            className="px-4 py-1.5 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
                           >
-                            Dettagli
+                            Abbina
                           </button>
                           <button
                             type="button"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (window.confirm("Sei sicuro di voler cancellare questo viaggio?")) {
                                 onDeleteTrip(trip.id);
                               }
                             }}
-                            className="px-3 py-1-5 text-xs rounded-lg border transition-colors delete-trip-button"
+                            className="px-3 py-2 text-xs rounded-lg border border-red-200 text-red-600 hover:bg-red-50 cursor-pointer delete-trip-btn inline-flex items-center gap-2"
                           >
+                            <Trash2 className="w-3 h-3" />
                             Elimina
                           </button>
                         </td>
@@ -299,72 +394,131 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
 
               {unmatchedTrips.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-gray-500 text-sm">Nessun viaggio da abbinare trovato.</p>
+                  <p className="text-gray-500 mt-3 mb-3">Nessun viaggio da abbinare trovato.</p>
                 </div>
               )}
             </div>
           </section>
 
-          {/* Sezione: Già abbinati */}
-          <section>
+          {/* Sezione: Abbinamenti attivi (raggruppati per driver) */}
+          <section className="mb-8">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-gray-900">Viaggi già abbinati</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Abbinamenti attivi</h2>
             </div>
 
-            {matchedGroups.length === 0 && (
+            {activeMatchGroups.length === 0 && (
               <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-                <p className="text-gray-500 text-sm">Non ci sono ancora viaggi abbinati.</p>
+                <p className="text-gray-500">Non ci sono ancora abbinamenti attivi.</p>
               </div>
             )}
 
-            <div className="space-y-4 flex flex-col gap-4">
-              {matchedGroups.map(([groupKey, groupTrips]) => {
-                const sample = groupTrips[0];
+            <div className="space-y-4 max-h-6xl overflow-y-auto">
+              {activeMatchGroups.map(({ driver, items }) => {
+                const totalSeats = driver.availableSeats ?? 0;
+                const usedSeats = items.length;
+                const remainingSeats = totalSeats > 0 ? Math.max(totalSeats - usedSeats, 0) : null;
+
                 return (
-                  <div key={groupKey} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                      <div>
-                        <p className="text-xs text-gray-500 uppercase">Percorso</p>
-                        <p className="text-gray-900 font-medium text-sm">
-                          {sample.departureLocation} → {sample.arrivalLocation}
-                        </p>
+                  <div key={driver.id} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <MapPin className="w-5 h-5 text-primary" />
+                        <span className="font-semibold text-gray-900">
+                          {driver.departureLocation} → {driver.arrivalLocation}
+                        </span>
                       </div>
                       <div className="flex flex-wrap gap-4 text-xs text-gray-700">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          <span>{new Date(sample.date).toLocaleDateString("it-IT")}</span>
+                          <span>{new Date(driver.date).toLocaleDateString("it-IT")}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-gray-400" />
-                          <span>{sample.arrivalTime}</span>
+                          <span>{driver.arrivalTime}</span>
+                        </div>
+                        {totalSeats > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-gray-400" />
+                            <span>
+                              {usedSeats}/{totalSeats} passeggeri
+                              {remainingSeats === 0 && " (pieno)"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Driver info */}
+                    <div className="flex flex-col gap-2 border border-gray-100 rounded-xl px-3 py-2 bg-gray-50/60 mb-3">
+                      <p className="text-[11px] text-gray-500 uppercase">Conducente</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900">{driver.userName}</span>
+                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(driver.role)}`}>
+                              {getRoleIcon(driver.role)}
+                              <span>{getRoleLabel(driver.role)}</span>
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 mt-1">
+                            <span>{driver.userEmail}</span>
+                            {driver.userPhone && (
+                              <>
+                                <span>•</span>
+                                <span>{driver.userPhone}</span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-3">
-                      {groupTrips.map((trip) => (
-                        <div key={trip.id} className="flex items-center justify-between flex-wrap gap-3 rounded-xl border border-gray-100 px-3 py-2 hover:bg-gray-50">
-                          <div className="flex flex-col gap-2">
+                    {/* Lista passeggeri per questo driver */}
+                    <div className="space-y-2">
+                      {items.map(({ match, passenger }) => (
+                        <div key={match.id} className="flex items-center justify-between gap-3 border border-gray-100 rounded-xl px-3 py-2">
+                          <div>
+                            <p className="text-[11px] text-gray-500 uppercase mb-1">Passeggero</p>
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-900">{trip.userName}</span>
-                              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(trip.role)}`}>
-                                {getRoleIcon(trip.role)}
-                                <span>{getRoleLabel(trip.role)}</span>
+                              <span className="font-medium text-gray-900">{passenger.userName}</span>
+                              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(passenger.role)}`}>
+                                {getRoleIcon(passenger.role)}
+                                <span>{getRoleLabel(passenger.role)}</span>
                               </span>
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
-                              <span>{trip.userEmail}</span>
-                              <span>•</span>
-                              <span>{trip.userPhone}</span>
+                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 mt-1">
+                              <span>{passenger.userEmail}</span>
+                              {passenger.userPhone && (
+                                <>
+                                  <span>•</span>
+                                  <span>{passenger.userPhone}</span>
+                                </>
+                              )}
                             </div>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => onToggleMatched(trip.id)}
-                            className="text-[11px] px-3 py-2 rounded-md border border-gray-300 delete-trip-button"
-                          >
-                            Elimina Abbinamento
-                          </button>
+
+                          <div className="flex flex-col gap-2 items-end">
+                            <button
+                              type="button"
+                              onClick={() => onArchiveMatch(match.id)}
+                              className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-gray-300 text-[11px] text-gray-700 hover:bg-gray-50 cursor-pointer"
+                            >
+                              <Archive className="w-3 h-3" />
+                              Archivia
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (window.confirm("Sei sicuro di voler eliminare questo abbinamento?")) {
+                                  onDeleteMatch(match.id);
+                                }
+                              }}
+                              className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border delete-trip-btn cursor-pointer"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                              Elimina abbinamento
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -373,15 +527,51 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
               })}
             </div>
           </section>
+
+          {/* Sezione: Abbinamenti archiviati */}
+          {archivedMatchCards.length > 0 && (
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-900">Abbinamenti archiviati</h2>
+              </div>
+
+              <div className="space-y-4">
+                {archivedMatchCards.map(({ match, driver, passenger }) => (
+                  <div key={match.id} className="bg-gray-50 rounded-2xl border border-gray-200 p-4 shadow-sm opacity-90">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Link2 className="w-4 h-4 text-gray-400" />
+                        <span className="font-semibold text-gray-800">
+                          {driver.departureLocation} → {driver.arrivalLocation}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-gray-500">Archiviato il {new Date(match.createdAt).toLocaleDateString("it-IT")}</span>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-800">
+                      <div>
+                        <p className="text-[11px] text-gray-500 uppercase mb-1">Conducente</p>
+                        <p className="font-medium">{driver.userName}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] text-gray-500 uppercase mb-1">Passeggero</p>
+                        <p className="font-medium">{passenger.userName}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
 
-      {/* Dialog Dettagli Viaggio - fuori dal contenitore per essere davvero overlay */}
+      {/* Dialog Dettagli Viaggio - overlay */}
       {selectedTrip && (
         <div className="admin-detail-dialog inset-0 z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4">
             <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <p className="text-xl uppercase tracking-wide ">Dettagli viaggio</p>
                 <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
                   {selectedTrip.userName}
@@ -391,13 +581,13 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                   </span>
                 </h3>
               </div>
-              <button type="button" onClick={closeDetails} className="py-2 px-3 rounded-full hover:bg-gray-100 text-gray-500 cursor-pointer">
-                <X className="w-5 h-5" />
+              <button type="button" onClick={closeDetails} className="py-2 px-2 rounded-full hover:bg-gray-100 text-gray-500 cursor-pointer">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="px-6 py-4 space-y-4 max-h-[70vh] overflow-y-auto">
-              <div className="grid md:grid-cols-2 gap-4">
+            <div className="px-6 py-4 space-y-4 max-h-6xl overflow-y-auto">
+              <div className="grid md:grid-cols-2 gap-4 mb-2">
                 {/* Percorso */}
                 <div className="space-y-3">
                   <h4 className="text-xl font-semibold text-gray-800">Percorso</h4>
@@ -424,6 +614,20 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-900">{selectedTrip.arrivalTime}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Clock className="w-4 h-4 text-gray-400" />
+                      <div className="flex flex-col gap-2">
+                        <p className="line-h-1 text-gray-500 uppercase">Flessibilità Prima dell&apos;orario</p>
+                        <p className="line-h-1 text-gray-900">{FLEXIBILITY_OPTIONS.find((opt) => opt.value === selectedTrip.flexibilityBefore)?.label}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Clock className="w-4 h-4 text-gray-400" />
+                      <div className="flex flex-col gap-2">
+                        <p className="line-h-1 text-gray-500 uppercase">Flessibilità Dopo l&apos;orario</p>
+                        <p className="line-h-1 text-gray-900">{FLEXIBILITY_OPTIONS.find((opt) => opt.value === selectedTrip.flexibilityAfter)?.label}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Repeat className="w-4 h-4 text-gray-400" />
@@ -462,14 +666,14 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                   <div className="mt-3">
                     <p className="text-[11px] text-gray-500">Creato il {new Date(selectedTrip.createdAt).toLocaleString("it-IT")}</p>
                     <p className="text-[11px] text-gray-500">
-                      Stato: <span className="font-medium">{selectedTrip.isMatched ? "Abbinato" : "Da abbinare"}</span>
+                      Stato: <span className="font-medium">{isTripMatched(selectedTrip.id) ? "Abbinato" : "Da abbinare"}</span>
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Azioni abbinamento */}
-              {!selectedTrip.isMatched && (
+              {!isTripMatched(selectedTrip.id) && (
                 <div className="pt-3 border-t border-gray-200">
                   <div className="flex items-center justify-end mb-4">
                     <button
@@ -482,78 +686,147 @@ export function AdminPage({ trips, onToggleMatched, onDeleteTrip }: AdminPagePro
                   </div>
 
                   {showMatchCandidates && (
-                    <div className="mt-2 space-y-3">
-                      <p className="text-[11px] text-gray-500">
-                        Seleziona il viaggio da abbinare a <span className="font-semibold">{selectedTrip.userName}</span>.
-                      </p>
-                      <div className="max-h-56 overflow-y-auto border border-gray-100 rounded-xl">
-                        {getMatchCandidates(selectedTrip).length === 0 && (
-                          <div className="px-4 py-3 text-sm text-gray-500">Nessun candidato compatibile trovato.</div>
-                        )}
+                    <div className="mt-2 space-y-4">
+                      {/* Abbinamenti consigliati */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h5 className="font-semibold text-gray-800 flex items-center gap-2 mb-2">Abbinamenti consigliati</h5>
+                        </div>
 
-                        {getMatchCandidates(selectedTrip).map((candidate) => {
-                          const seats = candidate.availableSeats ?? 0;
-                          const candidateIsDriver = isDriverLike(candidate);
-                          const disableForPassenger = !isDriverLike(selectedTrip) && candidateIsDriver && seats <= 0;
+                        {(() => {
+                          const suggested = getSuggestedCandidates(selectedTrip);
+                          if (suggested.length === 0) {
+                            return (
+                              <div className="px-4 py-3 text-sm text-gray-500 border border-gray-100 rounded-xl">
+                                Nessun abbinamento consigliato trovato sulla base della data. Puoi comunque vedere tutti i possibili abbinamenti.
+                              </div>
+                            );
+                          }
 
                           return (
-                            <div key={candidate.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-900">{candidate.userName}</span>
-                                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(candidate.role)}`}>
-                                    {getRoleIcon(candidate.role)}
-                                    <span>{getRoleLabel(candidate.role)}</span>
-                                  </span>
-                                </div>
-                                <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
-                                  <span>
-                                    {candidate.departureLocation} → {candidate.arrivalLocation}
-                                  </span>
-                                  <span>•</span>
-                                  <span>
-                                    {new Date(candidate.date).toLocaleDateString("it-IT")} {candidate.arrivalTime}
-                                  </span>
-                                  {candidateIsDriver && (
-                                    <>
+                            <div className="max-h-56 overflow-y-auto border border-gray-100 rounded-xl mb-4">
+                              {suggested.map(({ trip: candidate, reason }) => (
+                                <div key={candidate.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium text-gray-900">{candidate.userName}</span>
+                                      <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(candidate.role)}`}>
+                                        {getRoleIcon(candidate.role)}
+                                        <span>{getRoleLabel(candidate.role)}</span>
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                                      <span>
+                                        {candidate.departureLocation} → {candidate.arrivalLocation}
+                                      </span>
                                       <span>•</span>
-                                      <span>Posti: {candidate.availableSeats ?? "—"}</span>
-                                    </>
-                                  )}
+                                      <span>
+                                        {new Date(candidate.date).toLocaleDateString("it-IT")} {candidate.arrivalTime}
+                                      </span>
+                                      {isDriverLike(candidate) && (
+                                        <>
+                                          <span>•</span>
+                                          <span>Posti: {candidate.availableSeats ?? "—"}</span>
+                                        </>
+                                      )}
+                                    </div>
+                                    <p className="text-[11px] text-green-700">{reason}</p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handlePerformMatch(selectedTrip, candidate)}
+                                    className="px-4 py-2 rounded-lg text-xs font-medium cursor-pointer bg-primary text-white hover:bg-blue-700"
+                                  >
+                                    Abbina
+                                  </button>
                                 </div>
-                              </div>
-                              <button
-                                type="button"
-                                disabled={disableForPassenger}
-                                onClick={() => handlePerformMatch(candidate)}
-                                className={`px-4 py-2 rounded-lg text-xs font-medium cursor-pointer ${
-                                  disableForPassenger ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-primary text-white hover:bg-blue-700"
-                                }`}
-                              >
-                                Abbina
-                              </button>
+                              ))}
                             </div>
                           );
-                        })}
+                        })()}
                       </div>
+
+                      {/* Pulsante per vedere tutti i possibili abbinamenti */}
+                      <div className="flex items-center justify-end border-t border-gray-100 pt-3">
+                        <button
+                          type="button"
+                          onClick={() => setShowAllCandidates((v) => !v)}
+                          className="px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        >
+                          {showAllCandidates ? "Nascondi tutti gli abbinamenti" : "Mostra tutti i possibili abbinamenti"}
+                        </button>
+                      </div>
+
+                      {/* Tutti i possibili abbinamenti */}
+                      {showAllCandidates && (
+                        <div className="mt-1">
+                          <h5 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">Tutti i possibili abbinamenti</h5>
+                          <div className="max-h-56 overflow-y-auto border border-gray-100 rounded-xl">
+                            {(() => {
+                              const all = getAllCandidates(selectedTrip);
+                              if (all.length === 0) {
+                                return <div className="px-4 py-3 text-sm text-gray-500">Nessun candidato compatibile trovato.</div>;
+                              }
+
+                              return all.map((candidate) => {
+                                const totalSeats = candidate.availableSeats ?? 0;
+                                const usedSeats = getPassengersCountForDriver(candidate.id);
+                                const remainingSeats = totalSeats > 0 ? Math.max(totalSeats - usedSeats, 0) : null;
+                                const candidateIsDriver = isDriverLike(candidate);
+                                return (
+                                  <div key={candidate.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50">
+                                    <div className="space-y-1">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-900">{candidate.userName}</span>
+                                        <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(candidate.role)}`}>
+                                          {getRoleIcon(candidate.role)}
+                                          <span>{getRoleLabel(candidate.role)}</span>
+                                        </span>
+                                      </div>
+                                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                                        <span>
+                                          {candidate.departureLocation} → {candidate.arrivalLocation}
+                                        </span>
+                                        <span>•</span>
+                                        <span>
+                                          {new Date(candidate.date).toLocaleDateString("it-IT")} {candidate.arrivalTime}
+                                        </span>
+                                        {candidateIsDriver && (
+                                          <>
+                                            <span>•</span>
+                                            <span>
+                                              Posti: {usedSeats}/{totalSeats || "—"}
+                                              {totalSeats > 0 && remainingSeats === 0 && " (pieno)"}
+                                            </span>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => handlePerformMatch(selectedTrip, candidate)}
+                                      className="px-4 py-2 rounded-lg text-xs font-medium cursor-pointer bg-primary text-white hover:bg-blue-700"
+                                    >
+                                      Abbina
+                                    </button>
+                                  </div>
+                                );
+                              });
+                            })()}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               )}
 
-              {selectedTrip.isMatched && (
+              {/* Informazioni se già abbinato */}
+              {isTripMatched(selectedTrip.id) && (
                 <div className="pt-3 border-t border-gray-200">
-                  <p className="text-[11px] text-gray-500 mb-2">Questo viaggio è già segnato come abbinato. Puoi riportarlo a “non abbinato” se necessario.</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onToggleMatched(selectedTrip.id);
-                      closeDetails();
-                    }}
-                    className="px-4 py-2 rounded-lg border border-gray-300 text-xs text-gray-700 hover:bg-gray-50"
-                  >
-                    Segna come non abbinato
-                  </button>
+                  <p className="text-[11px] text-gray-500">
+                    Questo viaggio fa parte di almeno un abbinamento. Gestisci gli abbinamenti dalla sezione &quot;Abbinamenti attivi&quot;.
+                  </p>
                 </div>
               )}
             </div>

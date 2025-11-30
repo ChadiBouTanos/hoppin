@@ -7,7 +7,7 @@ import { MyTripsPage } from "./components/MyTripsPage";
 import { CreateTripFlow } from "./components/CreateTripFlow";
 import { AdminPage } from "./components/AdminPage";
 import { QAPage } from "./components/QAPage";
-import { User, Trip } from "./types";
+import { User, Trip, TripMatch } from "./types";
 import { api } from "./services/api";
 
 export type CreateTripPayload = {
@@ -20,10 +20,13 @@ export type CreateTripPayload = {
   recurringDays?: string[];
   availableSeats?: number;
   rules?: string;
+  flexibilityBefore?: number | null;
+  flexibilityAfter?: number | null;
 };
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "signup" | "login" | "mytrips" | "create" | "admin" | "qa">("home");
+
   const [user, setUser] = useState<User | null>(() => {
     try {
       const storedUser = localStorage.getItem("hoppin_user");
@@ -32,39 +35,53 @@ export default function App() {
       return null;
     }
   });
+
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [matches, setMatches] = useState<TripMatch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      if (user?.token) {
-        setIsLoading(true);
-        setError(null);
-        try {
-          const fetchedTrips = await api.getTrips(user.token, user.isAdmin);
-          // Ensure we always set an array
-          setTrips(Array.isArray(fetchedTrips) ? fetchedTrips : []);
-        } catch (err: any) {
-          console.error("Failed to fetch trips:", err);
-          setError(err.message);
-          setTrips([]); // Set empty array on error
+  // Helper per ricaricare viaggi + abbinamenti (solo admin)
+  const refreshData = async (token: string, isAdmin: boolean) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const tripsPromise = api.getTrips(token, isAdmin);
+      const matchesPromise = isAdmin ? api.getMatches(token, true) : Promise.resolve([]);
+      
+      const [fetchedTrips, fetchedMatches] = await Promise.all([tripsPromise, matchesPromise]);
 
-          // If token is invalid, log out user
-          if (err.message.includes("401") || err.message.includes("Unauthorized") || err.message.includes("Invalid token")) {
-            handleLogout();
-          }
-        } finally {
-          setIsLoading(false);
-        }
+      setTrips(Array.isArray(fetchedTrips) ? fetchedTrips : []);
+      setMatches(Array.isArray(fetchedMatches) ? fetchedMatches : []);
+    } catch (err: any) {
+      console.error("Failed to fetch data:", err);
+      setError(err.message || "Errore nel recupero dei dati");
+      setTrips([]);
+      setMatches([]);
+
+      if (err.message?.includes("401") || err.message?.includes("Unauthorized") || err.message?.includes("Invalid token")) {
+        handleLogout();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Caricamento iniziale di viaggi + match quando cambia utente/token
+  useEffect(() => {
+    const fetchAll = async () => {
+      if (user?.token) {
+        await refreshData(user.token, user.isAdmin);
       } else {
-        setIsLoading(false);
         setTrips([]);
+        setMatches([]);
+        setIsLoading(false);
       }
     };
-    fetchTrips();
-  }, [user?.token]); // Only depend on token to avoid infinite loops
+    fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.token, user?.isAdmin]);
 
   const handleUserSession = (userData: User) => {
     setUser(userData);
@@ -75,7 +92,6 @@ export default function App() {
   const handleSignUp = async (userData: Omit<User, "id" | "isAdmin" | "token"> & { password: string }) => {
     setError(null);
     setIsLoading(true);
-    console.log("SignUp data being sent:", userData); // Debug log
     try {
       const newUser = await api.signUp(userData);
       handleUserSession(newUser);
@@ -104,6 +120,7 @@ export default function App() {
   const handleLogout = () => {
     setUser(null);
     setTrips([]);
+    setMatches([]);
     localStorage.removeItem("hoppin_user");
     setCurrentPage("home");
   };
@@ -140,7 +157,14 @@ export default function App() {
     setIsLoading(true);
     try {
       await api.deleteTrip(tripId, user.token);
-      setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+
+      if (user.isAdmin) {
+        // per admin ricarico viaggi + match dal backend
+        await refreshData(user.token, user.isAdmin);
+      } else {
+        // per utente normale basta filtrare localmente
+        setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
+      }
     } catch (err: any) {
       console.error("Delete trip error:", err);
       setError(err.message || "Failed to delete trip");
@@ -149,26 +173,82 @@ export default function App() {
     }
   };
 
-  const handleToggleMatched = async (tripId: string) => {
+  // Creazione abbinamento (driverTrip + passengerTrip)
+  const handleCreateMatch = async (driverTripId: string, passengerTripId: string) => {
     if (!user?.token) {
-      setError("You must be logged in to modify a trip.");
+      setError("You must be logged in as admin to create a match.");
       return;
     }
+    if (!user.isAdmin) {
+      setError("Solo un amministratore può creare abbinamenti.");
+      return;
+    }
+
     setError(null);
+    setIsLoading(true);
     try {
-      const updatedTrip = await api.toggleMatched(tripId, user.token);
-      setTrips((prevTrips) => prevTrips.map((trip) => (trip.id === tripId ? updatedTrip : trip)));
+      await api.createMatch(driverTripId, passengerTripId, user.token);
+      await refreshData(user.token, user.isAdmin);
     } catch (err: any) {
-      console.error("Toggle matched error:", err);
-      setError(err.message || "Failed to update trip");
+      console.error("Create match error:", err);
+      setError(err.message || "Errore nella creazione dell'abbinamento");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleArchiveMatch = async (matchId: string) => {
+    if (!user?.token) {
+      setError("You must be logged in as admin to archive a match.");
+      return;
+    }
+    if (!user.isAdmin) {
+      setError("Solo un amministratore può archiviare abbinamenti.");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+    try {
+      await api.archiveMatch(matchId, user.token);
+      await refreshData(user.token, user.isAdmin);
+    } catch (err: any) {
+      console.error("Archive match error:", err);
+      setError(err.message || "Errore nell'archiviazione dell'abbinamento");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteMatch = async (matchId: string) => {
+    if (!user?.token) {
+      setError("You must be logged in as admin to delete a match.");
+      return;
+    }
+    if (!user.isAdmin) {
+      setError("Solo un amministratore può eliminare abbinamenti.");
+      return;
+    }
+
+    const confirmed = window.confirm("Sei sicuro di voler eliminare definitivamente questo abbinamento?");
+    if (!confirmed) return;
+
+    setError(null);
+    setIsLoading(true);
+    try {
+      await api.deleteMatch(matchId, user.token);
+      await refreshData(user.token, user.isAdmin);
+    } catch (err: any) {
+      console.error("Delete match error:", err);
+      setError(err.message || "Errore nella eliminazione dell'abbinamento");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const getUserTrips = () => {
     if (!user) return [];
-    // Ensure trips is always an array
     const tripsArray = Array.isArray(trips) ? trips : [];
-    // If admin, show all trips; otherwise filter by user
     return user.isAdmin ? tripsArray : tripsArray.filter((trip) => trip.userId === user.id);
   };
 
@@ -335,7 +415,16 @@ export default function App() {
             <MyTripsPage trips={getUserTrips()} onCreateTrip={() => setCurrentPage("create")} onDeleteTrip={handleDeleteTrip} />
           )}
           {currentPage === "create" && user && <CreateTripFlow onComplete={handleCreateTrip} onCancel={() => setCurrentPage("mytrips")} />}
-          {currentPage === "admin" && user?.isAdmin && <AdminPage trips={trips} onToggleMatched={handleToggleMatched} onDeleteTrip={handleDeleteTrip} />}
+          {currentPage === "admin" && user?.isAdmin && (
+            <AdminPage
+              trips={trips}
+              matches={matches}
+              onCreateMatch={handleCreateMatch}
+              onArchiveMatch={handleArchiveMatch}
+              onDeleteMatch={handleDeleteMatch}
+              onDeleteTrip={handleDeleteTrip}
+            />
+          )}
           {currentPage === "qa" && <QAPage onBack={() => setCurrentPage(user ? "home" : "home")} />}
         </>
       )}

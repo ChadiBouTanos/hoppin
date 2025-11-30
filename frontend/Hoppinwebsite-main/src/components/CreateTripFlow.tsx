@@ -8,15 +8,17 @@ type CreateTripFlowProps = {
 };
 
 type FormState = {
-  role: "driver" | "passenger" | "both" | "";
+  role: "" | "driver" | "passenger" | "both";
   departureLocation: string;
   arrivalLocation: string;
   date: string;
-  arrivalTime: string;
+  departureTime: string;
   recurrence: "once" | "weekly" | "custom";
   recurringDays: string[];
   availableSeats: string;
   rules: string;
+  flexibilityBefore: "" | "15" | "30" | "45" | "60" | "90" | "120";
+  flexibilityAfter: "" | "15" | "30" | "45" | "60" | "90" | "120";
 };
 
 const DAYS_OF_WEEK = [
@@ -27,6 +29,15 @@ const DAYS_OF_WEEK = [
   { value: "friday", label: "Venerdì" },
   { value: "saturday", label: "Sabato" },
   { value: "sunday", label: "Domenica" },
+];
+
+export const FLEXIBILITY_OPTIONS = [
+  { value: 15, label: "15 minuti" },
+  { value: 30, label: "30 minuti" },
+  { value: 45, label: "45 minuti" },
+  { value: 60, label: "1 ora" },
+  { value: 90, label: "1 ora e 30 min" },
+  { value: 120, label: "2 ore" },
 ];
 
 export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
@@ -42,6 +53,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
     recurringDays: [],
     availableSeats: "",
     rules: "",
+    flexibilityBefore: "",
+    flexibilityAfter: "",
   });
 
   const handleRoleSelect = (role: "driver" | "passenger" | "both") => {
@@ -86,6 +99,9 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
         return;
       }
 
+      const flexibilityBeforeNumber = formData.flexibilityBefore ? Number(formData.flexibilityBefore) : undefined;
+      const flexibilityAfterNumber = formData.flexibilityAfter ? Number(formData.flexibilityAfter) : undefined;
+
       const tripData = {
         role: formData.role as "driver" | "passenger" | "both",
         departureLocation: formData.departureLocation,
@@ -96,9 +112,11 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
         recurringDays: formData.recurrence === "custom" ? formData.recurringDays : undefined,
         availableSeats: availableSeatsNumber,
         rules: isDriver ? formData.rules || undefined : undefined,
+        flexibilityBefore: flexibilityBeforeNumber,
+        flexibilityAfter: flexibilityAfterNumber,
       };
 
-      onComplete(tripData);
+      onComplete(tripData as any);
       setShowSuccess(true);
     } else {
       alert("Compila tutti i campi obbligatori");
@@ -112,7 +130,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {showSuccess ? (
           <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
             <div className="text-center mb-8">
@@ -309,7 +327,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                     <div>
                       <label className="block text-gray-700 mb-2 flex items-center gap-2">
                         <Clock className="w-5 h-5 text-gray-400" />
-                        Orario di Arrivo
+                        Orario di Partenza
                       </label>
                       <input
                         type="time"
@@ -317,6 +335,42 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                         onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-gray-700 mb-2">Quanto puoi essere flessibile prima dell’orario indicato?</label>
+                      <select
+                        value={formData.flexibilityBefore}
+                        onChange={(e) => setFormData({ ...formData, flexibilityBefore: e.target.value as any })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                      >
+                        <option value="">Seleziona...</option>
+                        {FLEXIBILITY_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value.toString()}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-xs text-gray-500">Es. ho scritto 9:00 ma posso partire anche alle 8:30.</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 mb-2">Quanto puoi essere flessibile dopo l’orario indicato?</label>
+                      <select
+                        value={formData.flexibilityAfter}
+                        onChange={(e) => setFormData({ ...formData, flexibilityAfter: e.target.value as any })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                      >
+                        <option value="">Seleziona...</option>
+                        {FLEXIBILITY_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value.toString()}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-xs text-gray-500">Es. ho scritto 9:00 ma posso partire anche alle 9:30.</p>
                     </div>
                   </div>
 

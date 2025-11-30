@@ -24,6 +24,16 @@ export type Trip = {
   recurringDays?: string[]; // ['monday', 'wednesday', 'friday']
   availableSeats?: number;
   rules?: string;
+  flexibilityBefore?: number | null;
+  flexibilityAfter?: number | null;
   isMatched: boolean;
+  createdAt: string;
+};
+
+export type TripMatch = {
+  id: string;
+  driverTripId: string;
+  passengerTripId: string;
+  isArchived: boolean;
   createdAt: string;
 };
