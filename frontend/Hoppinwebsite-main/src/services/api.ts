@@ -75,12 +75,14 @@ export const api = {
   },
 
   getMatches: async (token: string, includeArchived = false): Promise<TripMatch[]> => {
-    const url = new URL(`${API_URL}/trips/matches/`);
+    let url = `${API_URL}/trips/matches/`;
+
     if (includeArchived) {
-      url.searchParams.set('include_archived', '1');
+      url += url.includes("?") ? "&" : "?";
+      url += "include_archived=1";
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
