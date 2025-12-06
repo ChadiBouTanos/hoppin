@@ -122,7 +122,7 @@ export function MyTripsPage({ trips, onCreateTrip, onDeleteTrip }: MyTripsPagePr
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 text-gray-400 mt-1" />
                       <div>
-                        <p className="text-gray-500">Orario di Arrivo</p>
+                        <p className="text-gray-500">Orario di Partenza</p>
                         <p className="text-gray-900">{trip.arrivalTime}</p>
                       </div>
                     </div>
