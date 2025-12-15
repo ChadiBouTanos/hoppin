@@ -4,6 +4,7 @@ import { HomePage } from "./components/HomePage";
 import { SignUpPage } from "./components/SignUpPage";
 import { LoginPage } from "./components/LoginPage";
 import { MyTripsPage } from "./components/MyTripsPage";
+import { AllTripsPage } from "./components/AllTripsPage";
 import { CreateTripFlow } from "./components/CreateTripFlow";
 import { AdminPage } from "./components/AdminPage";
 import { QAPage } from "./components/QAPage";
@@ -25,7 +26,7 @@ export type CreateTripPayload = {
 };
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "signup" | "login" | "mytrips" | "create" | "admin" | "qa">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa">("home");
 
   const [user, setUser] = useState<User | null>(() => {
     try {
@@ -49,7 +50,7 @@ export default function App() {
     try {
       const tripsPromise = api.getTrips(token, isAdmin);
       const matchesPromise = isAdmin ? api.getMatches(token, true) : Promise.resolve([]);
-      
+
       const [fetchedTrips, fetchedMatches] = await Promise.all([tripsPromise, matchesPromise]);
 
       setTrips(Array.isArray(fetchedTrips) ? fetchedTrips : []);
@@ -258,7 +259,6 @@ export default function App() {
         <nav className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              {/* Left: logo + desktop menu */}
               <div className="flex items-center gap-8">
                 <button
                   onClick={() => {
@@ -270,13 +270,18 @@ export default function App() {
                   Hoppin
                 </button>
 
-                {/* Desktop nav (visibile da md in su) */}
                 <div className="hidden md:flex gap-4">
                   <button
                     onClick={() => setCurrentPage("mytrips")}
                     className={`px-3 py-2 rounded-md ${currentPage === "mytrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                   >
                     I miei Viaggi
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage("alltrips")}
+                    className={`px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  >
+                    Tutti i Viaggi
                   </button>
                   <button
                     onClick={() => setCurrentPage("create")}
@@ -288,7 +293,6 @@ export default function App() {
                     Aiuto
                   </button>
 
-                  {/* Solo per admin: voce extra */}
                   {user.isAdmin && (
                     <button
                       onClick={() => setCurrentPage("admin")}
@@ -300,18 +304,15 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Right: user info + logout + hamburger mobile */}
               <div className="flex items-center gap-4">
                 <span className="text-gray-700 hidden sm:inline">
                   {user.firstName} {user.lastName}
                 </span>
 
-                {/* Logout desktop */}
                 <button onClick={handleLogout} className="px-4 py-2 text-gray-600 hover:text-gray-900 hidden md:inline-block">
                   Sign Out
                 </button>
 
-                {/* Hamburger mobile */}
                 <button
                   onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                   className="md:hidden inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100"
@@ -323,7 +324,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Mobile menu (md:hidden) */}
           {isMobileMenuOpen && (
             <div className="md:hidden border-t border-gray-200 bg-white">
               <div className="px-4 pt-2 pb-3 space-y-1">
@@ -335,6 +335,15 @@ export default function App() {
                   className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "mytrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                 >
                   I miei Viaggi
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentPage("alltrips");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                >
+                  Tutti i Viaggi
                 </button>
                 <button
                   onClick={() => {
@@ -415,6 +424,7 @@ export default function App() {
             <MyTripsPage trips={getUserTrips()} onCreateTrip={() => setCurrentPage("create")} onDeleteTrip={handleDeleteTrip} />
           )}
           {currentPage === "create" && user && <CreateTripFlow onComplete={handleCreateTrip} onCancel={() => setCurrentPage("mytrips")} />}
+          {currentPage === "alltrips" && <AllTripsPage trips={trips} whatsappNumber={'36611925756'} />}
           {currentPage === "admin" && user?.isAdmin && (
             <AdminPage
               trips={trips}
