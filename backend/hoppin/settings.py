@@ -45,6 +45,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "hoppin.middleware.LogRequestMiddleware",
 ]
 
 ROOT_URLCONF = 'hoppin.urls'
