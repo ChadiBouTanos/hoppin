@@ -12,8 +12,10 @@ DEBUG =  default=False
 # Updated ALLOWED_HOSTS to read from environment
 ALLOWED_HOSTS = [
     'localhost',
+    'backend',
     '127.0.0.1',
     'hoppin.cloud',
+    "www.hoppin.cloud",
     '51.91.109.69'
 ]
 
