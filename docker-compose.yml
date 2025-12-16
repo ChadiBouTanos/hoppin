@@ -16,30 +16,20 @@ services:
       - ./backend/.env
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: hoppin_frontend
-    volumes:
-      - frontend_build:/app/dist
-    restart: unless-stopped
-
   nginx:
     image: nginx:alpine
     container_name: hoppin_nginx
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - static_volume:/static
-      - ./frontend/dist:/usr/share/nginx/html:ro 
-      - frontend_build:/usr/share/nginx/html
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
     depends_on:
       - backend
-      - frontend
     restart: unless-stopped
 
 volumes:
   static_volume:
-  frontend_build:
