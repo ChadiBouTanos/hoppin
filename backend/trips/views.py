@@ -2,10 +2,15 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from django.views.decorators.csrf import csrf_exempt
+import json
+import requests
 
 from .models import Trip, TripMatch, update_trip_matched_flags
 from .serializers import TripSerializer, TripMatchSerializer
 
+TELEGRAM_BOT_TOKEN = "8485064756:AAHdOcJNEfZFkIYy97vSiVRqWNOlLT2e-xM"
+TELEGRAM_CHAT_ID = "-5010584294" 
 
 class TripListCreateView(generics.ListCreateAPIView):
     """
@@ -128,3 +133,45 @@ def archive_match(request, pk):
 
     serializer = TripMatchSerializer(match)
     return Response(serializer.data)
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def notify_share(request):
+    """
+    POST /api/admin/notify-share/
+    Body JSON:
+    {
+      "tripId": 1,
+      "contactingUser": "Mario Rossi",
+      "contactingPhone": "+393331234567",
+      "contactedUser": "Luca Bianchi",
+      "contactedPhone": "+393339876543",
+      "departure": "Milano",
+      "arrival": "Bergamo",
+      "date": "2025-12-17",
+      "time": "08:30"
+    }
+    """
+    try:
+        data = json.loads(request.body)
+    except Exception:
+        return Response({"status": "error", "message": "Invalid JSON"}, status=status.HTTP_400_BAD_REQUEST)
+
+    trip_info = (
+        f"📢 Nuovo contatto WhatsApp\n"
+        f"Chi contatta: {data.get('contactingUser')} ({data.get('contactingPhone')})\n"
+        f"Chi viene contattato: {data.get('contactedUser')} ({data.get('contactedPhone')})\n"
+        f"Viaggio: {data.get('departure')} → {data.get('arrival')}\n"
+        f"Data: {data.get('date')} {data.get('time')}"
+    )
+
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": trip_info}
+
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        return Response({"status": "error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({"status": "ok"})

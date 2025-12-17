@@ -412,7 +412,7 @@ export default function App() {
               onDeleteTrip={handleDeleteTrip}
             />
           )}
-          {currentPage === "alltrips" && <AllTripsPage trips={allTrips} />}
+          {currentPage === "alltrips" && <AllTripsPage trips={allTrips} user={user} />}
           {currentPage === "create" && user && <CreateTripFlow onComplete={handleCreateTrip} onCancel={() => setCurrentPage("mytrips")} />}
           {currentPage === "admin" && user?.isAdmin && (
             <AdminPage

@@ -20,6 +20,7 @@ from django.conf import settings
 import os
 from django.contrib import admin
 from django.urls import path, include
+from .views import serve_logo, notify_share
 
 def serve_logo(request):
     """
@@ -45,4 +46,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/trips/', include('trips.urls')),
+    path("api/admin/notify-share/", notify_share, name="notify_share"),
 ]

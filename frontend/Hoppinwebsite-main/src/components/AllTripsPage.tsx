@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
-import { Trip } from "../types";
+import { Trip, User } from "../types";
 import { MapPin, Calendar, Clock, Search, Filter, Repeat, Users, MessageCircle } from "lucide-react";
 
 type UserTripsPageProps = {
   trips: Trip[];
+  user: User;
 };
 
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 
-export function AllTripsPage({ trips }: UserTripsPageProps) {
+export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<RoleFilter>("all");
 
@@ -17,8 +18,8 @@ export function AllTripsPage({ trips }: UserTripsPageProps) {
 
     return trips.filter((trip) => {
       const matchesSearch =
-        trip.departureLocation.toLowerCase().includes(term) || 
-        trip.arrivalLocation.toLowerCase().includes(term) || 
+        trip.departureLocation.toLowerCase().includes(term) ||
+        trip.arrivalLocation.toLowerCase().includes(term) ||
         trip.userName.toLowerCase().includes(term);
 
       const matchesRole = filterRole === "all" || trip.role === filterRole;
@@ -43,11 +44,30 @@ export function AllTripsPage({ trips }: UserTripsPageProps) {
 
   const normalizePhone = (phone: string) => phone.replace(/\D/g, "");
 
+  const notifyAdmin = async (trip: Trip) => {
+    await fetch("/api/admin/notify-share/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tripId: trip.id,
+        contactingUser: user.firstName + " " + user.lastName,              
+        contactingPhone: user.phone,             
+        contactedUser: trip.userName, 
+        contactedPhone: trip.userPhone, 
+        departure: trip.departureLocation,
+        arrival: trip.arrivalLocation,
+        date: trip.date,
+        time: trip.arrivalTime,
+      }),
+    });
+  };
+
   const handleWhatsappContact = (trip: Trip) => {
     if (!trip.userPhone) return;
 
-    const phone = normalizePhone(trip.userPhone);
+    notifyAdmin(trip); 
 
+    const phone = normalizePhone(trip.userPhone);
     const message =
       `Ciao ${trip.userName}! Sono interessato a questo viaggio:%0A` +
       `${trip.departureLocation} → ${trip.arrivalLocation}%0A` +
