@@ -20,7 +20,7 @@ from django.conf import settings
 import os
 from django.contrib import admin
 from django.urls import path, include
-from .views import serve_logo, notify_share
+from trips.views import notify_share
 
 def serve_logo(request):
     """
