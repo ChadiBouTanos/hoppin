@@ -17,7 +17,9 @@ export function AllTripsPage({ trips }: UserTripsPageProps) {
 
     return trips.filter((trip) => {
       const matchesSearch =
-        trip.departureLocation.toLowerCase().includes(term) || trip.arrivalLocation.toLowerCase().includes(term) || trip.userName.toLowerCase().includes(term);
+        trip.departureLocation.toLowerCase().includes(term) || 
+        trip.arrivalLocation.toLowerCase().includes(term) || 
+        trip.userName.toLowerCase().includes(term);
 
       const matchesRole = filterRole === "all" || trip.role === filterRole;
       return matchesSearch && matchesRole;
@@ -60,7 +62,6 @@ export function AllTripsPage({ trips }: UserTripsPageProps) {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900 mb-1">Viaggi disponibili</h1>
-          <p className="text-gray-600 text-sm">Sfoglia tutti i viaggi e contatta il referente.</p>
         </div>
 
         {/* Ricerca & Filtro */}
@@ -81,8 +82,9 @@ export function AllTripsPage({ trips }: UserTripsPageProps) {
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <select
                 value={filterRole}
+                name="roleFilter"
                 onChange={(e) => setFilterRole(e.target.value as RoleFilter)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
               >
                 <option value="all">Tutti i ruoli</option>
                 <option value="driver">Conducente</option>

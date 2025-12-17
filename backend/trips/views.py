@@ -9,26 +9,15 @@ from .serializers import TripSerializer, TripMatchSerializer
 
 class TripListCreateView(generics.ListCreateAPIView):
     """
-    GET /api/trips/        - Admin only, returns all trips
-    POST /api/trips/       - Any authenticated user can create a trip
+    GET /api/trips/        - Tutti gli utenti autenticati vedono tutti i viaggi
+    POST /api/trips/       - Qualsiasi utente autenticato può creare un viaggio
     """
     serializer_class = TripSerializer
     permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        # Solo admin vede tutti i viaggi
-        if self.request.user.is_admin:
-            return Trip.objects.all().select_related('user')
-        return Trip.objects.none()
-    
-    def list(self, request, *args, **kwargs):
-        if not request.user.is_admin:
-            return Response(
-                {'message': 'Admin access required'},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().list(request, *args, **kwargs)
 
+    def get_queryset(self):
+        # Tutti vedono tutti i viaggi
+        return Trip.objects.all().select_related('user')
 
 class MyTripsView(generics.ListAPIView):
     """

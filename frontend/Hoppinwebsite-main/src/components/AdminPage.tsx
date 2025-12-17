@@ -87,7 +87,6 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
         trip.userPhone.toLowerCase().includes(term);
 
       const matchesRole = filterRole === "all" || trip.role === filterRole;
-
       return matchesSearch && matchesRole;
     })
     .sort((a, b) => {
@@ -188,7 +187,6 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
   };
 
   const getSuggestedReason = (trip: Trip, candidate: Trip): string | null => {
-    // Per ora consideriamo "consigliato" solo se ha la stessa data
     if (trip.date === candidate.date) {
       return `Stessa data (${new Date(trip.date).toLocaleDateString("it-IT")})`;
     }

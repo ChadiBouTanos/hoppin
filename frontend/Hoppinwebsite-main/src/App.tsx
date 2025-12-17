@@ -37,28 +37,35 @@ export default function App() {
     }
   });
 
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [allTrips, setAllTrips] = useState<Trip[]>([]);
+  const [userTrips, setUserTrips] = useState<Trip[]>([]);
   const [matches, setMatches] = useState<TripMatch[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Helper per ricaricare viaggi + abbinamenti (solo admin)
+  // Helper per ricaricare viaggi + abbinamenti
   const refreshData = async (token: string, isAdmin: boolean) => {
     setIsLoading(true);
     setError(null);
     try {
-      const tripsPromise = api.getTrips(token, isAdmin);
+      // fetch all trips for AllTrips/Admin
+      const allTripsPromise = api.getTrips(token, true);
+      // fetch only user trips for MyTrips
+      const userTripsPromise = api.getTrips(token, false);
       const matchesPromise = isAdmin ? api.getMatches(token, true) : Promise.resolve([]);
 
-      const [fetchedTrips, fetchedMatches] = await Promise.all([tripsPromise, matchesPromise]);
+      const [fetchedAllTrips, fetchedUserTrips, fetchedMatches] =
+        await Promise.all([allTripsPromise, userTripsPromise, matchesPromise]);
 
-      setTrips(Array.isArray(fetchedTrips) ? fetchedTrips : []);
+      setAllTrips(Array.isArray(fetchedAllTrips) ? fetchedAllTrips : []);
+      setUserTrips(Array.isArray(fetchedUserTrips) ? fetchedUserTrips : []);
       setMatches(Array.isArray(fetchedMatches) ? fetchedMatches : []);
     } catch (err: any) {
       console.error("Failed to fetch data:", err);
       setError(err.message || "Errore nel recupero dei dati");
-      setTrips([]);
+      setAllTrips([]);
+      setUserTrips([]);
       setMatches([]);
 
       if (err.message?.includes("401") || err.message?.includes("Unauthorized") || err.message?.includes("Invalid token")) {
@@ -75,13 +82,13 @@ export default function App() {
       if (user?.token) {
         await refreshData(user.token, user.isAdmin);
       } else {
-        setTrips([]);
+        setAllTrips([]);
+        setUserTrips([]);
         setMatches([]);
         setIsLoading(false);
       }
     };
     fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.token, user?.isAdmin]);
 
   const handleUserSession = (userData: User) => {
@@ -120,22 +127,19 @@ export default function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setTrips([]);
+    setAllTrips([]);
+    setUserTrips([]);
     setMatches([]);
     localStorage.removeItem("hoppin_user");
     setCurrentPage("home");
   };
 
   const handleCreateTrip = async (tripData: CreateTripPayload) => {
-    if (!user?.token) {
-      setError("You must be logged in to create a trip.");
-      return;
-    }
-    setError(null);
-    setIsLoading(true);
+    if (!user?.token) { setError("You must be logged in to create a trip."); return; }
+    setError(null); setIsLoading(true);
     try {
-      const newTrip = await api.createTrip(tripData, user.token);
-      setTrips((prevTrips) => [...prevTrips, newTrip]);
+      await api.createTrip(tripData, user.token);
+      await refreshData(user.token, user.isAdmin); // reload both lists
       setCurrentPage("mytrips");
     } catch (err: any) {
       console.error("Create trip error:", err);
@@ -146,26 +150,12 @@ export default function App() {
   };
 
   const handleDeleteTrip = async (tripId: string) => {
-    if (!user?.token) {
-      setError("You must be logged in to delete a trip.");
-      return;
-    }
-
-    const confirmed = window.confirm("Sei sicuro di voler cancellare questo viaggio?");
-    if (!confirmed) return;
-
-    setError(null);
-    setIsLoading(true);
+    if (!user?.token) { setError("You must be logged in to delete a trip."); return; }
+    if (!window.confirm("Sei sicuro di voler cancellare questo viaggio?")) return;
+    setError(null); setIsLoading(true);
     try {
       await api.deleteTrip(tripId, user.token);
-
-      if (user.isAdmin) {
-        // per admin ricarico viaggi + match dal backend
-        await refreshData(user.token, user.isAdmin);
-      } else {
-        // per utente normale basta filtrare localmente
-        setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== tripId));
-      }
+      await refreshData(user.token, user.isAdmin); // keep both lists accurate
     } catch (err: any) {
       console.error("Delete trip error:", err);
       setError(err.message || "Failed to delete trip");
@@ -173,6 +163,7 @@ export default function App() {
       setIsLoading(false);
     }
   };
+
 
   // Creazione abbinamento (driverTrip + passengerTrip)
   const handleCreateMatch = async (driverTripId: string, passengerTripId: string) => {
@@ -245,12 +236,6 @@ export default function App() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const getUserTrips = () => {
-    if (!user) return [];
-    const tripsArray = Array.isArray(trips) ? trips : [];
-    return user.isAdmin ? tripsArray : tripsArray.filter((trip) => trip.userId === user.id);
   };
 
   return (
@@ -421,13 +406,17 @@ export default function App() {
           {currentPage === "signup" && <SignUpPage onSignUp={handleSignUp} onBack={() => setCurrentPage("home")} />}
           {currentPage === "login" && <LoginPage onLogin={handleLogin} onBack={() => setCurrentPage("home")} />}
           {currentPage === "mytrips" && user && (
-            <MyTripsPage trips={getUserTrips()} onCreateTrip={() => setCurrentPage("create")} onDeleteTrip={handleDeleteTrip} />
+            <MyTripsPage
+              trips={user.isAdmin ? allTrips : userTrips}
+              onCreateTrip={() => setCurrentPage("create")}
+              onDeleteTrip={handleDeleteTrip}
+            />
           )}
+          {currentPage === "alltrips" && <AllTripsPage trips={allTrips} />}
           {currentPage === "create" && user && <CreateTripFlow onComplete={handleCreateTrip} onCancel={() => setCurrentPage("mytrips")} />}
-          {currentPage === "alltrips" && <AllTripsPage trips={trips} whatsappNumber={'36611925756'} />}
           {currentPage === "admin" && user?.isAdmin && (
             <AdminPage
-              trips={trips}
+              trips={allTrips}
               matches={matches}
               onCreateMatch={handleCreateMatch}
               onArchiveMatch={handleArchiveMatch}
@@ -435,6 +424,7 @@ export default function App() {
               onDeleteTrip={handleDeleteTrip}
             />
           )}
+
           {currentPage === "qa" && <QAPage onBack={() => setCurrentPage(user ? "home" : "home")} />}
         </>
       )}
