@@ -41,12 +41,9 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   const filteredTrips = useMemo(() => {
     const term = searchTerm.toLowerCase();
 
-    return trips
-      .filter((trip) => {
-        const matchesSearch =
-          trip.departureLocation.toLowerCase().includes(term) ||
-          trip.arrivalLocation.toLowerCase().includes(term) ||
-          trip.userName.toLowerCase().includes(term);
+    return trips.filter((trip) => {
+      const matchesSearch =
+        trip.departureLocation.toLowerCase().includes(term) || trip.arrivalLocation.toLowerCase().includes(term) || trip.userName.toLowerCase().includes(term);
 
         const matchesRole = filterRole === "all" || trip.role === filterRole;
         return matchesSearch && matchesRole;
@@ -88,21 +85,18 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   const normalizePhone = (phone: string) => phone.replace(/\D/g, "");
 
   const notifyAdmin = async (trip: Trip) => {
-    await fetch("/api/admin/notify-share/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tripId: trip.id,
-        contactingUser: user.firstName + " " + user.lastName,
-        contactingPhone: user.phone,
-        contactedUser: trip.userName,
-        contactedPhone: trip.userPhone,
-        departure: trip.departureLocation,
-        arrival: trip.arrivalLocation,
-        date: trip.date,
-        time: trip.arrivalTime,
-      }),
-    });
+    await api.notifyShare(
+      trip.id,
+      user.firstName + " " + user.lastName,
+      user.phone,
+      trip.userName,
+      trip.userPhone,
+      trip.departureLocation,
+      trip.arrivalLocation,
+      trip.date,
+      trip.arrivalTime,
+      user.token
+    );
   };
 
   const handleWhatsappContact = (trip: Trip) => {

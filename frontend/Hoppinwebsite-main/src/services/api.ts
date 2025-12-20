@@ -134,5 +134,42 @@ export const api = {
       const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-  }
+  },
+
+  notifyShare: async (
+    tripId: string | number,
+    contactingUser: string,
+    contactingPhone: string,
+    contactedUser: string,
+    contactedPhone: string,
+    departure: string,
+    arrival: string,
+    date: string,
+    time: string,
+    token: string
+  ): Promise<void> => {
+    const response = await fetch(`${API_URL}/admin/notify-share/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        tripId,
+        contactingUser,
+        contactingPhone,
+        contactedUser,
+        contactedPhone,
+        departure,
+        arrival,
+        date,
+        time,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+  },
 };
