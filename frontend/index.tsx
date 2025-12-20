@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './Hoppinwebsite-main/src/App';
-import './Hoppinwebsite-main/src/index.css';
+import './Hoppinwebsite-main/src/css/index.css';
+import './Hoppinwebsite-main/src/css/calendar.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

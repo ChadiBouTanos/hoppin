@@ -7,51 +7,47 @@ type QAPageProps = {
 const faqs = [
   {
     question: "Cos'è Hoppin?",
-    answer: "Hoppin è una piattaforma di carpooling progettata per connettere persone che condividono tragitti quotidiani simili. Che tu stia guidando per andare al lavoro o cerchi un passaggio, Hoppin ti aiuta a trovare compagni di viaggio compatibili per condividere i costi e ridurre l'impatto ambientale."
+    answer: "Hoppin è una piattaforma di carpooling che connette persone con tragitti simili, aiutandole a condividere spostamenti, ridurre i costi e contribuire a un trasporto più sostenibile. Gli utenti possono consultare tutti i viaggi pubblicati e contattare direttamente chi li ha inseriti attraverso WhatsApp."
   },
   {
     question: "Come creo un viaggio?",
-    answer: "Dopo la registrazione e l'accesso, clicca su 'Crea Percorso' dal menu di navigazione o dalla home page. Sarai guidato attraverso un semplice processo in 2 passaggi dove selezioni il tuo ruolo (conducente, passeggero o entrambi) e poi inserisci i dettagli del viaggio inclusi luogo di partenza, luogo di arrivo, data, ora e opzioni di ricorrenza."
+    answer: "Dopo la registrazione e l’accesso, puoi creare un percorso selezionando la voce “Crea Percorso” dal menu o dalla home. Ti verrà chiesto di scegliere il tuo ruolo, che può essere conducente, passeggero o entrambi, e di compilare i dettagli del viaggio, inserendo la città di partenza, la città di arrivo, la data, l’ora e le eventuali impostazioni di ricorrenza."
   },
   {
     question: "Quali sono le opzioni di ricorrenza?",
-    answer: "Puoi scegliere tra tre tipi di ricorrenza: 'Una Volta' per viaggi singoli, 'Ripeti Ogni Settimana' per viaggi che avvengono lo stesso giorno ogni settimana, o 'Giorni Personalizzati' dove puoi selezionare giorni specifici della settimana (es. Lunedì, Mercoledì, Venerdì) per il tuo tragitto regolare."
+    answer: "Durante la creazione del viaggio puoi decidere se effettuare il tragitto una sola volta, ripeterlo ogni settimana nello stesso giorno oppure personalizzarne la frequenza scegliendo giorni specifici della settimana. Questa flessibilità ti permette di organizzare facilmente sia spostamenti occasionali sia tragitti regolari"
   },
   {
-    question: "Come funziona l'abbinamento dei viaggi?",
-    answer: "Il nostro team amministrativo esamina manualmente tutti i viaggi pubblicati e abbina conducenti con passeggeri in base a percorsi, orari e località compatibili. Quando viene trovata una corrispondenza, ti contatteremo via WhatsApp (se hai fornito il consenso) o tramite le informazioni di contatto registrate."
+    question: "Come funziona l'abbinamento?",
+    answer: "I viaggi pubblicati sono visibili nella sezione “Trova viaggi disponibili”, dove ogni utente può esplorare le proposte presenti. È possibile filtrare i risultati per data, per orario o per destinazione, così da individuare rapidamente il tragitto più adatto. Quando trovi un viaggio compatibile con le tue esigenze, puoi contattare direttamente la persona che lo ha pubblicato attraverso il pulsante “Contatta su WhatsApp”, avviando subito una conversazione."
   },
   {
-    question: "Perché avete bisogno del consenso per WhatsApp?",
-    answer: "Il consenso per WhatsApp consente al nostro team di contattarti rapidamente quando troviamo corrispondenze di viaggio compatibili. Questo permette una comunicazione più veloce e un coordinamento più facile con potenziali partner di carpooling. Puoi disattivare le notifiche WhatsApp durante la registrazione se preferisci il contatto solo via email."
+    question: "Perché utilizzate WhatsApp per i contatti?",
+    answer: "WhatsApp garantisce una comunicazione immediata e semplice tra gli utenti. Il pulsante presente in ogni viaggio apre direttamente una chat con la persona che ha creato l’annuncio, rendendo più rapido accordarsi sul tragitto e sui dettagli organizzativi."
   },
   {
     question: "Le mie informazioni di contatto sono sicure?",
-    answer: "Sì! La tua email e numero di telefono sono visibili solo al nostro team amministrativo per scopi di abbinamento. Gli altri utenti non vedranno i tuoi dettagli di contatto a meno che non venga effettuato un abbinamento e entrambe le parti accettino di condividere le informazioni."
+    answer: "La tua email non viene resa pubblica. Il numero di telefono è necessario esclusivamente per permettere agli altri utenti di contattarti tramite WhatsApp, ed è utilizzato unicamente attraverso il pulsante integrato. Non vengono mostrati dati aggiuntivi e non sono visibili informazioni non necessarie alla comunicazione."
   },
   {
     question: "Posso essere sia conducente che passeggero?",
-    answer: "Assolutamente! Quando crei un viaggio, puoi selezionare 'Entrambi' come tuo ruolo. Questo è perfetto per persone che hanno accesso a un veicolo ma sono flessibili sul guidare o viaggiare con altri."
+    answer: "Sì. Se sei flessibile e disponi di un veicolo ma sei aperto anche a viaggiare come passeggero, puoi selezionare l’opzione “Entrambi” durante la creazione del percorso. In questo modo aumenti le possibilità di trovare un compagno di viaggio compatibile"
   },
   {
     question: "Come visualizzo i miei viaggi pubblicati?",
-    answer: "Clicca su 'I Miei Viaggi' nel menu di navigazione per vedere tutti i tuoi viaggi attivi. Puoi visualizzare i dettagli inclusi luoghi di partenza/arrivo, date, orari, impostazioni di ricorrenza e stato di abbinamento."
-  },
-  {
-    question: "Cosa significa lo stato 'Abbinato'?",
-    answer: "Quando un viaggio mostra lo stato 'Abbinato', significa che il nostro team amministrativo ha trovato un partner di carpooling compatibile per te. Dovresti aspettarti di essere contattato presto con i dettagli del tuo abbinamento."
+    answer: "Accedendo alla sezione “I Miei Viaggi” puoi vedere tutti i percorsi che hai creato. In questa pagina sono riportati i dettagli relativi alla città di partenza, alla città di arrivo, alla data, all’orario e alle eventuali ricorrenze, così da avere sempre sotto controllo i tuoi spostamenti pianificati:"
   },
   {
     question: "Posso modificare o eliminare un viaggio dopo la pubblicazione?",
-    answer: "Attualmente, la modifica dei viaggi non è disponibile nell'app. Se hai bisogno di modificare o cancellare un viaggio, contatta direttamente il nostro team amministrativo e ti aiuteranno ad aggiornare le tue informazioni."
+    answer: "Per ora non è possibile modificare direttamente un viaggio dall’app. Se hai necessità di correggere o rimuovere un percorso, puoi contattare l’assistenza e verrà aggiornato tutto ciò di cui hai bisogno"
   },
   {
     question: "C'è un costo per usare Hoppin?",
-    answer: "Hoppin è gratuito! Non addebitiamo commissioni per pubblicare viaggi o essere abbinati. Eventuali accordi di condivisione dei costi (carburante, pedaggi, ecc.) vengono concordati direttamente tra i partner di carpooling."
+    answer: "No. L’utilizzo della piattaforma è completamente gratuito. Eventuali accordi sulle spese di condivisione, come carburante o pedaggi, vengono stabiliti direttamente tra gli utenti che decidono di viaggiare insieme."
   },
   {
     question: "Come contatto l'assistenza?",
-    answer: "Per qualsiasi domanda o necessità di supporto, puoi contattare il nostro team amministrativo tramite le informazioni di contatto registrate. Siamo qui per rendere la tua esperienza di carpooling fluida ed efficiente!"
+    answer: "Per richieste di supporto o informazioni puoi utilizzare i recapiti forniti in fase di registrazione. Il team è sempre disponibile ad aiutarti e a garantire un’esperienza d’uso semplice ed efficiente."
   }
 ];
 

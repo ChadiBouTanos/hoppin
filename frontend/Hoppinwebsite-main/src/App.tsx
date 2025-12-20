@@ -266,7 +266,7 @@ export default function App() {
                     onClick={() => setCurrentPage("alltrips")}
                     className={`px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                   >
-                    Tutti i Viaggi
+                    Trova viaggi disponibili
                   </button>
                   <button
                     onClick={() => setCurrentPage("create")}
@@ -328,7 +328,7 @@ export default function App() {
                   }}
                   className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                 >
-                  Tutti i Viaggi
+                  Trova viaggi disponibili
                 </button>
                 <button
                   onClick={() => {

@@ -235,10 +235,10 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
           <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
             <div className="grid md:grid-cols-3 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Cerca per nome, località, email o telefono..."
+                  placeholder="Cerca per nome, città, email o telefono..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
@@ -246,7 +246,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
               </div>
 
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Filter className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value as RoleFilter)}
@@ -266,8 +266,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
                 >
                   <option value="datetime">Ordina per Data e Ora</option>
-                  <option value="arrival">Ordina per Località di Arrivo</option>
-                  <option value="departure">Ordina per Località di Partenza</option>
+                  <option value="arrival">Ordina per Città di Arrivo</option>
+                  <option value="departure">Ordina per Città di Partenza</option>
                 </select>
               </div>
             </div>
@@ -323,13 +323,13 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs ${getRoleColor(trip.role)}`}>
+                          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(trip.role)}`}>
                             {getRoleIcon(trip.role)}
                             <span>{getRoleLabel(trip.role)}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="space-y-0.5 text-sm">
+                          <div className="space-y-0.5">
                             <div className="flex items-start gap-2">
                               <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                               <span className="text-gray-900">{trip.departureLocation}</span>
@@ -366,7 +366,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                               e.stopPropagation();
                               handleRowClick(trip);
                             }}
-                            className="px-4 py-1.5 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
+                            className="px-4 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer"
                           >
                             Abbina
                           </button>
@@ -378,9 +378,9 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                                 onDeleteTrip(trip.id);
                               }
                             }}
-                            className="px-3 py-2 text-xs rounded-lg border border-red-200 text-red-600 hover:bg-red-50 cursor-pointer delete-trip-btn inline-flex items-center gap-2"
+                            className="px-3 py-2 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 cursor-pointer delete-trip-btn inline-flex items-center gap-2"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-4 h-4" />
                             Elimina
                           </button>
                         </td>
@@ -419,7 +419,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 return (
                   <div key={driver.id} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <div className="flex items-center gap-2 text-gray-700">
                         <MapPin className="w-5 h-5 text-primary" />
                         <span className="font-semibold text-gray-900">
                           {driver.departureLocation} → {driver.arrivalLocation}
@@ -448,17 +448,17 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
                     {/* Driver info */}
                     <div className="flex flex-col gap-2 border border-gray-100 rounded-xl px-3 py-2 bg-gray-50/60 mb-3">
-                      <p className="text-[11px] text-gray-500 uppercase">Conducente</p>
+                      <p className="text-gray-500">Conducente</p>
                       <div className="flex items-center justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-gray-900">{driver.userName}</span>
-                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(driver.role)}`}>
+                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(driver.role)}`}>
                               {getRoleIcon(driver.role)}
                               <span>{getRoleLabel(driver.role)}</span>
                             </span>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 mt-1">
+                          <div className="flex flex-wrap items-center gap-2 text-gray-500 mt-1">
                             <span>{driver.userEmail}</span>
                             {driver.userPhone && (
                               <>
@@ -476,7 +476,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                       {items.map(({ match, passenger }) => (
                         <div key={match.id} className="flex items-center justify-between gap-3 border border-gray-100 rounded-xl px-3 py-2">
                           <div>
-                            <p className="text-[11px] text-gray-500 uppercase mb-1">Passeggero</p>
+                            <p className="text-[11px] text-gray-500 mb-1">Passeggero</p>
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-gray-900">{passenger.userName}</span>
                               <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(passenger.role)}`}>
@@ -548,11 +548,11 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
                     <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-800">
                       <div>
-                        <p className="text-[11px] text-gray-500 uppercase mb-1">Conducente</p>
+                        <p className="text-[11px] text-gray-500 mb-1">Conducente</p>
                         <p className="font-medium">{driver.userName}</p>
                       </div>
                       <div>
-                        <p className="text-[11px] text-gray-500 uppercase mb-1">Passeggero</p>
+                        <p className="text-[11px] text-gray-500 mb-1">Passeggero</p>
                         <p className="font-medium">{passenger.userName}</p>
                       </div>
                     </div>
@@ -570,10 +570,10 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
           <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4">
             <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
               <div className="flex flex-col gap-3">
-                <p className="text-xl uppercase tracking-wide ">Dettagli viaggio</p>
+                <p className="text-xl tracking-wide ">Dettagli viaggio</p>
                 <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
                   {selectedTrip.userName}
-                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] ${getRoleColor(selectedTrip.role)}`}>
+                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(selectedTrip.role)}`}>
                     {getRoleIcon(selectedTrip.role)}
                     <span>{getRoleLabel(selectedTrip.role)}</span>
                   </span>
@@ -592,14 +592,14 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-gray-400 mt-0.5" />
                     <div className="flex flex-col gap-2">
-                      <p className="line-h-1 text-gray-500 uppercase">Partenza</p>
+                      <p className="line-h-1 text-gray-500">Partenza</p>
                       <p className="line-h-1 text-gray-900">{selectedTrip.departureLocation}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <MapPin className="w-4 h-4 text-primary mt-0.5" />
                     <div className="flex flex-col gap-2">
-                      <p className="line-h-1 text-gray-500 uppercase">Arrivo</p>
+                      <p className="line-h-1 text-gray-500">Arrivo</p>
                       <p className="line-h-1 text-gray-900">{selectedTrip.arrivalLocation}</p>
                     </div>
                   </div>
@@ -616,14 +616,14 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                     <div className="flex items-start gap-2">
                       <Clock className="w-4 h-4 text-gray-400" />
                       <div className="flex flex-col gap-2">
-                        <p className="line-h-1 text-gray-500 uppercase">Flessibilità Prima dell&apos;orario</p>
+                        <p className="line-h-1 text-gray-500">Flessibilità Prima dell&apos;orario</p>
                         <p className="line-h-1 text-gray-900">{FLEXIBILITY_OPTIONS.find((opt) => opt.value === selectedTrip.flexibilityBefore)?.label}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <Clock className="w-4 h-4 text-gray-400" />
                       <div className="flex flex-col gap-2">
-                        <p className="line-h-1 text-gray-500 uppercase">Flessibilità Dopo l&apos;orario</p>
+                        <p className="line-h-1 text-gray-500">Flessibilità Dopo l&apos;orario</p>
                         <p className="line-h-1 text-gray-900">{FLEXIBILITY_OPTIONS.find((opt) => opt.value === selectedTrip.flexibilityAfter)?.label}</p>
                       </div>
                     </div>

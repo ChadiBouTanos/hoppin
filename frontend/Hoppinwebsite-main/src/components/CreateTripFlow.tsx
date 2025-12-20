@@ -285,7 +285,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   <div>
                     <label className="block text-gray-700 mb-2 flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-gray-400" />
-                      Località di Partenza
+                      Città di Partenza
                     </label>
                     <input
                       type="text"
@@ -299,7 +299,7 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   <div>
                     <label className="block text-gray-700 mb-2 flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-blue-600" />
-                      Località di Arrivo
+                      Città di Arrivo
                     </label>
                     <input
                       type="text"

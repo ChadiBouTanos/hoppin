@@ -1,4 +1,5 @@
 import { Car, Users, MapPin, Clock, Plus } from 'lucide-react';
+import logo from '../images/logo.png';
 
 type HomePageProps = {
   onSignUp: () => void;
@@ -27,7 +28,7 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
         <nav className="relative z-10 max-w-6xl mx-auto px-6 pt-6">
           <div className="bg-white rounded-full shadow-lg px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <img src="/images/logo.png" alt="Hoppin" className="h-8 w-auto" />
+              <img src={logo} alt="Hoppin" className="h-8 w-auto" />
             </div>
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button

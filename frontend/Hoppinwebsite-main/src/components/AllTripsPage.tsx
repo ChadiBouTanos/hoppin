@@ -1,6 +1,16 @@
 import { useMemo, useState } from "react";
 import { Trip, User } from "../types";
-import { MapPin, Calendar, Clock, Search, Filter, Repeat, Users, MessageCircle } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Clock,
+  Search,
+  Filter,
+  Repeat,
+  Users,
+  MessageCircle,
+  Car,
+} from "lucide-react";
 
 type UserTripsPageProps = {
   trips: Trip[];
@@ -13,24 +23,57 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<RoleFilter>("all");
 
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDayTrips, setSelectedDayTrips] = useState<Trip[] | null>(null);
+
+  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
+
+  const tripsByDay = useMemo<Record<string, Trip[]>>(() => {
+    const map: Record<string, Trip[]> = {};
+    trips.forEach((trip) => {
+      if (!map[trip.date]) map[trip.date] = [];
+      map[trip.date].push(trip);
+    });
+    return map;
+  }, [trips]);
+
   const filteredTrips = useMemo(() => {
     const term = searchTerm.toLowerCase();
 
-    return trips.filter((trip) => {
-      const matchesSearch =
-        trip.departureLocation.toLowerCase().includes(term) ||
-        trip.arrivalLocation.toLowerCase().includes(term) ||
-        trip.userName.toLowerCase().includes(term);
+    return trips
+      .filter((trip) => {
+        const matchesSearch =
+          trip.departureLocation.toLowerCase().includes(term) ||
+          trip.arrivalLocation.toLowerCase().includes(term) ||
+          trip.userName.toLowerCase().includes(term);
 
-      const matchesRole = filterRole === "all" || trip.role === filterRole;
-      return matchesSearch && matchesRole;
-    });
+        const matchesRole = filterRole === "all" || trip.role === filterRole;
+        return matchesSearch && matchesRole;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.arrivalTime}`);
+        const dateB = new Date(`${b.date}T${b.arrivalTime}`);
+        return dateA.getTime() - dateB.getTime();
+      });
   }, [trips, searchTerm, filterRole]);
+
+  const getRoleIcon = (role: string) => {
+    if (role === "driver") return <Car className="w-4 h-4" />;
+    if (role === "passenger") return <Users className="w-4 h-4" />;
+    return <Car className="w-4 h-4" />;
+  };
 
   const getRoleLabel = (role: string) => {
     if (role === "driver") return "Conducente";
     if (role === "passenger") return "Passeggero";
     return "Entrambi";
+  };
+
+  const getRoleColor = (role: string) => {
+    if (role === "driver") return "bg-green-100 text-green-700";
+    if (role === "passenger") return "bg-purple-100 text-purple-700";
+    return "bg-blue-100 text-blue-700";
   };
 
   const getRecurrenceLabel = (trip: Trip) => {
@@ -50,10 +93,10 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tripId: trip.id,
-        contactingUser: user.firstName + " " + user.lastName,              
-        contactingPhone: user.phone,             
-        contactedUser: trip.userName, 
-        contactedPhone: trip.userPhone, 
+        contactingUser: user.firstName + " " + user.lastName,
+        contactingPhone: user.phone,
+        contactedUser: trip.userName,
+        contactedPhone: trip.userPhone,
         departure: trip.departureLocation,
         arrival: trip.arrivalLocation,
         date: trip.date,
@@ -65,7 +108,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   const handleWhatsappContact = (trip: Trip) => {
     if (!trip.userPhone) return;
 
-    notifyAdmin(trip); 
+    notifyAdmin(trip);
 
     const phone = normalizePhone(trip.userPhone);
     const message =
@@ -76,22 +119,66 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
+  const getCalendarDays = (year: number, month: number) => {
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const days: (Date | null)[] = [];
+
+    const offset = (firstDay.getDay() + 6) % 7;
+    for (let i = 0; i < offset; i++) days.push(null);
+
+    for (let d = 1; d <= lastDay.getDate(); d++) {
+      days.push(new Date(year, month, d));
+    }
+
+    return days;
+  };
+
+  const goToPrevMonth = () => {
+    if (calendarMonth === 0) {
+      setCalendarMonth(11);
+      setCalendarYear(calendarYear - 1);
+    } else {
+      setCalendarMonth(calendarMonth - 1);
+    }
+  };
+
+  const goToNextMonth = () => {
+    if (calendarMonth === 11) {
+      setCalendarMonth(0);
+      setCalendarYear(calendarYear + 1);
+    } else {
+      setCalendarMonth(calendarMonth + 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12">
       <div className="max-w-7xl mx-auto px-4">
+
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">Viaggi disponibili</h1>
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+            Viaggi disponibili
+          </h1>
+
+          <button
+            onClick={() => setShowCalendar(true)}
+            className="p-2 rounded-lg hover:bg-gray-200 transition"
+          >
+            <Calendar className="w-6 h-6 text-gray-700" />
+          </button>
         </div>
 
         {/* Ricerca & Filtro */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Cerca per nome o località..."
+                placeholder="Cerca per nome o città..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
@@ -99,7 +186,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
             </div>
 
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Filter className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
               <select
                 value={filterRole}
                 name="roleFilter"
@@ -118,14 +205,24 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
         {/* Lista viaggi */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredTrips.map((trip) => (
-            <div key={trip.id} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-col justify-between">
+            <div
+              key={trip.id}
+              className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-col justify-between"
+            >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="font-semibold text-gray-900">{trip.userName}</p>
-                  <span className="text-[11px] px-3 py-1 rounded-full bg-gray-100 text-gray-700">{getRoleLabel(trip.role)}</span>
+                  <div
+                    className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(
+                      trip.role
+                    )}`}
+                  >
+                    {getRoleIcon(trip.role)}
+                    <span>{getRoleLabel(trip.role)}</span>
+                  </div>
                 </div>
 
-                <div className="space-y-1 text-sm">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-gray-400" />
                     <span>{trip.departureLocation}</span>
@@ -136,10 +233,19 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
                   </div>
                 </div>
 
-                <div className="space-y-1 text-sm">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
-                    <span>{new Date(trip.date).toLocaleDateString("it-IT")}</span>
+                    <span>
+                      {new Date(trip.date)
+                        .toLocaleDateString("it-IT", {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                        .replace(/^\w/, c => c.toUpperCase())}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gray-400" />
@@ -152,7 +258,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
                 </div>
 
                 {trip.availableSeats && (
-                  <div className="flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-gray-400" />
                     <span>Posti disponibili: {trip.availableSeats}</span>
                   </div>
@@ -171,8 +277,154 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
           ))}
         </div>
 
-        {filteredTrips.length === 0 && <div className="text-center py-10 text-gray-500">Nessun viaggio trovato.</div>}
+        {filteredTrips.length === 0 && (
+          <div className="text-center py-10 text-gray-500">
+            Nessun viaggio trovato.
+          </div>
+        )}
       </div>
+
+      {showCalendar && (
+        <div className="calendar-overlay">
+          <div className="calendar-modal">
+
+            {/* Header */}
+            <div className="calendar-header">
+              <button onClick={goToPrevMonth} className="calendar-nav-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24">
+                  <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                </svg>
+              </button>
+
+              <h2 className="calendar-title">
+                {new Date(calendarYear, calendarMonth)
+                  .toLocaleDateString("it-IT", { month: "long", year: "numeric" })
+                  .replace(/^\w/, c => c.toUpperCase())}
+              </h2>
+
+              <button onClick={goToNextMonth} className="calendar-nav-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24">
+                  <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Giorni della settimana */}
+            <div className="calendar-grid" style={{ fontWeight: 600, textAlign: "center", marginBottom: 8 }}>
+              <div>Lun</div>
+              <div>Mar</div>
+              <div>Mer</div>
+              <div>Gio</div>
+              <div>Ven</div>
+              <div>Sab</div>
+              <div>Dom</div>
+            </div>
+
+            {/* Griglia giorni */}
+            <div className="calendar-grid">
+              {getCalendarDays(calendarYear, calendarMonth).map((day, index) => {
+                if (!day) {
+                  return <div key={index} className="calendar-day-empty"></div>;
+                }
+
+                const today = new Date();
+                const isToday =
+                  day.getFullYear() === today.getFullYear() &&
+                  day.getMonth() === today.getMonth() &&
+                  day.getDate() === today.getDate();
+
+                const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+                const dayTrips = tripsByDay[dateKey] || [];
+
+                return (
+                  <div
+                    key={index}
+                    className={`calendar-day ${isToday ? "today" : ""}`}
+                    data-count={dayTrips.length}
+                    onClick={() => dayTrips.length > 0 && setSelectedDayTrips(dayTrips)}
+                  >
+                    <div className="calendar-day-number">{day.getDate()}</div>
+
+                    {dayTrips.slice(0, 3).map((t) => (
+
+                      <div key={t.id} className="calendar-trip">
+                        <span>{getRoleIcon(t.role)}</span> {t.departureLocation} → {t.arrivalLocation}
+                      </div>
+                    ))}
+
+                    {dayTrips.length > 3 && (
+                      <div className="calendar-trip" style={{ color: "#2563eb" }}>
+                        + altri {dayTrips.length - 3}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ textAlign: "right", marginTop: 16 }}>
+              <button
+                onClick={() => setShowCalendar(false)}
+                className="px-4 py-2 bg-gray-200 rounded-lg"
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedDayTrips && (
+        <div className="calendar-overlay">
+          <div className="detail-modal">
+            <div className="detail-container">
+              <div className="detail-header">
+                <div className="detail-header-icon">📅</div>
+                <h2 className="detail-title">
+                  {new Date(selectedDayTrips[0].date).toLocaleDateString("it-IT", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  }).replace(/^\w/, c => c.toUpperCase())}
+                </h2>
+                <button onClick={() => setSelectedDayTrips(null)} className="detail-close-btn">✕</button>
+              </div>
+
+              <div>
+                {selectedDayTrips.map((trip) => (
+                  <div key={trip.id} className="detail-trip">
+                    <div className="detail-trip-header">
+                      <span className="detail-trip-role">
+                        {trip.role === "driver" ? "🚗 Conducente" : "🧍 Passeggero"}
+                      </span>
+                      <span className="detail-trip-time">⏰ {trip.arrivalTime}</span>
+                    </div>
+
+                    <div className="detail-trip-body">
+                      <div className="detail-trip-row">
+                        <span className="detail-trip-icon">📍</span>
+                        <span>{trip.departureLocation}</span>
+                      </div>
+
+                      <div className="detail-trip-row">
+                        <span className="detail-trip-icon">🏁</span>
+                        <span>{trip.arrivalLocation}</span>
+                      </div>
+
+                      <div className="detail-trip-row">
+                        <span className="detail-trip-icon">👤</span>
+                        <span>{trip.userName}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
