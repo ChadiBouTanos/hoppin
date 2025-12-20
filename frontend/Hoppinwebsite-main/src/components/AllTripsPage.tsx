@@ -46,9 +46,9 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
       const matchesSearch =
         trip.departureLocation.toLowerCase().includes(term) || trip.arrivalLocation.toLowerCase().includes(term) || trip.userName.toLowerCase().includes(term);
 
-        const matchesRole = filterRole === "all" || trip.role === filterRole;
-        return matchesSearch && matchesRole;
-      })
+      const matchesRole = filterRole === "all" || trip.role === filterRole;
+      return matchesSearch && matchesRole;
+    })
       .sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.arrivalTime}`);
         const dateB = new Date(`${b.date}T${b.arrivalTime}`);
@@ -304,57 +304,59 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
               </button>
             </div>
 
-            {/* Giorni della settimana */}
-            <div className="calendar-grid" style={{ fontWeight: 600, textAlign: "center", marginBottom: 8 }}>
-              <div>Lun</div>
-              <div>Mar</div>
-              <div>Mer</div>
-              <div>Gio</div>
-              <div>Ven</div>
-              <div>Sab</div>
-              <div>Dom</div>
-            </div>
+            <div className="calendar-grid-wrapper">
+              {/* Giorni della settimana */}
+              <div className="calendar-grid" style={{ fontWeight: 600, textAlign: "center", marginBottom: 8 }}>
+                <div>Lun</div>
+                <div>Mar</div>
+                <div>Mer</div>
+                <div>Gio</div>
+                <div>Ven</div>
+                <div>Sab</div>
+                <div>Dom</div>
+              </div>
 
-            {/* Griglia giorni */}
-            <div className="calendar-grid">
-              {getCalendarDays(calendarYear, calendarMonth).map((day, index) => {
-                if (!day) {
-                  return <div key={index} className="calendar-day-empty"></div>;
-                }
+              {/* Griglia giorni */}
+              <div className="calendar-grid">
+                {getCalendarDays(calendarYear, calendarMonth).map((day, index) => {
+                  if (!day) {
+                    return <div key={index} className="calendar-day-empty"></div>;
+                  }
 
-                const today = new Date();
-                const isToday =
-                  day.getFullYear() === today.getFullYear() &&
-                  day.getMonth() === today.getMonth() &&
-                  day.getDate() === today.getDate();
+                  const today = new Date();
+                  const isToday =
+                    day.getFullYear() === today.getFullYear() &&
+                    day.getMonth() === today.getMonth() &&
+                    day.getDate() === today.getDate();
 
-                const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
-                const dayTrips = tripsByDay[dateKey] || [];
+                  const dateKey = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+                  const dayTrips = tripsByDay[dateKey] || [];
 
-                return (
-                  <div
-                    key={index}
-                    className={`calendar-day ${isToday ? "today" : ""}`}
-                    data-count={dayTrips.length}
-                    onClick={() => dayTrips.length > 0 && setSelectedDayTrips(dayTrips)}
-                  >
-                    <div className="calendar-day-number">{day.getDate()}</div>
+                  return (
+                    <div
+                      key={index}
+                      className={`calendar-day ${isToday ? "today" : ""}`}
+                      data-count={dayTrips.length}
+                      onClick={() => dayTrips.length > 0 && setSelectedDayTrips(dayTrips)}
+                    >
+                      <div className="calendar-day-number">{day.getDate()}</div>
 
-                    {dayTrips.slice(0, 3).map((t) => (
+                      {dayTrips.slice(0, 3).map((t) => (
 
-                      <div key={t.id} className="calendar-trip">
-                        <span>{getRoleIcon(t.role)}</span> {t.departureLocation} → {t.arrivalLocation}
-                      </div>
-                    ))}
+                        <div key={t.id} className="calendar-trip">
+                          <span>{getRoleIcon(t.role)}</span> {t.departureLocation} → {t.arrivalLocation}
+                        </div>
+                      ))}
 
-                    {dayTrips.length > 3 && (
-                      <div className="calendar-trip" style={{ color: "#2563eb" }}>
-                        + altri {dayTrips.length - 3}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      {dayTrips.length > 3 && (
+                        <div className="calendar-trip" style={{ color: "#2563eb" }}>
+                          + altri {dayTrips.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div style={{ textAlign: "right", marginTop: 16 }}>

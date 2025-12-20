@@ -2041,10 +2041,13 @@ select:open::picker-icon {
 .calendar-modal {
   background: white;
   width: 100%;
+  height: 100%;
   max-width: 1200px;
+  max-height: 85vh;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  overflow: auto;
 }
 
 .calendar-header {
@@ -2168,6 +2171,11 @@ select:open::picker-icon {
 }
 
 @media (max-width: 600px) {
+  .calendar-grid-wrapper {
+    max-height: 80%;
+    overflow: auto;
+  }
+
   .calendar-modal {
     padding: 16px 8px;
   }
