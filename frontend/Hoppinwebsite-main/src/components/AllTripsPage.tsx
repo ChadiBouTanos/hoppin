@@ -170,7 +170,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
         <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Cerca per nome o città..."
@@ -181,7 +181,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
             </div>
 
             <div className="relative">
-              <Filter className="absolute left-3 top-1/4 text-gray-400 w-5 h-5" />
+              <Filter className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
               <select
                 value={filterRole}
                 name="roleFilter"
