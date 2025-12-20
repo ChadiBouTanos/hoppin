@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Car,
 } from "lucide-react";
+import { api } from "../services/api";
 
 type UserTripsPageProps = {
   trips: Trip[];
