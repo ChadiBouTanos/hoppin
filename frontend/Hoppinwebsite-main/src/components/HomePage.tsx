@@ -1,5 +1,6 @@
 import { Car, Users, MapPin, Clock, Plus } from 'lucide-react';
 import logo from '../images/logo.png';
+import { SupportFooterBanner } from './SupportFooterBanner';
 
 type HomePageProps = {
   onSignUp: () => void;
@@ -119,6 +120,10 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
             </div>
           </div>
         </div>
+
+        <div className="relative z-10 pb-16">
+          <SupportFooterBanner />
+        </div>
       </div>
     );
   }
@@ -178,6 +183,10 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="pb-16">
+        <SupportFooterBanner />
       </div>
     </div>
   );

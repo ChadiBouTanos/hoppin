@@ -1,4 +1,5 @@
 import { ArrowLeft, HelpCircle } from 'lucide-react';
+import { SUPPORT_EMAIL, SUPPORT_WHATSAPP } from '../constants/support';
 
 type QAPageProps = {
   onBack: () => void;
@@ -99,6 +100,20 @@ export function QAPage({ onBack }: QAPageProps) {
             <p className="text-gray-600">
               Contatta il nostro team di supporto e saremo felici di aiutarti a iniziare con Hoppin!
             </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <a
+                href={SUPPORT_WHATSAPP}
+                className="inline-flex items-center justify-center rounded-lg border border-green-600 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50"
+              >
+                Chat su WhatsApp
+              </a>
+              <a
+                href={SUPPORT_EMAIL}
+                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-blue-100/60"
+              >
+                Scrivici via email
+              </a>
+            </div>
           </div>
         </div>
       </div>
