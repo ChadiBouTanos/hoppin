@@ -149,44 +149,44 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12">
+    <div className="min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+          <h1 className="text-2xl font-semibold mb-1">
             Viaggi disponibili
           </h1>
 
           <button
             onClick={() => setShowCalendar(true)}
-            className="p-2 rounded-lg hover:bg-gray-200 transition"
+            className="btn-icon"
           >
-            <Calendar className="w-6 h-6 text-gray-700" />
+            <Calendar className="w-6 h-6 text-muted" />
           </button>
         </div>
 
         {/* Ricerca & Filtro */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
+        <div className="glass-panel p-6 mb-6">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 input-icon text-muted w-5 h-5" />
               <input
                 type="text"
                 placeholder="Cerca per nome o città..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="input-field pl-10"
               />
             </div>
 
             <div className="relative">
-              <Filter className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
+              <Filter className="absolute left-3 input-icon text-muted w-5 h-5" />
               <select
                 value={filterRole}
                 name="roleFilter"
                 onChange={(e) => setFilterRole(e.target.value as RoleFilter)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
+                className="select-field pl-10 appearance-none"
               >
                 <option value="all">Tutti i ruoli</option>
                 <option value="driver">Conducente</option>
@@ -202,11 +202,11 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
           {filteredTrips.map((trip) => (
             <div
               key={trip.id}
-              className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm flex flex-col justify-between"
+              className="glass-card p-4 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-semibold text-gray-900">{trip.userName}</p>
+                  <p className="font-semibold">{trip.userName}</p>
                   <div
                     className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${getRoleColor(
                       trip.role
@@ -219,18 +219,18 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <MapPin className="w-4 h-4 text-muted" />
                     <span>{trip.departureLocation}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" />
+                    <MapPin className="w-4 h-4 text-brand" />
                     <span>{trip.arrivalLocation}</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <Calendar className="w-4 h-4 text-muted" />
                     <span>
                       {new Date(trip.date)
                         .toLocaleDateString("it-IT", {
@@ -243,18 +243,18 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-gray-400" />
+                    <Clock className="w-4 h-4 text-muted" />
                     <span>{trip.arrivalTime}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Repeat className="w-4 h-4 text-gray-400" />
+                    <Repeat className="w-4 h-4 text-muted" />
                     <span>{getRecurrenceLabel(trip)}</span>
                   </div>
                 </div>
 
                 {trip.availableSeats && (
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-gray-400" />
+                    <Users className="w-4 h-4 text-muted" />
                     <span>Posti disponibili: {trip.availableSeats}</span>
                   </div>
                 )}
@@ -273,7 +273,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
         </div>
 
         {filteredTrips.length === 0 && (
-          <div className="text-center py-10 text-gray-500">
+          <div className="text-center py-10 text-muted">
             Nessun viaggio trovato.
           </div>
         )}
@@ -362,7 +362,7 @@ export function AllTripsPage({ trips, user }: UserTripsPageProps) {
             <div style={{ textAlign: "right", marginTop: 16 }}>
               <button
                 onClick={() => setShowCalendar(false)}
-                className="px-4 py-2 bg-gray-200 rounded-lg"
+                className="btn-secondary"
               >
                 Chiudi
               </button>

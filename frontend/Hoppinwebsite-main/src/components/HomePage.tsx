@@ -130,19 +130,19 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
 
   // Logged in - Show dashboard with Create Route button
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen py-10">
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="text-center">
-          <h1 className="text-primary mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="glass-panel px-6 py-10 sm:px-10 sm:py-12 text-center">
+          <h1 className="text-brand mb-4">
             Bentornato!
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
+          <p className="text-lg text-muted max-w-3xl mx-auto mb-8">
             Pronto a creare un nuovo percorso o gestire i tuoi viaggi esistenti?
           </p>
           <button
             onClick={onCreateRoute}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+            className="btn-primary btn-primary-lg"
           >
             <Plus className="w-5 h-5" />
             Crea Percorso
@@ -151,34 +151,34 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
       </div>
 
       {/* Info Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4">
-              <Car className="w-8 h-8 text-green-600" />
+          <div className="glass-card p-8">
+            <div className="glass-soft w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
+              <Car className="w-7 h-7 text-brand" />
             </div>
             <h2 className="mb-3">Economico</h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Condividi i costi di carburante e pedaggi con altri viaggiatori sul tuo percorso.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4">
-              <MapPin className="w-8 h-8 text-primary" />
+          <div className="glass-card p-8">
+            <div className="glass-soft w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
+              <MapPin className="w-7 h-7 text-brand" />
             </div>
             <h2 className="mb-3">Ecologico</h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Riduci la tua impronta di carbonio limitando i veicoli sulla strada.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4">
-              <Users className="w-8 h-8 text-purple-600" />
+          <div className="glass-card p-8">
+            <div className="glass-soft w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
+              <Users className="w-7 h-7 text-brand" />
             </div>
             <h2 className="mb-3">Sociale</h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Incontra colleghi e costruisci connessioni durante il tuo tragitto quotidiano.
             </p>
           </div>

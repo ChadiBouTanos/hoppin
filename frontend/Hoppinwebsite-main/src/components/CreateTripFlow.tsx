@@ -124,52 +124,47 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 py-12 relative overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div className="min-h-screen py-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {showSuccess ? (
-          <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
+          <div className="glass-panel p-8 md:p-12">
             <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"></div>
+              <div className="glass-soft w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"></div>
               <h1 className="text-3xl font-bold mb-3">🎉 Il tuo viaggio è pubblicato!</h1>
-              <p className="text-xl text-gray-600">Benvenuto su Hoppin, l'app di carpooling per gli studenti del PoliMi</p>
+              <p className="text-lg text-muted">Benvenuto su Hoppin, l'app di carpooling per gli studenti del PoliMi</p>
             </div>
 
-            <div className="bg-blue-50 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">Cosa succede adesso?</h2>
+            <div className="glass-card p-6 mb-8">
+              <h2 className="text-xl font-semibold mb-4">Cosa succede adesso?</h2>
 
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white bg-[#fe6e5a]">1</div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Hai completato la registrazione</h3>
-                    <p className="text-gray-600">Hai indicato il tuo ruolo e percorso — perfetto!</p>
+                    <h3 className="font-semibold mb-1">Hai completato la registrazione</h3>
+                    <p className="text-muted">Hai indicato il tuo ruolo e percorso — perfetto!</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white bg-[#fe6e5a]">2</div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Analizzeremo il tuo percorso</h3>
-                    <p className="text-gray-600">Nei prossimi giorni, troveremo studenti del PoliMi con lo stesso percorso e orario (andata o ritorno).</p>
+                    <h3 className="font-semibold mb-1">Analizzeremo il tuo percorso</h3>
+                    <p className="text-muted">Nei prossimi giorni, troveremo studenti del PoliMi con lo stesso percorso e orario (andata o ritorno).</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white bg-[#fe6e5a]">3</div>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Ti contatteremo via WhatsApp</h3>
-                    <p className="text-gray-600">
+                    <h3 className="font-semibold mb-1">Ti contatteremo via WhatsApp</h3>
+                    <p className="text-muted">
                       Quando troveremo una corrispondenza compatibile, ti contatteremo direttamente su WhatsApp per metterti in contatto e aiutarti a
                       organizzare il viaggio.
                     </p>
@@ -178,113 +173,113 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
               </div>
             </div>
 
-            <div className="bg-purple-50 rounded-xl p-6 mb-8">
-              <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <div className="glass-card p-6 mb-8">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <span className="text-xl">🎯</span>
                 Il Nostro Obiettivo
               </h3>
-              <p className="text-gray-700">Aiutarti a raggiungere il PoliMi più velocemente, spendendo meno e riducendo il caos dei mezzi pubblici.</p>
+              <p className="text-muted">Aiutarti a raggiungere il PoliMi più velocemente, spendendo meno e riducendo il caos dei mezzi pubblici.</p>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
-              <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+            <div className="glass-card p-6 mb-8">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <span className="text-xl">💡</span>
                 Suggerimento Rapido
               </h3>
-              <p className="text-gray-700">
+              <p className="text-muted">
                 Più completi sono i dettagli del tuo percorso (orari, fermate, giorni), più velocemente troveremo una corrispondenza perfetta.
               </p>
             </div>
 
             <div className="text-center">
-              <p className="text-gray-600 mb-6">
+              <p className="text-muted mb-6">
                 Grazie per essere uno dei primi utenti di Hoppin! Il tuo feedback ci aiuterà a crescere e migliorare l'esperienza per tutti gli studenti del
                 PoliMi.
               </p>
               <button
                 onClick={() => (window.location.href = "mailto:hello@hoppinapp.com")}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-semibold"
+                className="btn-primary btn-primary-lg text-lg"
               >
                 Contattaci
               </button>
-              <p className="text-sm text-gray-500 mt-4">hello@hoppinapp.com</p>
+              <p className="text-sm text-muted mt-4">hello@hoppinapp.com</p>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-              <p className="text-gray-600 mb-2">Ci vediamo sulla strada! 🚀</p>
-              <p className="text-sm text-gray-500">– Il Team di Hoppin</p>
+            <div className="mt-8 pt-8 border-t border-white/60 text-center">
+              <p className="text-muted mb-2">Ci vediamo sulla strada! 🚀</p>
+              <p className="text-sm text-muted">– Il Team di Hoppin</p>
             </div>
           </div>
         ) : (
           <>
             <div className="mb-8">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white">Passaggio {step} di 2</span>
-                <button onClick={onCancel} className="text-white hover:text-gray-200">
+                <span className="text-muted">Passaggio {step} di 2</span>
+                <button onClick={onCancel} className="btn-ghost text-sm">
                   Annulla
                 </button>
               </div>
-              <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-white transition-all duration-300" style={{ width: `${(step / 2) * 100}%` }} />
+              <div className="h-2 bg-white/60 rounded-full overflow-hidden">
+                <div className="h-full bg-[#fe6e5a]" style={{ width: `${(step / 2) * 100}%` }} />
               </div>
             </div>
 
             {step === 1 && (
-              <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
+              <div className="glass-panel p-8">
                 <h1 className="text-3xl font-bold mb-2">Qual è il tuo ruolo?</h1>
-                <p className="text-gray-600 mb-8">Seleziona se sei conducente, passeggero o entrambi</p>
+                <p className="text-muted mb-8">Seleziona se sei conducente, passeggero o entrambi</p>
 
                 <div className="grid md:grid-cols-3 gap-6">
                   <button
                     onClick={() => handleRoleSelect("driver")}
-                    className="p-8 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all group"
+                    className="glass-card p-8 text-left transition-colors group hover:border-[rgba(254,110,90,0.45)]"
                   >
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                      <Car className="w-8 h-8 text-green-600" />
+                    <div className="glass-soft w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Car className="w-8 h-8 text-brand" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Conducente</h3>
-                    <p className="text-gray-600">Offro posti nel mio veicolo</p>
+                    <p className="text-muted">Offro posti nel mio veicolo</p>
                   </button>
 
                   <button
                     onClick={() => handleRoleSelect("passenger")}
-                    className="p-8 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all group"
+                    className="glass-card p-8 text-left transition-colors group hover:border-[rgba(254,110,90,0.45)]"
                   >
-                    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
-                      <Users className="w-8 h-8 text-purple-600" />
+                    <div className="glass-soft w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-8 h-8 text-brand" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Passeggero</h3>
-                    <p className="text-gray-600">Cerco un passaggio</p>
+                    <p className="text-muted">Cerco un passaggio</p>
                   </button>
 
                   <button
                     onClick={() => handleRoleSelect("both")}
-                    className="p-8 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all group"
+                    className="glass-card p-8 text-left transition-colors group hover:border-[rgba(254,110,90,0.45)]"
                   >
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                      <Car className="w-8 h-8 text-blue-600" />
+                    <div className="glass-soft w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Car className="w-8 h-8 text-brand" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Entrambi</h3>
-                    <p className="text-gray-600">Posso essere sia conducente che passeggero</p>
+                    <p className="text-muted">Posso essere sia conducente che passeggero</p>
                   </button>
                 </div>
               </div>
             )}
 
             {step === 2 && (
-              <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
-                <button onClick={() => setStep(1)} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+              <div className="glass-panel p-8">
+                <button onClick={() => setStep(1)} className="btn-ghost mb-6">
                   <ArrowLeft className="w-4 h-4" />
                   Indietro
                 </button>
 
                 <h1 className="text-3xl font-bold mb-2">Dettagli del Viaggio</h1>
-                <p className="text-gray-600 mb-8">Inserisci le informazioni del tuo viaggio quotidiano</p>
+                <p className="text-muted mb-8">Inserisci le informazioni del tuo viaggio quotidiano</p>
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-gray-400" />
+                    <label className="block text-muted mb-2 flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-muted" />
                       Città di Partenza
                     </label>
                     <input
@@ -292,13 +287,13 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                       value={formData.departureLocation}
                       onChange={(e) => setFormData({ ...formData, departureLocation: e.target.value })}
                       placeholder="es. Milano, Via Roma 1"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="input-field"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-blue-600" />
+                    <label className="block text-muted mb-2 flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-brand" />
                       Città di Arrivo
                     </label>
                     <input
@@ -306,45 +301,45 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                       value={formData.arrivalLocation}
                       onChange={(e) => setFormData({ ...formData, arrivalLocation: e.target.value })}
                       placeholder="es. Politecnico di Milano, Piazza Leonardo da Vinci"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="input-field"
                     />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-gray-400" />
+                      <label className="block text-muted mb-2 flex items-center gap-2">
+                        <Calendar className="w-5 h-5 text-muted" />
                         Data del Viaggio
                       </label>
                       <input
                         type="date"
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="input-field"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                        <Clock className="w-5 h-5 text-gray-400" />
+                      <label className="block text-muted mb-2 flex items-center gap-2">
+                        <Clock className="w-5 h-5 text-muted" />
                         Orario di Partenza
                       </label>
                       <input
                         type="time"
                         value={formData.arrivalTime}
                         onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="input-field"
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-gray-700 mb-2">Quanto puoi essere flessibile prima dell’orario indicato?</label>
+                      <label className="block text-muted mb-2">Quanto puoi essere flessibile prima dell’orario indicato?</label>
                       <select
                         value={formData.flexibilityBefore}
                         onChange={(e) => setFormData({ ...formData, flexibilityBefore: e.target.value as any })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                        className="select-field"
                       >
                         <option value="">Seleziona...</option>
                         {FLEXIBILITY_OPTIONS.map((opt) => (
@@ -353,15 +348,15 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                           </option>
                         ))}
                       </select>
-                      <p className="mt-1 text-xs text-gray-500">Es. ho scritto 9:00 ma posso partire anche alle 8:30.</p>
+                      <p className="mt-1 text-xs text-muted">Es. ho scritto 9:00 ma posso partire anche alle 8:30.</p>
                     </div>
 
                     <div>
-                      <label className="block text-gray-700 mb-2">Quanto puoi essere flessibile dopo l’orario indicato?</label>
+                      <label className="block text-muted mb-2">Quanto puoi essere flessibile dopo l’orario indicato?</label>
                       <select
                         value={formData.flexibilityAfter}
                         onChange={(e) => setFormData({ ...formData, flexibilityAfter: e.target.value as any })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                        className="select-field"
                       >
                         <option value="">Seleziona...</option>
                         {FLEXIBILITY_OPTIONS.map((opt) => (
@@ -370,14 +365,14 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                           </option>
                         ))}
                       </select>
-                      <p className="mt-1 text-xs text-gray-500">Es. ho scritto 9:00 ma posso partire anche alle 9:30.</p>
+                      <p className="mt-1 text-xs text-muted">Es. ho scritto 9:00 ma posso partire anche alle 9:30.</p>
                     </div>
                   </div>
 
                   {(formData.role === "driver" || formData.role === "both") && (
                     <div>
-                      <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-gray-400" />
+                      <label className="block text-muted mb-2 flex items-center gap-2">
+                        <Users className="w-5 h-5 text-muted" />
                         Posti Disponibili
                       </label>
                       <input
@@ -387,16 +382,16 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                         value={formData.availableSeats}
                         onChange={(e) => setFormData({ ...formData, availableSeats: e.target.value })}
                         placeholder="es. 3"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="input-field"
                       />
-                      <p className="text-sm text-gray-500 mt-1">Indica quanti posti puoi offrire nel tuo veicolo.</p>
+                      <p className="text-sm text-muted mt-1">Indica quanti posti puoi offrire nel tuo veicolo.</p>
                     </div>
                   )}
 
                   {(formData.role === "driver" || formData.role === "both") && (
                     <div>
-                      <label className="block text-gray-700 mb-2 flex items-center gap-2">
-                        <span className="w-5 h-5 text-gray-400">📝</span>
+                      <label className="block text-muted mb-2 flex items-center gap-2">
+                        <span className="w-5 h-5 text-muted">📝</span>
                         Regole Aggiuntive
                       </label>
                       <textarea
@@ -404,59 +399,59 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                         onChange={(e) => setFormData({ ...formData, rules: e.target.value })}
                         placeholder="es. Niente fumo in macchina, ok animali piccoli, ascolto musica..."
                         rows={3}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                        className="textarea-field resize-none"
                       />
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-gray-700 mb-3 flex items-center gap-2">
-                      <Repeat className="w-5 h-5 text-gray-400" />
+                    <label className="block text-muted mb-3 flex items-center gap-2">
+                      <Repeat className="w-5 h-5 text-muted" />
                       Ricorrenza
                     </label>
                     <div className="space-y-3">
-                      <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                      <label className="glass-soft flex items-center gap-3 p-4 cursor-pointer">
                         <input
                           type="radio"
                           name="recurrence"
                           value="once"
                           checked={formData.recurrence === "once"}
                           onChange={() => setFormData({ ...formData, recurrence: "once", recurringDays: [] })}
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4 text-[#fe6e5a]"
                         />
                         <div>
-                          <p className="text-gray-900 font-medium">Una Volta</p>
-                          <p className="text-sm text-gray-500">Questo viaggio avviene solo una volta</p>
+                          <p className="font-medium">Una Volta</p>
+                          <p className="text-sm text-muted">Questo viaggio avviene solo una volta</p>
                         </div>
                       </label>
 
-                      <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                      <label className="glass-soft flex items-center gap-3 p-4 cursor-pointer">
                         <input
                           type="radio"
                           name="recurrence"
                           value="weekly"
                           checked={formData.recurrence === "weekly"}
                           onChange={() => setFormData({ ...formData, recurrence: "weekly", recurringDays: [] })}
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4 text-[#fe6e5a]"
                         />
                         <div>
-                          <p className="text-gray-900 font-medium">Ripeti Ogni Settimana</p>
-                          <p className="text-sm text-gray-500">Questo viaggio si ripete lo stesso giorno ogni settimana</p>
+                          <p className="font-medium">Ripeti Ogni Settimana</p>
+                          <p className="text-sm text-muted">Questo viaggio si ripete lo stesso giorno ogni settimana</p>
                         </div>
                       </label>
 
-                      <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                      <label className="glass-soft flex items-center gap-3 p-4 cursor-pointer">
                         <input
                           type="radio"
                           name="recurrence"
                           value="custom"
                           checked={formData.recurrence === "custom"}
                           onChange={() => setFormData({ ...formData, recurrence: "custom" })}
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4 text-[#fe6e5a]"
                         />
                         <div className="flex-1">
-                          <p className="text-gray-900 font-medium">Giorni Personalizzati</p>
-                          <p className="text-sm text-gray-500 mb-3">Seleziona giorni specifici della settimana</p>
+                          <p className="font-medium">Giorni Personalizzati</p>
+                          <p className="text-sm text-muted mb-3">Seleziona giorni specifici della settimana</p>
 
                           {formData.recurrence === "custom" && (
                             <div className="grid grid-cols-4 gap-2">
@@ -465,8 +460,8 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                                   key={day.value}
                                   type="button"
                                   onClick={() => toggleDay(day.value)}
-                                  className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                                    formData.recurringDays.includes(day.value) ? "bg-primary text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                  className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                                    formData.recurringDays.includes(day.value) ? "bg-[#fe6e5a] text-white" : "bg-white/70 text-muted"
                                   }`}
                                 >
                                   {day.label.slice(0, 3)}
@@ -480,13 +475,13 @@ export function CreateTripFlow({ onComplete, onCancel }: CreateTripFlowProps) {
                   </div>
 
                   <div className="flex justify-end gap-4 pt-4">
-                    <button type="button" onClick={onCancel} className="px-6 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button type="button" onClick={onCancel} className="btn-secondary">
                       Annulla
                     </button>
                     <button
                       type="button"
                       onClick={handleSubmit}
-                      className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="btn-primary"
                     >
                       Pubblica Viaggio
                       <ArrowRight className="w-5 h-5" />

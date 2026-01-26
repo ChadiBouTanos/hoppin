@@ -1988,9 +1988,11 @@ html {
 }
 
 .delete-trip-btn {
-  background-color: rgb(226, 0, 0);
-  color: #fff;
-  font-weight: 500;
+  background-color: rgba(254, 110, 90, 0.14);
+  color: #b8493d;
+  border-color: rgba(254, 110, 90, 0.35);
+  border-radius: 999px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -2325,4 +2327,327 @@ select:open::picker-icon {
 
 .detail-trip-icon {
   font-size: 16px;
+}
+
+/* Logged-in redesign (liquid glass) */
+:root {
+  --liquid-primary: #283c47;
+  --liquid-primary-strong: #3b5160;
+  --liquid-primary-border: rgba(40, 60, 71, 0.25);
+  --liquid-primary-shadow: rgba(40, 60, 71, 0.25);
+  --liquid-bg: #fefbf2;
+  --liquid-ink: #283c47;
+  --liquid-muted: #5a6c77;
+  --liquid-card: rgba(255, 255, 255, 0.92);
+  --liquid-card-strong: rgba(255, 255, 255, 0.98);
+  --liquid-border: rgba(40, 60, 71, 0.12);
+  --liquid-shadow: 0 12px 32px rgba(40, 60, 71, 0.12);
+}
+
+.logged-in-shell {
+  --liquid-primary: #fe6e5a;
+  --liquid-primary-strong: #ff7e6a;
+  --liquid-primary-border: rgba(254, 110, 90, 0.45);
+  --liquid-primary-shadow: rgba(254, 110, 90, 0.35);
+  --liquid-bg: #fffff6;
+  --liquid-ink: #2f231f;
+  --liquid-muted: #6f5a52;
+  --liquid-card: rgba(255, 255, 255, 0.72);
+  --liquid-card-strong: rgba(255, 255, 255, 0.88);
+  --liquid-border: rgba(255, 255, 255, 0.7);
+  --liquid-shadow: 0 18px 50px rgba(84, 58, 50, 0.16);
+  background-color: var(--liquid-bg);
+  color: var(--liquid-ink);
+  background-image:
+    radial-gradient(1200px 420px at 10% -10%, rgba(254, 110, 90, 0.18), transparent 60%),
+    radial-gradient(900px 360px at 90% 6%, rgba(255, 214, 170, 0.35), transparent 65%),
+    radial-gradient(820px 380px at 40% 112%, rgba(255, 235, 210, 0.65), transparent 70%);
+  font-family: "Avenir Next", "Avenir", "Nunito", "Trebuchet MS", sans-serif;
+}
+
+.logged-in-shell h1,
+.logged-in-shell h2,
+.logged-in-shell h3,
+.logged-in-shell h4 {
+  font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
+  letter-spacing: -0.01em;
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 12px 30px rgba(84, 58, 50, 0.1);
+}
+
+.glass-panel {
+  background: var(--liquid-card);
+  border: 1px solid var(--liquid-border);
+  border-radius: 26px;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--liquid-shadow);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--liquid-border);
+  border-radius: 22px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 28px rgba(84, 58, 50, 0.12);
+}
+
+.glass-soft {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+}
+
+.text-brand {
+  color: var(--liquid-primary);
+}
+
+.text-muted {
+  color: var(--liquid-muted);
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--liquid-muted);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.65);
+  color: var(--liquid-ink);
+}
+
+.nav-link-active {
+  background: rgba(254, 110, 90, 0.12);
+  color: var(--liquid-primary);
+  border: 1px solid rgba(254, 110, 90, 0.28);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--liquid-primary-border);
+  background: var(--liquid-primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 12px 26px var(--liquid-primary-shadow);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--liquid-primary-strong);
+  box-shadow: 0 14px 30px rgba(254, 110, 90, 0.38);
+}
+
+.btn-primary-lg {
+  padding: 14px 28px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--liquid-border);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--liquid-ink);
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--liquid-card-strong);
+  border-color: rgba(254, 110, 90, 0.25);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--liquid-muted);
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--liquid-ink);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--liquid-border);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--liquid-muted);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: var(--liquid-card-strong);
+  border-color: rgba(254, 110, 90, 0.25);
+  color: var(--liquid-ink);
+}
+
+.input-field,
+.select-field,
+.textarea-field {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--liquid-ink);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 2px rgba(84, 58, 50, 0.08);
+  outline: none;
+}
+
+.input-field:focus,
+.select-field:focus,
+.textarea-field:focus {
+  border-color: rgba(254, 110, 90, 0.6);
+  box-shadow: 0 0 0 3px rgba(254, 110, 90, 0.18);
+}
+
+.support-banner {
+  margin-top: 32px;
+}
+
+.logged-in-shell .support-banner-card {
+  background: var(--liquid-card);
+  border: 1px solid var(--liquid-border);
+  border-radius: 22px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 28px rgba(84, 58, 50, 0.12);
+}
+
+.logged-in-shell .bg-white {
+  background-color: var(--liquid-card);
+  backdrop-filter: blur(16px);
+}
+
+.logged-in-shell .bg-gray-50 {
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.logged-in-shell .bg-blue-50,
+.logged-in-shell .bg-purple-50,
+.logged-in-shell .bg-yellow-50 {
+  background-color: rgba(255, 247, 238, 0.78);
+}
+
+.logged-in-shell .border-gray-200,
+.logged-in-shell .border-gray-100 {
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.logged-in-shell .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.logged-in-shell .text-gray-900 {
+  color: var(--liquid-ink);
+}
+
+.logged-in-shell .text-gray-700 {
+  color: #5b4a43;
+}
+
+.logged-in-shell .text-gray-600 {
+  color: var(--liquid-muted);
+}
+
+.logged-in-shell .text-gray-500 {
+  color: #7d675f;
+}
+
+.logged-in-shell .text-gray-400 {
+  color: #9b857c;
+}
+
+.logged-in-shell .focus\\:ring-blue-500:focus {
+  --tw-ring-color: rgba(254, 110, 90, 0.45);
+}
+
+.logged-in-shell .shadow-sm {
+  box-shadow: 0 12px 28px rgba(84, 58, 50, 0.12);
+}
+
+.logged-in-shell .shadow-2xl {
+  box-shadow: 0 24px 60px rgba(84, 58, 50, 0.2);
+}
+
+.support-whatsapp {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.contact-whatsapp-btn {
+  border-radius: 999px;
+  background-color: #27c96b;
+  box-shadow: 0 10px 22px rgba(39, 201, 107, 0.25);
+}
+
+.calendar-overlay {
+  background: rgba(36, 26, 22, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+.calendar-modal,
+.detail-modal .detail-container {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(18px);
+}
+
+.calendar-header button,
+.calendar-nav-btn,
+.detail-close-btn {
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+
+.calendar-header button:hover,
+.calendar-nav-btn:hover,
+.detail-close-btn:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.calendar-day {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.calendar-day.today {
+  border-color: rgba(254, 110, 90, 0.5);
+  box-shadow: inset 0 0 0 2px rgba(254, 110, 90, 0.25);
+}
+
+.detail-trip-role {
+  background: rgba(254, 110, 90, 0.12);
+  color: var(--liquid-primary);
 }

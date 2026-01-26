@@ -54,62 +54,55 @@ const faqs = [
 
 export function QAPage({ onBack }: QAPageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 py-12 relative overflow-hidden">
-      {/* Decorative shapes */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div className="min-h-screen py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
+          className="btn-ghost mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Indietro
         </button>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8 md:p-12">
+        <div className="glass-panel p-8 md:p-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <HelpCircle className="w-6 h-6 text-primary" />
+            <div className="glass-soft w-12 h-12 rounded-full flex items-center justify-center">
+              <HelpCircle className="w-6 h-6 text-brand" />
             </div>
-            <h1 className="text-gray-900">Domande Frequenti</h1>
+            <h1>Domande Frequenti</h1>
           </div>
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted mb-8">
             Tutto ciò che devi sapere sull'utilizzo di Hoppin
           </p>
 
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <div key={index} className="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
-                <h3 className="text-gray-900 mb-3">
+                <h3 className="mb-3">
                   {faq.question}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-muted leading-relaxed">
                   {faq.answer}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 p-6 bg-blue-50 rounded-xl">
-            <h3 className="text-gray-900 mb-2">Hai ancora domande?</h3>
-            <p className="text-gray-600">
+          <div className="mt-10 p-6 glass-card">
+            <h3 className="mb-2">Hai ancora domande?</h3>
+            <p className="text-muted">
               Contatta il nostro team di supporto e saremo felici di aiutarti a iniziare con Hoppin!
             </p>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <a
                 href={SUPPORT_WHATSAPP}
-                className="inline-flex items-center justify-center rounded-lg border border-green-600 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50"
+                className="support-whatsapp inline-flex items-center justify-center rounded-full border border-green-600 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50"
               >
                 Chat su WhatsApp
               </a>
               <a
                 href={SUPPORT_EMAIL}
-                className="inline-flex items-center justify-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-blue-100/60"
+                className="btn-secondary px-4 py-2 text-sm"
               >
                 Scrivici via email
               </a>

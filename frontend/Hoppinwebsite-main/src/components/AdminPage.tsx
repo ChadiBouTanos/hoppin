@@ -223,34 +223,34 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12">
+      <div className="min-h-screen py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-1">Pannello Amministratore</h1>
-            <p className="text-gray-600 text-sm">Gestisci tutti i viaggi, visualizza i dettagli e abbina i percorsi.</p>
+            <h1 className="text-2xl font-semibold mb-1">Pannello Amministratore</h1>
+            <p className="text-muted text-sm">Gestisci tutti i viaggi, visualizza i dettagli e abbina i percorsi.</p>
           </div>
 
           {/* Filtro & Ricerca */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
+          <div className="glass-panel p-6 mb-6">
             <div className="grid md:grid-cols-3 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 input-icon text-muted w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Cerca per nome, città, email o telefono..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="input-field pl-10"
                 />
               </div>
 
               <div className="relative">
-                <Filter className="absolute left-3 input-icon text-gray-400 w-5 h-5" />
+                <Filter className="absolute left-3 input-icon text-muted w-5 h-5" />
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value as RoleFilter)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
+                  className="select-field pl-10 appearance-none"
                 >
                   <option value="all">Tutti i Ruoli</option>
                   <option value="driver">Solo Conducenti</option>
@@ -263,7 +263,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
+                  className="select-field appearance-none"
                 >
                   <option value="datetime">Ordina per Data e Ora</option>
                   <option value="arrival">Ordina per Città di Arrivo</option>
@@ -275,21 +275,21 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
           {/* Statistiche */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <p className="text-gray-600 mb-1">Viaggi Totali</p>
-              <p className="text-primary text-xl font-semibold">{trips.length}</p>
+            <div className="glass-card p-4">
+              <p className="text-muted mb-1">Viaggi Totali</p>
+              <p className="text-brand text-xl font-semibold">{trips.length}</p>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <p className="text-gray-600 mb-1">Conducenti</p>
-              <p className="text-green-600 text-xl font-semibold">{trips.filter((t) => t.role === "driver" || t.role === "both").length}</p>
+            <div className="glass-card p-4">
+              <p className="text-muted mb-1">Conducenti</p>
+              <p className="text-emerald-600 text-xl font-semibold">{trips.filter((t) => t.role === "driver" || t.role === "both").length}</p>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <p className="text-gray-600 mb-1">Passeggeri</p>
+            <div className="glass-card p-4">
+              <p className="text-muted mb-1">Passeggeri</p>
               <p className="text-purple-600 text-xl font-semibold">{trips.filter((t) => t.role === "passenger" || t.role === "both").length}</p>
             </div>
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-              <p className="text-gray-600 mb-1">Abbinamenti attivi</p>
-              <p className="text-gray-900 text-xl font-semibold">{activeMatches.length}</p>
+            <div className="glass-card p-4">
+              <p className="text-muted mb-1">Abbinamenti attivi</p>
+              <p className="text-xl font-semibold">{activeMatches.length}</p>
             </div>
           </div>
 
@@ -299,7 +299,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
               <h2 className="text-lg font-semibold text-gray-900">Viaggi da abbinare</h2>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="glass-panel overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -405,8 +405,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
             </div>
 
             {activeMatchGroups.length === 0 && (
-              <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
-                <p className="text-gray-500">Non ci sono ancora abbinamenti attivi.</p>
+              <div className="glass-card p-4">
+                <p className="text-muted">Non ci sono ancora abbinamenti attivi.</p>
               </div>
             )}
 
@@ -417,7 +417,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 const remainingSeats = totalSeats > 0 ? Math.max(totalSeats - usedSeats, 0) : null;
 
                 return (
-                  <div key={driver.id} className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+                  <div key={driver.id} className="glass-card p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                       <div className="flex items-center gap-2 text-gray-700">
                         <MapPin className="w-5 h-5 text-primary" />
@@ -535,7 +535,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
               <div className="space-y-4">
                 {archivedMatchCards.map(({ match, driver, passenger }) => (
-                  <div key={match.id} className="bg-gray-50 rounded-2xl border border-gray-200 p-4 shadow-sm opacity-90">
+                  <div key={match.id} className="glass-card p-4 opacity-90">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <Link2 className="w-4 h-4 text-gray-400" />
@@ -567,8 +567,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
       {/* Dialog Dettagli Viaggio - overlay */}
       {selectedTrip && (
         <div className="admin-detail-dialog inset-0 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4">
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+          <div className="glass-panel max-w-3xl w-full mx-4">
+            <div className="flex items-center justify-between border-b border-white/60 px-6 py-3">
               <div className="flex flex-col gap-3">
                 <p className="text-xl tracking-wide ">Dettagli viaggio</p>
                 <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">

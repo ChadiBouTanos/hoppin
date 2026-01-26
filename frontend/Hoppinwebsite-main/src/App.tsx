@@ -239,9 +239,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${user ? "logged-in-shell" : "bg-gray-50"}`}>
       {user && (
-        <nav className="bg-white border-b border-gray-200">
+        <nav className="glass-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-8">
@@ -250,7 +250,7 @@ export default function App() {
                     setCurrentPage("home");
                     setIsMobileMenuOpen(false);
                   }}
-                  className="text-primary font-bold text-lg"
+                  className="text-brand font-bold text-lg tracking-tight"
                 >
                   Hoppin
                 </button>
@@ -258,30 +258,30 @@ export default function App() {
                 <div className="hidden md:flex gap-4">
                   <button
                     onClick={() => setCurrentPage("mytrips")}
-                    className={`px-3 py-2 rounded-md ${currentPage === "mytrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                    className={`nav-link ${currentPage === "mytrips" ? "nav-link-active" : ""}`}
                   >
                     I miei Viaggi
                   </button>
                   <button
                     onClick={() => setCurrentPage("alltrips")}
-                    className={`px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                    className={`nav-link ${currentPage === "alltrips" ? "nav-link-active" : ""}`}
                   >
                     Trova viaggi disponibili
                   </button>
                   <button
                     onClick={() => setCurrentPage("create")}
-                    className={`px-3 py-2 rounded-md ${currentPage === "create" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                    className={`nav-link ${currentPage === "create" ? "nav-link-active" : ""}`}
                   >
                     Crea Percorso
                   </button>
-                  <button onClick={() => setCurrentPage("qa")} className={`px-3 py-2 rounded-md ${currentPage === "qa" ? "bg-gray-100" : "hover:bg-gray-50"}`}>
+                  <button onClick={() => setCurrentPage("qa")} className={`nav-link ${currentPage === "qa" ? "nav-link-active" : ""}`}>
                     Aiuto
                   </button>
 
                   {user.isAdmin && (
                     <button
                       onClick={() => setCurrentPage("admin")}
-                      className={`px-3 py-2 rounded-md ${currentPage === "admin" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                      className={`nav-link ${currentPage === "admin" ? "nav-link-active" : ""}`}
                     >
                       Pannello Admin
                     </button>
@@ -290,17 +290,17 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-gray-700 hidden sm:inline">
+                <span className="text-muted hidden sm:inline">
                   {user.firstName} {user.lastName}
                 </span>
 
-                <button onClick={handleLogout} className="px-4 py-2 text-gray-600 hover:text-gray-900 hidden md:inline-block">
+                <button onClick={handleLogout} className="btn-ghost hidden md:inline-flex">
                   Sign Out
                 </button>
 
                 <button
                   onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-                  className="md:hidden inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100"
+                  className="md:hidden inline-flex items-center justify-center p-2 rounded-full hover:bg-white/60"
                   aria-label="Apri menu"
                 >
                   {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -310,14 +310,14 @@ export default function App() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-gray-200 bg-white">
-              <div className="px-4 pt-2 pb-3 space-y-1">
+            <div className="md:hidden border-t border-white/60 bg-white/70 backdrop-blur-xl">
+              <div className="px-4 pt-3 pb-4 space-y-2">
                 <button
                   onClick={() => {
                     setCurrentPage("mytrips");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "mytrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  className={`block w-full text-left nav-link ${currentPage === "mytrips" ? "nav-link-active" : ""}`}
                 >
                   I miei Viaggi
                 </button>
@@ -326,7 +326,7 @@ export default function App() {
                     setCurrentPage("alltrips");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "alltrips" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  className={`block w-full text-left nav-link ${currentPage === "alltrips" ? "nav-link-active" : ""}`}
                 >
                   Trova viaggi disponibili
                 </button>
@@ -335,7 +335,7 @@ export default function App() {
                     setCurrentPage("create");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "create" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  className={`block w-full text-left nav-link ${currentPage === "create" ? "nav-link-active" : ""}`}
                 >
                   Crea Percorso
                 </button>
@@ -344,7 +344,7 @@ export default function App() {
                     setCurrentPage("qa");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "qa" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  className={`block w-full text-left nav-link ${currentPage === "qa" ? "nav-link-active" : ""}`}
                 >
                   Aiuto
                 </button>
@@ -356,7 +356,7 @@ export default function App() {
                       setCurrentPage("admin");
                       setIsMobileMenuOpen(false);
                     }}
-                    className={`block w-full text-left px-3 py-2 rounded-md ${currentPage === "admin" ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                    className={`block w-full text-left nav-link ${currentPage === "admin" ? "nav-link-active" : ""}`}
                   >
                     Pannello Admin
                   </button>
@@ -368,7 +368,7 @@ export default function App() {
                     setIsMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="mt-2 block w-full text-left px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
+                  className="mt-2 block w-full text-left btn-ghost text-red-600"
                 >
                   Sign Out
                 </button>
@@ -389,8 +389,8 @@ export default function App() {
 
       {isLoading && currentPage !== "home" ? (
         <div className="p-8 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#fe6e5a]"></div>
+          <p className="mt-2 text-muted">Loading...</p>
         </div>
       ) : (
         <>
