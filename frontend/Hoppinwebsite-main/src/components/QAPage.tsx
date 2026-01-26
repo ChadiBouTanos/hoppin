@@ -64,12 +64,12 @@ export function QAPage({ onBack }: QAPageProps) {
           Indietro
         </button>
 
-        <div className="glass-panel p-8 md:p-12">
+        <div className="glass-card p-8 md:p-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="glass-soft w-12 h-12 rounded-full flex items-center justify-center">
               <HelpCircle className="w-6 h-6 text-brand" />
             </div>
-            <h1>Domande Frequenti</h1>
+            <h1 className="text-brand">Domande Frequenti</h1>
           </div>
           <p className="text-muted mb-8">
             Tutto ciò che devi sapere sull'utilizzo di Hoppin
@@ -88,7 +88,7 @@ export function QAPage({ onBack }: QAPageProps) {
             ))}
           </div>
 
-          <div className="mt-10 p-6 glass-card">
+          <div className="mt-10 p-6 glass-soft border border-white/70">
             <h3 className="mb-2">Hai ancora domande?</h3>
             <p className="text-muted">
               Contatta il nostro team di supporto e saremo felici di aiutarti a iniziare con Hoppin!

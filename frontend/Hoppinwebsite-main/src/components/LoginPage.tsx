@@ -16,61 +16,56 @@ export function LoginPage({ onLogin, onBack }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Decorative shapes */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-16 -left-10 w-56 h-56 rounded-full bg-[#fe6e5a]/20 blur-3xl"></div>
+        <div className="absolute bottom-10 right-[-10%] w-80 h-80 rounded-full bg-[#ffd6aa]/60 blur-3xl"></div>
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
-        >
+        <button onClick={onBack} className="btn-ghost mb-8">
           <ArrowLeft className="w-4 h-4" />
           Indietro
         </button>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
-          <h1 className="mb-2">
+        <div className="glass-panel p-8 sm:p-10">
+          <h1 className="mb-2 text-3xl font-semibold text-brand">
             Accedi
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted mb-8">
             Accedi al tuo account Hoppin
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary w-full"
             >
               Accedi
             </button>

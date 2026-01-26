@@ -239,7 +239,15 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen ${user ? "logged-in-shell" : "bg-gray-50"}`}>
+    <div
+      className={`min-h-screen ${
+        user
+          ? "logged-in-shell"
+          : currentPage === "home" || currentPage === "qa" || currentPage === "login" || currentPage === "signup"
+            ? "public-shell"
+            : "bg-gray-50"
+      }`}
+    >
       {user && (
         <nav className="glass-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

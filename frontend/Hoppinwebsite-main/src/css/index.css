@@ -2344,7 +2344,8 @@ select:open::picker-icon {
   --liquid-shadow: 0 12px 32px rgba(40, 60, 71, 0.12);
 }
 
-.logged-in-shell {
+.logged-in-shell,
+.public-shell {
   --liquid-primary: #fe6e5a;
   --liquid-primary-strong: #ff7e6a;
   --liquid-primary-border: rgba(254, 110, 90, 0.45);
@@ -2366,9 +2367,13 @@ select:open::picker-icon {
 }
 
 .logged-in-shell h1,
+.public-shell h1,
 .logged-in-shell h2,
+.public-shell h2,
 .logged-in-shell h3,
-.logged-in-shell h4 {
+.public-shell h3,
+.logged-in-shell h4,
+.public-shell h4 {
   font-family: "Iowan Old Style", "Palatino", "Georgia", serif;
   letter-spacing: -0.01em;
 }
@@ -2519,18 +2524,46 @@ select:open::picker-icon {
   width: 100%;
   padding: 12px 16px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(118, 90, 78, 0.28);
+  background: rgba(255, 255, 255, 0.86);
   color: var(--liquid-ink);
   backdrop-filter: blur(10px);
-  box-shadow: inset 0 1px 2px rgba(84, 58, 50, 0.08);
   outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.input-field::placeholder,
+.select-field::placeholder,
+.textarea-field::placeholder {
+  color: rgba(136, 108, 96, 0.7);
+}
+
+.input-field:hover,
+.select-field:hover,
+.textarea-field:hover {
+  border-color: rgba(118, 90, 78, 0.38);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .input-field:focus,
 .select-field:focus,
 .textarea-field:focus {
-  border-color: rgba(254, 110, 90, 0.6);
+  border-color: rgba(254, 110, 90, 0.65);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.checkbox-liquid {
+  width: 16px;
+  height: 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.7);
+  accent-color: var(--liquid-primary);
+  box-shadow: inset 0 1px 2px rgba(84, 58, 50, 0.08);
+  outline: none;
+}
+
+.checkbox-liquid:focus {
   box-shadow: 0 0 0 3px rgba(254, 110, 90, 0.18);
 }
 
@@ -2538,7 +2571,8 @@ select:open::picker-icon {
   margin-top: 32px;
 }
 
-.logged-in-shell .support-banner-card {
+.logged-in-shell .support-banner-card,
+.public-shell .support-banner-card {
   background: var(--liquid-card);
   border: 1px solid var(--liquid-border);
   border-radius: 22px;
@@ -2546,59 +2580,75 @@ select:open::picker-icon {
   box-shadow: 0 12px 28px rgba(84, 58, 50, 0.12);
 }
 
-.logged-in-shell .bg-white {
+.logged-in-shell .bg-white,
+.public-shell .bg-white {
   background-color: var(--liquid-card);
   backdrop-filter: blur(16px);
 }
 
-.logged-in-shell .bg-gray-50 {
+.logged-in-shell .bg-gray-50,
+.public-shell .bg-gray-50 {
   background-color: rgba(255, 255, 255, 0.55);
 }
 
 .logged-in-shell .bg-blue-50,
+.public-shell .bg-blue-50,
 .logged-in-shell .bg-purple-50,
-.logged-in-shell .bg-yellow-50 {
+.public-shell .bg-purple-50,
+.logged-in-shell .bg-yellow-50,
+.public-shell .bg-yellow-50 {
   background-color: rgba(255, 247, 238, 0.78);
 }
 
 .logged-in-shell .border-gray-200,
-.logged-in-shell .border-gray-100 {
+.public-shell .border-gray-200,
+.logged-in-shell .border-gray-100,
+.public-shell .border-gray-100 {
   border-color: rgba(255, 255, 255, 0.65);
 }
 
-.logged-in-shell .border-gray-300 {
+.logged-in-shell .border-gray-300,
+.public-shell .border-gray-300 {
   border-color: rgba(255, 255, 255, 0.65);
 }
 
-.logged-in-shell .text-gray-900 {
+.logged-in-shell .text-gray-900,
+.public-shell .text-gray-900 {
   color: var(--liquid-ink);
 }
 
-.logged-in-shell .text-gray-700 {
+.logged-in-shell .text-gray-700,
+.public-shell .text-gray-700 {
   color: #5b4a43;
 }
 
-.logged-in-shell .text-gray-600 {
+.logged-in-shell .text-gray-600,
+.public-shell .text-gray-600 {
   color: var(--liquid-muted);
 }
 
-.logged-in-shell .text-gray-500 {
+.logged-in-shell .text-gray-500,
+.public-shell .text-gray-500 {
   color: #7d675f;
 }
 
-.logged-in-shell .text-gray-400 {
+.logged-in-shell .text-gray-400,
+.public-shell .text-gray-400 {
   color: #9b857c;
 }
 
-.logged-in-shell .focus\\:ring-blue-500:focus {
+.logged-in-shell .focus\\:ring-blue-500:focus,
+.public-shell .focus\\:ring-blue-500:focus {
   --tw-ring-color: rgba(254, 110, 90, 0.45);
 }
 
-.logged-in-shell .shadow-sm {
+.logged-in-shell .shadow-sm,
+.public-shell .shadow-sm {
   box-shadow: 0 12px 28px rgba(84, 58, 50, 0.12);
 }
 
-.logged-in-shell .shadow-2xl {
+.logged-in-shell .shadow-2xl,
+.public-shell .shadow-2xl {
   box-shadow: 0 24px 60px rgba(84, 58, 50, 0.2);
 }
 

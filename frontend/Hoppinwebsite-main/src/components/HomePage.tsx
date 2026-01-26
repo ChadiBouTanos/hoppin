@@ -12,35 +12,30 @@ type HomePageProps = {
 
 export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLoggedIn }: HomePageProps) {
   if (!isLoggedIn) {
-    // Not logged in - Show marketing page with gradient
     return (
       <div className="min-h-screen relative overflow-hidden">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500">
-          {/* Decorative shapes */}
-          <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl"></div>
-          </div>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-20 -left-10 w-72 h-72 rounded-full bg-[#fe6e5a]/20 blur-3xl"></div>
+          <div className="absolute top-24 right-[-6%] w-96 h-96 rounded-full bg-[#ffd6aa]/55 blur-3xl"></div>
+          <div className="absolute bottom-0 left-1/2 w-[520px] h-[520px] -translate-x-1/2 translate-y-1/3 rounded-full bg-[#fff1dc]/80 blur-3xl"></div>
         </div>
 
         {/* Navigation */}
         <nav className="relative z-10 max-w-6xl mx-auto px-6 pt-6">
-          <div className="bg-white rounded-full shadow-lg px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="glass-nav rounded-full px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <img src={logo} alt="Hoppin" className="h-8 w-auto" />
             </div>
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
                 onClick={onLogin}
-                className="px-6 py-2 text-gray-700 hover:text-gray-900 transition-colors"
+                className="btn-ghost"
               >
                 Accedi
               </button>
               <button
                 onClick={onSignUp}
-                className="px-6 py-2 bg-primary text-white rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap"
+                className="btn-primary"
               >
                 Registrati
               </button>
@@ -49,26 +44,26 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
         </nav>
 
         {/* Hero Section */}
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-16">
-          <div className="max-w-3xl">
-            <h1 className="text-white mb-6 text-4xl md:text-5xl leading-tight">
-              Creiamo <span className="text-blue-200">carpooling</span> che rende il tuo{' '}
-              <span className="text-blue-200">tragitto quotidiano</span> più facile
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-16">
+          <div className="glass-panel px-8 py-12 md:px-12 md:py-14">
+            <h1 className="mb-6 text-4xl md:text-5xl leading-tight">
+              Creiamo <span className="text-brand">carpooling</span> che rende il tuo{' '}
+              <span className="text-brand">tragitto quotidiano</span> più facile
             </h1>
-            <p className="text-[#fefbf2] text-lg md:text-xl mb-12 max-w-2xl">
-              Condividi i tuoi viaggi quotidiani per lavoro o università. Risparmia denaro, riduci la tua impronta di carbonio 
+            <p className="text-lg md:text-xl mb-12 max-w-2xl text-muted">
+              Condividi i tuoi viaggi quotidiani per lavoro o università. Risparmia denaro, riduci la tua impronta di carbonio
               e viaggia in buona compagnia con il nostro sistema di abbinamento intelligente.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={onSignUp}
-                className="px-8 py-4 bg-white text-primary rounded-full hover:bg-blue-50 transition-colors"
+                className="btn-primary btn-primary-lg"
               >
                 Inizia Ora
               </button>
               <button
                 onClick={onLearnMore}
-                className="px-8 py-4 bg-blue-500/20 text-white rounded-full hover:bg-blue-500/30 transition-colors backdrop-blur-sm border border-white/20"
+                className="btn-secondary btn-primary-lg"
               >
                 Scopri di Più
               </button>
@@ -77,44 +72,44 @@ export function HomePage({ onSignUp, onLogin, onCreateRoute, onLearnMore, isLogg
         </div>
 
         {/* Features Section */}
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-16">
           <div className="grid md:grid-cols-4 gap-6">
-            <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-white" />
+            <div className="glass-card p-6">
+              <div className="glass-soft w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-brand" />
               </div>
-              <h3 className="text-white mb-2">Crea Profilo</h3>
-              <p className="text-[#fefbf2]">
+              <h3 className="mb-2">Crea Profilo</h3>
+              <p className="text-muted">
                 Registrati in pochi secondi con le tue informazioni di base.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                <Car className="w-6 h-6 text-white" />
+            <div className="glass-card p-6">
+              <div className="glass-soft w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <Car className="w-6 h-6 text-brand" />
               </div>
-              <h3 className="text-white mb-2">Pubblica il Tuo Percorso</h3>
-              <p className="text-[#fefbf2]">
+              <h3 className="mb-2">Pubblica il Tuo Percorso</h3>
+              <p className="text-muted">
                 Specifica se sei conducente, passeggero o entrambi.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                <MapPin className="w-6 h-6 text-white" />
+            <div className="glass-card p-6">
+              <div className="glass-soft w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <MapPin className="w-6 h-6 text-brand" />
               </div>
-              <h3 className="text-white mb-2">Aggiungi Dettagli</h3>
-              <p className="text-[#fefbf2]">
+              <h3 className="mb-2">Aggiungi Dettagli</h3>
+              <p className="text-muted">
                 Partenza, arrivo, data e ora del tuo percorso quotidiano.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                <Clock className="w-6 h-6 text-white" />
+            <div className="glass-card p-6">
+              <div className="glass-soft w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                <Clock className="w-6 h-6 text-brand" />
               </div>
-              <h3 className="text-white mb-2">Trova Corrispondenze</h3>
-              <p className="text-[#fefbf2]">
+              <h3 className="mb-2">Trova Corrispondenze</h3>
+              <p className="text-muted">
                 Il nostro team ti metterà in contatto con percorsi compatibili.
               </p>
             </div>

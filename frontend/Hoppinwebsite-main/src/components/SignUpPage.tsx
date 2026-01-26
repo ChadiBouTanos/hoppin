@@ -49,35 +49,30 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Decorative shapes */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-16 -left-10 w-56 h-56 rounded-full bg-[#fe6e5a]/20 blur-3xl"></div>
+        <div className="absolute bottom-10 right-[-10%] w-80 h-80 rounded-full bg-[#ffd6aa]/60 blur-3xl"></div>
       </div>
 
       <div className="max-w-md w-full relative z-10">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-white hover:text-[#fefbf2] mb-8"
-        >
+        <button onClick={onBack} className="btn-ghost mb-8">
           <ArrowLeft className="w-4 h-4" />
           Indietro
         </button>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-white/20 p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="glass-panel p-8 sm:p-10">
+          <h1 className="text-3xl font-semibold text-brand mb-2">
             Crea Account
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted mb-8">
             Unisciti alla comunità Hoppin
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-muted mb-2">
                   Nome
                 </label>
                 <input
@@ -85,12 +80,12 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="input-field"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-muted mb-2">
                   Cognome
                 </label>
                 <input
@@ -98,14 +93,14 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="input-field"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Email
               </label>
               <input
@@ -113,13 +108,13 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Telefono
               </label>
               <input
@@ -128,13 +123,13 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+39 123 456 7890"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Password
               </label>
               <input
@@ -142,14 +137,14 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
                 minLength={1}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-muted mb-2">
                 Conferma Password
               </label>
               <input
@@ -157,29 +152,29 @@ export function SignUpPage({ onSignUp, onBack }: SignUpPageProps) {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="input-field"
                 required
                 minLength={1}
               />
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-start gap-3 p-4 glass-soft">
               <input
                 type="checkbox"
                 name="whatsappConsent"
                 id="whatsappConsent"
                 checked={formData.whatsappConsent}
                 onChange={handleChange}
-                className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                className="checkbox-liquid mt-1"
               />
-              <label htmlFor="whatsappConsent" className="text-sm text-gray-700 cursor-pointer">
+              <label htmlFor="whatsappConsent" className="text-sm text-muted cursor-pointer">
                 Acconsento ad essere contattato via WhatsApp per abbinare i miei viaggi con altri utenti
               </label>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+              className="btn-primary w-full"
             >
               Crea il Mio Account
             </button>
