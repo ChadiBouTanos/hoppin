@@ -2,7 +2,7 @@ import { SUPPORT_EMAIL, SUPPORT_WHATSAPP } from '../constants/support';
 
 export function SupportFooterBanner() {
   return (
-    <div className="support-banner mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div className="support-banner mx-auto max-w-6xl px-6 sm:px-6 lg:px-8">
       <div className="support-banner-card flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-gray-900">Hai bisogno di aiuto?</p>
