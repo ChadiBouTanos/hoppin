@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { HomePage } from "./components/HomePage";
+import { LandingPage } from "./components/LandingPage";
 import { SignUpPage } from "./components/SignUpPage";
 import { LoginPage } from "./components/LoginPage";
 import { MyTripsPage } from "./components/MyTripsPage";
@@ -26,7 +27,7 @@ export type CreateTripPayload = {
 };
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa">("home");
+  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa">("landing");
 
   const [user, setUser] = useState<User | null>(() => {
     try {
@@ -131,7 +132,7 @@ export default function App() {
     setUserTrips([]);
     setMatches([]);
     localStorage.removeItem("hoppin_user");
-    setCurrentPage("home");
+    setCurrentPage("landing");
   };
 
   const handleCreateTrip = async (tripData: CreateTripPayload) => {
@@ -241,11 +242,13 @@ export default function App() {
   return (
     <div
       className={`min-h-screen ${
-        user
-          ? "logged-in-shell"
-          : currentPage === "home" || currentPage === "qa" || currentPage === "login" || currentPage === "signup"
-            ? "public-shell"
-            : "bg-gray-50"
+        currentPage === "landing"
+          ? "public-shell"
+          : user
+            ? "logged-in-shell"
+            : currentPage === "home" || currentPage === "qa" || currentPage === "login" || currentPage === "signup"
+              ? "public-shell"
+              : "bg-gray-50"
       }`}
     >
       {user && (
@@ -395,13 +398,16 @@ export default function App() {
         </div>
       )}
 
-      {isLoading && currentPage !== "home" ? (
+      {isLoading && currentPage !== "home" && currentPage !== "landing" ? (
         <div className="p-8 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#fe6e5a]"></div>
           <p className="mt-2 text-muted">Loading...</p>
         </div>
       ) : (
         <>
+          {currentPage === "landing" && !user && (
+            <LandingPage />
+          )}
           {currentPage === "home" && (
             <HomePage
               onSignUp={() => setCurrentPage("signup")}
@@ -411,8 +417,8 @@ export default function App() {
               isLoggedIn={!!user}
             />
           )}
-          {currentPage === "signup" && <SignUpPage onSignUp={handleSignUp} onBack={() => setCurrentPage("home")} />}
-          {currentPage === "login" && <LoginPage onLogin={handleLogin} onBack={() => setCurrentPage("home")} />}
+          {currentPage === "signup" && <SignUpPage onSignUp={handleSignUp} onBack={() => setCurrentPage("landing")} />}
+          {currentPage === "login" && <LoginPage onLogin={handleLogin} onBack={() => setCurrentPage("landing")} />}
           {currentPage === "mytrips" && user && (
             <MyTripsPage
               trips={user.isAdmin ? allTrips : userTrips}
@@ -433,7 +439,7 @@ export default function App() {
             />
           )}
 
-          {currentPage === "qa" && <QAPage onBack={() => setCurrentPage(user ? "home" : "home")} />}
+          {currentPage === "qa" && <QAPage onBack={() => setCurrentPage(user ? "home" : "landing")} />}
         </>
       )}
     </div>

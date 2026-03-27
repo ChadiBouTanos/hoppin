@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \":*)",
+      "Bash(where python3:*)",
+      "Bash(where python:*)",
+      "Bash(ls /c/Python*)",
+      "Read(//c/Users/nicolo.rota/AppData/Local/Programs/**)",
+      "Bash(node -e \":*)",
+      "Bash(npm install:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

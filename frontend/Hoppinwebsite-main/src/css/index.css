@@ -2770,3 +2770,11 @@ select:open::picker-icon {
   background: rgba(254, 110, 90, 0.12);
   color: var(--liquid-primary);
 }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
