@@ -11,7 +11,9 @@
       "Bash(npm ls:*)",
       "Bash(npx tsc:*)",
       "Bash(npx vite:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e \"const pkg = require\\(''./node_modules/tailwindcss/package.json''\\); console.log\\(''Tailwind installed:'', pkg.version\\)\")",
+      "WebFetch(domain:hoppin.cloud)"
     ]
   }
 }
