@@ -1,15 +1,76 @@
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>management</title>
-    </head>
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
+    <!-- SEO Meta Tags -->
+    <title>Hoppin - Carpooling per eventi | Come arrivare agli eventi condividendo il viaggio</title>
+    <meta name="description" content="Hoppin è la piattaforma di carpooling per eventi. Trova passaggi, riduci traffico e emissioni CO₂. Scopri come arrivare ai tuoi eventi in modo sostenibile e conveniente." />
+    <meta name="keywords" content="carpooling eventi, come arrivare evento, passaggi eventi, riduzione traffico eventi, mobilità sostenibile eventi, condivisione viaggio evento, carpooling concerti, carpooling festival" />
+    <meta name="author" content="Hoppin" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://hoppin.cloud" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://hoppin.cloud" />
+    <meta property="og:title" content="Hoppin - Carpooling per eventi" />
+    <meta property="og:description" content="Trova passaggi per i tuoi eventi. Riduci traffico, emissioni e costi con il carpooling intelligente di Hoppin." />
+    <meta property="og:site_name" content="Hoppin" />
+    <meta property="og:locale" content="it_IT" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Hoppin - Carpooling per eventi" />
+    <meta name="twitter:description" content="Trova passaggi per i tuoi eventi. Riduci traffico, emissioni e costi con il carpooling intelligente di Hoppin." />
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Hoppin",
+      "url": "https://hoppin.cloud",
+      "description": "Piattaforma di carpooling per eventi che riduce congestione ed emissioni CO₂",
+      "email": "info@hoppin.cloud",
+      "sameAs": [
+        "https://www.linkedin.com/company/hoppin-carpooling"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Hoppin",
+      "url": "https://hoppin.cloud",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Web",
+      "description": "Carpooling intelligente per eventi: trova passaggi, riduci traffico e emissioni. Scopri come arrivare agli eventi condividendo il viaggio.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+        "description": "Gratuito per i partecipanti"
+      }
+    }
+    </script>
+
+    <!-- Google Analytics GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-52PQZ5XRET"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-52PQZ5XRET');
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
   

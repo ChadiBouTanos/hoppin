@@ -13,7 +13,12 @@
       "Bash(npx vite:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(node -e \"const pkg = require\\(''./node_modules/tailwindcss/package.json''\\); console.log\\(''Tailwind installed:'', pkg.version\\)\")",
-      "WebFetch(domain:hoppin.cloud)"
+      "WebFetch(domain:hoppin.cloud)",
+      "Bash(npm run:*)",
+      "Bash(grep -c \"sm\\\\\\\\:px-\" dist/assets/index-01LJrMoP.css)",
+      "Bash(grep -c \"sm\\\\\\\\:\" dist/assets/index-01LJrMoP.css)",
+      "Bash(grep -c \"md\\\\\\\\:\" dist/assets/index-01LJrMoP.css)",
+      "Bash(find /c/Users/nicolo.rota/Downloads/Hoppin/hoppin/frontend/Hoppinwebsite-main/src -name *api* -o -name *service*)"
     ]
   }
 }

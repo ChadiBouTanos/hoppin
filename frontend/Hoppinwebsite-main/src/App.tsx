@@ -406,7 +406,7 @@ export default function App() {
       ) : (
         <>
           {currentPage === "landing" && !user && (
-            <LandingPage />
+            <LandingPage onLogin={() => setCurrentPage("login")} onSignUp={() => setCurrentPage("signup")} />
           )}
           {currentPage === "home" && (
             <HomePage

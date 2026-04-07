@@ -19,7 +19,10 @@ import {
 } from 'lucide-react';
 import logo from '../images/logo.png';
 
-/* no props needed for now */
+interface LandingPageProps {
+  onLogin?: () => void;
+  onSignUp?: () => void;
+}
 
 /* ──────────────────── tiny hook: animate numbers on scroll ──────────────────── */
 function useCountUp(end: number, duration = 1600) {
@@ -87,7 +90,7 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 /* ════════════════════════════════════════════════════════════════════════════════
    LANDING PAGE
    ════════════════════════════════════════════════════════════════════════════════ */
-export function LandingPage() {
+export function LandingPage({ onLogin, onSignUp }: LandingPageProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -147,6 +150,16 @@ export function LandingPage() {
             <button onClick={() => scrollTo('contact')} className="btn-primary">
               Contattaci
             </button>
+            {onLogin && (
+              <button onClick={onLogin} className="btn-ghost text-sm font-semibold">
+                Accedi
+              </button>
+            )}
+            {onSignUp && (
+              <button onClick={onSignUp} className="btn-primary">
+                Registrati
+              </button>
+            )}
           </div>
 
           {/* mobile hamburger */}
@@ -175,6 +188,22 @@ export function LandingPage() {
                 {item.label}
               </button>
             ))}
+            {onLogin && (
+              <button
+                onClick={() => { setMobileMenu(false); onLogin(); }}
+                className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+              >
+                Accedi
+              </button>
+            )}
+            {onSignUp && (
+              <button
+                onClick={() => { setMobileMenu(false); onSignUp(); }}
+                className="block w-full text-left font-semibold text-[#fe6e5a] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+              >
+                Registrati
+              </button>
+            )}
           </div>
         )}
       </nav>
