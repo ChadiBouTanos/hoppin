@@ -18,7 +18,17 @@
       "Bash(grep -c \"sm\\\\\\\\:px-\" dist/assets/index-01LJrMoP.css)",
       "Bash(grep -c \"sm\\\\\\\\:\" dist/assets/index-01LJrMoP.css)",
       "Bash(grep -c \"md\\\\\\\\:\" dist/assets/index-01LJrMoP.css)",
-      "Bash(find /c/Users/nicolo.rota/Downloads/Hoppin/hoppin/frontend/Hoppinwebsite-main/src -name *api* -o -name *service*)"
+      "Bash(find /c/Users/nicolo.rota/Downloads/Hoppin/hoppin/frontend/Hoppinwebsite-main/src -name *api* -o -name *service*)",
+      "Bash(find /c/Users/nicolo.rota/Downloads/Hoppin/hoppin/backend -not -path */.venv/* -type f)",
+      "Bash(python manage.py makemigrations trips)",
+      "Bash(ssh -o StrictHostKeyChecking=no ubuntu@51.91.109.69 \"echo connected\")",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -c \"import paramiko; print\\(''ok''\\)\")",
+      "Bash(python -c \"import paramiko; print\\(''ok''\\)\")",
+      "Bash(apt list:*)",
+      "Bash(pacman -Q sshpass)",
+      "Bash(brew list:*)"
     ]
   }
 }

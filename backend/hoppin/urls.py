@@ -20,7 +20,14 @@ from django.conf import settings
 import os
 from django.contrib import admin
 from django.urls import path, include
-from trips.views import notify_share
+from trips.views import (
+    notify_share,
+    EventListCreateView,
+    EventDetailView,
+    EventByIdView,
+    EventRegistrationCreateView,
+    EventRegistrationListView,
+)
 
 def serve_logo(request):
     """
@@ -47,4 +54,11 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
     path('api/trips/', include('trips.urls')),
     path("api/admin/notify-share/", notify_share, name="notify_share"),
+
+    # Events
+    path('api/events/', EventListCreateView.as_view(), name='event_list_create'),
+    path('api/events/register/', EventRegistrationCreateView.as_view(), name='event_register'),
+    path('api/events/by-id/<int:pk>/', EventByIdView.as_view(), name='event_by_id'),
+    path('api/events/<slug:slug>/registrations/', EventRegistrationListView.as_view(), name='event_registrations'),
+    path('api/events/<slug:slug>/', EventDetailView.as_view(), name='event_detail'),
 ]

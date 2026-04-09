@@ -1,13 +1,13 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 
-from .models import Trip, TripMatch, update_trip_matched_flags
-from .serializers import TripSerializer, TripMatchSerializer
+from .models import Trip, TripMatch, Event, EventRegistration, update_trip_matched_flags
+from .serializers import TripSerializer, TripMatchSerializer, EventSerializer, EventRegistrationSerializer
 
 TELEGRAM_BOT_TOKEN = "8485064756:AAHdOcJNEfZFkIYy97vSiVRqWNOlLT2e-xM"
 TELEGRAM_CHAT_ID = "-5010584294" 
@@ -175,3 +175,99 @@ def notify_share(request):
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"status": "ok"})
+
+
+# ─── Events ───────────────────────────────────────────────────────────
+
+class EventListCreateView(generics.ListCreateAPIView):
+    """
+    GET  /api/events/   → lista pubblica (solo eventi attivi)
+    POST /api/events/   → crea evento (solo admin)
+    """
+    serializer_class = EventSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            return Event.objects.filter(is_active=True)
+        return Event.objects.all()
+
+
+class EventDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET    /api/events/<slug>/       → dettaglio evento (pubblico)
+    PUT    /api/events/<slug>/       → modifica evento (admin)
+    DELETE /api/events/<slug>/       → elimina evento (admin)
+    """
+    serializer_class = EventSerializer
+    lookup_field = 'slug'
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            return Event.objects.filter(is_active=True)
+        return Event.objects.all()
+
+
+class EventByIdView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Admin operations by ID:
+    GET/PUT/DELETE /api/events/by-id/<pk>/
+    """
+    serializer_class = EventSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Event.objects.all()
+
+
+class EventRegistrationCreateView(generics.CreateAPIView):
+    """
+    POST /api/events/register/  → registrazione pubblica a un evento
+    """
+    serializer_class = EventRegistrationSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        registration = serializer.save()
+        # Notifica Telegram
+        try:
+            event = registration.event
+            role_label = "Conducente" if registration.role == 'driver' else "Passeggero"
+            seats_info = f"\nPosti: {registration.available_seats}" if registration.available_seats else ""
+            note_info = f"\nNote: {registration.note}" if registration.note else ""
+
+            message = (
+                f"🎫 Nuova registrazione evento\n"
+                f"Evento: {event.title}\n"
+                f"Ruolo: {role_label}\n"
+                f"Contatto: {registration.contact}\n"
+                f"Partenza: {registration.departure_city}\n"
+                f"Data: {registration.event_date}"
+                f"{seats_info}"
+                f"{note_info}"
+            )
+
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message}
+            requests.post(url, json=payload, timeout=5)
+        except Exception as e:
+            print(f"Telegram notification failed: {e}")
+
+
+class EventRegistrationListView(generics.ListAPIView):
+    """
+    GET /api/events/<slug>/registrations/ → lista registrazioni (admin)
+    """
+    serializer_class = EventRegistrationSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        slug = self.kwargs.get('slug')
+        return EventRegistration.objects.filter(event__slug=slug).select_related('event')

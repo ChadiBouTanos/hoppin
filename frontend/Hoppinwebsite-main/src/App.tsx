@@ -9,8 +9,9 @@ import { AllTripsPage } from "./components/AllTripsPage";
 import { CreateTripFlow } from "./components/CreateTripFlow";
 import { AdminPage } from "./components/AdminPage";
 import { QAPage } from "./components/QAPage";
-import { User, Trip, TripMatch } from "./types";
+import { User, Trip, TripMatch, HoppinEvent } from "./types";
 import { api } from "./services/api";
+import { EventPage } from "./components/EventPage";
 
 export type CreateTripPayload = {
   role: "driver" | "passenger" | "both";
@@ -24,10 +25,11 @@ export type CreateTripPayload = {
   rules?: string;
   flexibilityBefore?: number | null;
   flexibilityAfter?: number | null;
+  eventId?: string;
 };
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa">("landing");
+  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event">("landing");
 
   const [user, setUser] = useState<User | null>(() => {
     try {
@@ -41,6 +43,8 @@ export default function App() {
   const [allTrips, setAllTrips] = useState<Trip[]>([]);
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
   const [matches, setMatches] = useState<TripMatch[]>([]);
+  const [events, setEvents] = useState<HoppinEvent[]>([]);
+  const [selectedEventSlug, setSelectedEventSlug] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -91,6 +95,42 @@ export default function App() {
     };
     fetchAll();
   }, [user?.token, user?.isAdmin]);
+
+  // Fetch eventi (pubblico, no auth)
+  useEffect(() => {
+    api.getEvents().then(setEvents).catch(console.error);
+  }, []);
+
+  const handleNavigateToEvent = (slug: string) => {
+    setSelectedEventSlug(slug);
+    setCurrentPage("event");
+  };
+
+  const handleCreateEvent = async (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => {
+    if (!user?.token) { setError("Devi essere admin per creare eventi."); return; }
+    setError(null);
+    try {
+      await api.createEvent(data, user.token);
+      const updatedEvents = await api.getEvents();
+      setEvents(updatedEvents);
+    } catch (err: any) {
+      console.error("Create event error:", err);
+      setError(err.message || "Errore nella creazione dell'evento");
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    if (!user?.token) { setError("Devi essere admin per eliminare eventi."); return; }
+    setError(null);
+    try {
+      await api.deleteEvent(eventId, user.token);
+      const updatedEvents = await api.getEvents();
+      setEvents(updatedEvents);
+    } catch (err: any) {
+      console.error("Delete event error:", err);
+      setError(err.message || "Errore nella eliminazione dell'evento");
+    }
+  };
 
   const handleUserSession = (userData: User) => {
     setUser(userData);
@@ -406,7 +446,12 @@ export default function App() {
       ) : (
         <>
           {currentPage === "landing" && !user && (
-            <LandingPage onLogin={() => setCurrentPage("login")} onSignUp={() => setCurrentPage("signup")} />
+            <LandingPage
+              onLogin={() => setCurrentPage("login")}
+              onSignUp={() => setCurrentPage("signup")}
+              events={events}
+              onEventClick={handleNavigateToEvent}
+            />
           )}
           {currentPage === "home" && (
             <HomePage
@@ -436,6 +481,16 @@ export default function App() {
               onArchiveMatch={handleArchiveMatch}
               onDeleteMatch={handleDeleteMatch}
               onDeleteTrip={handleDeleteTrip}
+              events={events}
+              onCreateEvent={handleCreateEvent}
+              onDeleteEvent={handleDeleteEvent}
+            />
+          )}
+
+          {currentPage === "event" && selectedEventSlug && (
+            <EventPage
+              slug={selectedEventSlug}
+              onBack={() => setCurrentPage("landing")}
             />
           )}
 

@@ -1,5 +1,63 @@
-from .models import Trip, TripMatch, update_trip_matched_flags
+from .models import Trip, TripMatch, Event, EventRegistration, update_trip_matched_flags
 from rest_framework import serializers
+
+
+class EventSerializer(serializers.ModelSerializer):
+    imageUrl = serializers.URLField(source='image_url', required=False, allow_blank=True)
+    eventDates = serializers.JSONField(source='event_dates', required=False)
+    isActive = serializers.BooleanField(source='is_active', read_only=True)
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+    registrationCount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = [
+            'id', 'title', 'description', 'imageUrl', 'slug',
+            'eventDates', 'isActive', 'createdAt', 'registrationCount',
+        ]
+        read_only_fields = ['id', 'slug', 'isActive', 'createdAt', 'registrationCount']
+
+    def get_registrationCount(self, obj):
+        return obj.registrations.count()
+
+
+class EventRegistrationSerializer(serializers.ModelSerializer):
+    eventId = serializers.PrimaryKeyRelatedField(
+        source='event', queryset=Event.objects.filter(is_active=True)
+    )
+    departureCity = serializers.CharField(source='departure_city')
+    eventDate = serializers.CharField(source='event_date', required=False, allow_blank=True)
+    availableSeats = serializers.IntegerField(
+        source='available_seats', required=False, allow_null=True
+    )
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+
+    class Meta:
+        model = EventRegistration
+        fields = [
+            'id', 'eventId', 'role', 'contact', 'departureCity',
+            'eventDate', 'availableSeats', 'note', 'createdAt',
+        ]
+        read_only_fields = ['id', 'createdAt']
+
+    def validate(self, attrs):
+        role = attrs.get('role')
+        available_seats = attrs.get('available_seats')
+
+        if role == 'driver' and (available_seats is None or available_seats <= 0):
+            raise serializers.ValidationError({
+                'availableSeats': 'Indica quanti posti puoi offrire.'
+            })
+        if role == 'passenger':
+            attrs['available_seats'] = None
+
+        contact = attrs.get('contact', '').strip()
+        if not contact:
+            raise serializers.ValidationError({
+                'contact': 'Inserisci un\'email o un numero di telefono.'
+            })
+        return attrs
+
 
 class TripSerializer(serializers.ModelSerializer):
     userId = serializers.IntegerField(source='user.id', read_only=True)

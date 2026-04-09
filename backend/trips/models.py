@@ -1,5 +1,60 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    image_url = models.URLField(blank=True)
+    slug = models.SlugField(unique=True, max_length=255)
+    event_dates = models.JSONField(
+        default=list, blank=True,
+        help_text='Lista di date dell\'evento, es. ["2026-05-30", "2026-05-31", "2026-06-01"]'
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Event.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+
+class EventRegistration(models.Model):
+    """Registrazione pubblica (senza account) per un evento."""
+    ROLE_CHOICES = [
+        ('driver', 'Driver'),
+        ('passenger', 'Passenger'),
+    ]
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    contact = models.CharField(max_length=255, help_text='Email o telefono')
+    departure_city = models.CharField(max_length=255)
+    event_date = models.CharField(max_length=50, blank=True)
+    available_seats = models.PositiveSmallIntegerField(null=True, blank=True)
+    note = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.contact} - {self.role} - {self.event.title}"
+
 
 class Trip(models.Model):
     ROLE_CHOICES = [

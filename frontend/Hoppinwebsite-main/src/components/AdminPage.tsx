@@ -1,6 +1,6 @@
 ﻿import { useMemo, useState } from "react";
-import { Trip, TripMatch } from "../types";
-import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2 } from "lucide-react";
+import { Trip, TripMatch, HoppinEvent } from "../types";
+import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2, Plus, Image, CalendarPlus } from "lucide-react";
 import { FLEXIBILITY_OPTIONS } from "./CreateTripFlow";
 
 type AdminPageProps = {
@@ -10,13 +10,22 @@ type AdminPageProps = {
   onArchiveMatch: (matchId: string) => void;
   onDeleteMatch: (matchId: string) => void;
   onDeleteTrip: (tripId: string) => void;
+  events?: HoppinEvent[];
+  onCreateEvent?: (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => void;
+  onDeleteEvent?: (id: string) => void;
 };
 
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 type SortBy = "datetime" | "arrival" | "departure";
 
-export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip }: AdminPageProps) {
+export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip, events = [], onCreateEvent, onDeleteEvent }: AdminPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<"trips" | "events">("trips");
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [newEventTitle, setNewEventTitle] = useState("");
+  const [newEventDescription, setNewEventDescription] = useState("");
+  const [newEventImageUrl, setNewEventImageUrl] = useState("");
+  const [newEventDates, setNewEventDates] = useState("");
   const [filterRole, setFilterRole] = useState<RoleFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("datetime");
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
@@ -228,9 +237,214 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-semibold mb-1">Pannello Amministratore</h1>
-            <p className="text-muted text-sm">Gestisci tutti i viaggi, visualizza i dettagli e abbina i percorsi.</p>
+            <p className="text-muted text-sm">Gestisci tutti i viaggi, gli eventi e gli abbinamenti.</p>
           </div>
 
+          {/* Tabs */}
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab("trips")}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                activeTab === "trips" ? "bg-[#fe6e5a] text-white" : "glass-soft text-[#6f5a52] hover:bg-white/80"
+              }`}
+            >
+              Viaggi & Abbinamenti
+            </button>
+            <button
+              onClick={() => setActiveTab("events")}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors flex items-center gap-2 ${
+                activeTab === "events" ? "bg-[#fe6e5a] text-white" : "glass-soft text-[#6f5a52] hover:bg-white/80"
+              }`}
+            >
+              <CalendarPlus className="w-4 h-4" />
+              Gestione Eventi
+              {events.length > 0 && (
+                <span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
+                  activeTab === "events" ? "bg-white/30 text-white" : "bg-[#fe6e5a]/10 text-[#fe6e5a]"
+                }`}>{events.length}</span>
+              )}
+            </button>
+          </div>
+
+          {/* ═══════════ EVENTS TAB ═══════════ */}
+          {activeTab === "events" && (
+            <div>
+              {/* Create Event Form */}
+              <div className="glass-panel p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold">Eventi</h2>
+                  <button
+                    onClick={() => setShowEventForm(!showEventForm)}
+                    className="btn-primary text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Nuovo Evento
+                  </button>
+                </div>
+
+                {showEventForm && (
+                  <div className="glass-card p-6 mb-6 space-y-4">
+                    <h3 className="font-semibold text-sm text-[#6f5a52] uppercase tracking-wider">Crea Nuovo Evento</h3>
+                    <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1">Titolo *</label>
+                      <input
+                        type="text"
+                        value={newEventTitle}
+                        onChange={(e) => setNewEventTitle(e.target.value)}
+                        placeholder="es. Festival della Musica 2026"
+                        className="input-field"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1">Descrizione</label>
+                      <textarea
+                        value={newEventDescription}
+                        onChange={(e) => setNewEventDescription(e.target.value)}
+                        placeholder="Descrivi l'evento: dove si svolge, quando, cosa aspettarsi..."
+                        rows={4}
+                        className="textarea-field resize-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1 flex items-center gap-2">
+                        <Image className="w-4 h-4" />
+                        URL Immagine
+                      </label>
+                      <input
+                        type="url"
+                        value={newEventImageUrl}
+                        onChange={(e) => setNewEventImageUrl(e.target.value)}
+                        placeholder="https://esempio.com/immagine-evento.jpg"
+                        className="input-field"
+                      />
+                      {newEventImageUrl && (
+                        <div className="mt-2 rounded-xl overflow-hidden h-32 bg-gray-100">
+                          <img src={newEventImageUrl} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1 flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Date dell'evento (una per riga)
+                      </label>
+                      <textarea
+                        value={newEventDates}
+                        onChange={(e) => setNewEventDates(e.target.value)}
+                        placeholder={"2026-05-30\n2026-05-31\n2026-06-01"}
+                        rows={3}
+                        className="textarea-field resize-none font-mono text-sm"
+                      />
+                      <p className="text-xs text-[#6f5a52] mt-1">Formato: YYYY-MM-DD, una data per riga. L'utente vedra un menu a tendina.</p>
+                    </div>
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => {
+                          setShowEventForm(false);
+                          setNewEventTitle("");
+                          setNewEventDescription("");
+                          setNewEventImageUrl("");
+                          setNewEventDates("");
+                        }}
+                        className="btn-ghost text-sm"
+                      >
+                        Annulla
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!newEventTitle.trim()) {
+                            alert("Inserisci un titolo per l'evento");
+                            return;
+                          }
+                          const dates = newEventDates
+                            .split("\n")
+                            .map((d) => d.trim())
+                            .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
+                          onCreateEvent?.({
+                            title: newEventTitle.trim(),
+                            description: newEventDescription.trim(),
+                            imageUrl: newEventImageUrl.trim(),
+                            eventDates: dates.length > 0 ? dates : undefined,
+                          });
+                          setNewEventTitle("");
+                          setNewEventDescription("");
+                          setNewEventImageUrl("");
+                          setNewEventDates("");
+                          setShowEventForm(false);
+                        }}
+                        className="btn-primary text-sm"
+                      >
+                        Crea Evento
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Events list */}
+                {events.length === 0 ? (
+                  <div className="text-center py-10 text-[#6f5a52]">
+                    <CalendarPlus className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                    <p>Nessun evento creato.</p>
+                    <p className="text-sm mt-1">Clicca "Nuovo Evento" per crearne uno.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {events.map((ev) => (
+                      <div key={ev.id} className="glass-card overflow-hidden group">
+                        {ev.imageUrl && (
+                          <div className="h-36 overflow-hidden">
+                            <img
+                              src={ev.imageUrl}
+                              alt={ev.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-[#2f231f] truncate">{ev.title}</h3>
+                              <p className="text-xs text-[#6f5a52] mt-1 line-clamp-2">{ev.description}</p>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 ${
+                              ev.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                            }`}>
+                              {ev.isActive ? "Attivo" : "Inattivo"}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/60">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-[#6f5a52]">/{ev.slug}</span>
+                              {ev.registrationCount !== undefined && ev.registrationCount > 0 && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#fe6e5a]/10 text-[#fe6e5a] font-bold">
+                                  {ev.registrationCount} iscritti
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Eliminare l'evento "${ev.title}"?`)) {
+                                  onDeleteEvent?.(ev.id);
+                                }
+                              }}
+                              className="btn-icon text-red-400 hover:text-red-600 hover:bg-red-50"
+                              title="Elimina evento"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════ TRIPS TAB ═══════════ */}
+          {activeTab === "trips" && (
+          <>
           {/* Filtro & Ricerca */}
           <div className="glass-panel p-6 mb-6">
             <div className="grid md:grid-cols-3 gap-4">
@@ -560,6 +774,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 ))}
               </div>
             </section>
+          )}
+          </>
           )}
         </div>
       </div>

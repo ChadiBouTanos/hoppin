@@ -27,6 +27,7 @@ export type Trip = {
   flexibilityBefore?: number | null;
   flexibilityAfter?: number | null;
   isMatched: boolean;
+  eventId?: string;
   createdAt: string;
 };
 
@@ -36,4 +37,26 @@ export type TripMatch = {
   passengerTripId: string;
   isArchived: boolean;
   createdAt: string;
+};
+
+export type HoppinEvent = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  slug: string;
+  eventDates?: string[];
+  isActive: boolean;
+  registrationCount?: number;
+  createdAt: string;
+};
+
+export type EventRegistrationPayload = {
+  eventId: string;
+  role: 'driver' | 'passenger';
+  contact: string;
+  departureCity: string;
+  eventDate?: string;
+  availableSeats?: number;
+  note?: string;
 };

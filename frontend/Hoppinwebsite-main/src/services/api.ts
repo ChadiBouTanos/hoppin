@@ -1,5 +1,5 @@
 import { CreateTripPayload } from "../App";
-import { Trip, TripMatch, User } from "../types";
+import { Trip, TripMatch, User, HoppinEvent, EventRegistrationPayload } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://hoppin.cloud/api';
 
@@ -167,6 +167,55 @@ export const api = {
       }),
     });
 
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+  },
+
+  // ─── Events ───
+
+  getEvents: async (): Promise<HoppinEvent[]> => {
+    const response = await fetch(`${API_URL}/events/`);
+    return handleResponse(response);
+  },
+
+  getEventBySlug: async (slug: string): Promise<HoppinEvent> => {
+    const response = await fetch(`${API_URL}/events/${slug}/`);
+    return handleResponse(response);
+  },
+
+  registerForEvent: async (data: EventRegistrationPayload): Promise<void> => {
+    const response = await fetch(`${API_URL}/events/register/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+
+  createEvent: async (
+    eventData: { title: string; description: string; imageUrl: string; eventDates?: string[] },
+    token: string
+  ): Promise<HoppinEvent> => {
+    const response = await fetch(`${API_URL}/events/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(eventData),
+    });
+    return handleResponse(response);
+  },
+
+  deleteEvent: async (eventId: string, token: string): Promise<void> => {
+    const response = await fetch(`${API_URL}/events/by-id/${eventId}/`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
