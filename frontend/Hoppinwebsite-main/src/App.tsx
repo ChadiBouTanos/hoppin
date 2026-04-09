@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react"; // hmr trigger
 import { HomePage } from "./components/HomePage";
 import { LandingPage } from "./components/LandingPage";
 import { SignUpPage } from "./components/SignUpPage";

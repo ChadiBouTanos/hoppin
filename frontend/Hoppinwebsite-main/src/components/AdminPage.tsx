@@ -390,7 +390,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {events.map((ev) => (
-                      <div key={ev.id} className="glass-card overflow-hidden group">
+                      <div key={ev.id} className="glass-card overflow-hidden group" onClick={() => window.location.href = `https://hoppin.cloud/eventi/${ev.slug}`}>
                         {ev.imageUrl && (
                           <div className="h-36 overflow-hidden">
                             <img
