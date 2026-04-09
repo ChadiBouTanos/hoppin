@@ -28,8 +28,19 @@ export type CreateTripPayload = {
   eventId?: string;
 };
 
+// ─── URL-based routing for event pages ───
+function getInitialRoute(): { page: "landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event"; eventSlug?: string } {
+  const path = window.location.pathname;
+  const match = path.match(/^\/eventi\/([a-z0-9-]+)\/?$/i);
+  if (match) {
+    return { page: "event", eventSlug: match[1] };
+  }
+  return { page: "landing" };
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event">("landing");
+  const initialRoute = getInitialRoute();
+  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event">(initialRoute.page);
 
   const [user, setUser] = useState<User | null>(() => {
     try {
@@ -44,7 +55,7 @@ export default function App() {
   const [userTrips, setUserTrips] = useState<Trip[]>([]);
   const [matches, setMatches] = useState<TripMatch[]>([]);
   const [events, setEvents] = useState<HoppinEvent[]>([]);
-  const [selectedEventSlug, setSelectedEventSlug] = useState<string | null>(null);
+  const [selectedEventSlug, setSelectedEventSlug] = useState<string | null>(initialRoute.eventSlug || null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -104,6 +115,7 @@ export default function App() {
   const handleNavigateToEvent = (slug: string) => {
     setSelectedEventSlug(slug);
     setCurrentPage("event");
+    window.history.pushState({}, "", `/eventi/${slug}`);
   };
 
   const handleCreateEvent = async (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => {
@@ -490,7 +502,10 @@ export default function App() {
           {currentPage === "event" && selectedEventSlug && (
             <EventPage
               slug={selectedEventSlug}
-              onBack={() => setCurrentPage("landing")}
+              onBack={() => {
+                setCurrentPage("landing");
+                window.history.pushState({}, "", "/");
+              }}
             />
           )}
 
