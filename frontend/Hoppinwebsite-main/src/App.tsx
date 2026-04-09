@@ -294,7 +294,7 @@ export default function App() {
   return (
     <div
       className={`min-h-screen ${
-        currentPage === "landing"
+        currentPage === "landing" || currentPage === "event"
           ? "public-shell"
           : user
             ? "logged-in-shell"
@@ -303,7 +303,7 @@ export default function App() {
               : "bg-gray-50"
       }`}
     >
-      {user && (
+      {user && currentPage !== "event" && (
         <nav className="glass-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -450,7 +450,7 @@ export default function App() {
         </div>
       )}
 
-      {isLoading && currentPage !== "home" && currentPage !== "landing" ? (
+      {isLoading && currentPage !== "home" && currentPage !== "landing" && currentPage !== "event" ? (
         <div className="p-8 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#fe6e5a]"></div>
           <p className="mt-2 text-muted">Loading...</p>
