@@ -5,6 +5,8 @@ from django.utils.text import slugify
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
+    displayedTitle = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     image_url = models.URLField(blank=True)
     slug = models.SlugField(unique=True, max_length=255)
