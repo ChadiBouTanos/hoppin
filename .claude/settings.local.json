@@ -29,7 +29,9 @@
       "Bash(apt list:*)",
       "Bash(pacman -Q sshpass)",
       "Bash(brew list:*)",
-      "Bash(netstat -ano)"
+      "Bash(netstat -ano)",
+      "Bash(.venv/.venv/Scripts/python.exe manage.py makemigrations trips)",
+      "Bash(py --version)"
     ]
   }
 }
