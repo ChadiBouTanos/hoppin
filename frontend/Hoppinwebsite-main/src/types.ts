@@ -39,9 +39,20 @@ export type TripMatch = {
   createdAt: string;
 };
 
+export type CreateHoppinEvent = {
+  title: string;
+  displayedTitle: string;
+  subtitle: string
+  description: string;
+  imageUrl: string;
+  eventDates?: string[];
+};
+
 export type HoppinEvent = {
   id: string;
   title: string;
+  displayedTitle: string;
+  subtitle: string
   description: string;
   imageUrl: string;
   slug: string;

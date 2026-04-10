@@ -9,7 +9,7 @@ import { AllTripsPage } from "./components/AllTripsPage";
 import { CreateTripFlow } from "./components/CreateTripFlow";
 import { AdminPage } from "./components/AdminPage";
 import { QAPage } from "./components/QAPage";
-import { User, Trip, TripMatch, HoppinEvent } from "./types";
+import { User, Trip, TripMatch, HoppinEvent, CreateHoppinEvent } from "./types";
 import { api } from "./services/api";
 import { EventPage } from "./components/EventPage";
 
@@ -118,11 +118,11 @@ export default function App() {
     window.history.pushState({}, "", `/eventi/${slug}`);
   };
 
-  const handleCreateEvent = async (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => {
+  const handleCreateEvent = async (event: CreateHoppinEvent) => {
     if (!user?.token) { setError("Devi essere admin per creare eventi."); return; }
     setError(null);
     try {
-      await api.createEvent(data, user.token);
+      await api.createEvent(event, user.token);
       const updatedEvents = await api.getEvents();
       setEvents(updatedEvents);
     } catch (err: any) {

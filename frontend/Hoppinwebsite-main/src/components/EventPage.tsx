@@ -104,12 +104,13 @@ export function EventPage({ slug, onBack }: EventPageProps) {
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
           {/* Testo */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2f231f] leading-tight mb-4">
-              Vai al {event.title}?
-            </h1>
-            <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#fe6e5a] leading-tight mb-5">
-              Taglia i costi.<br />Non partire da solo.
-            </p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#2f231f] leading-tight mb-4">{event.displayedTitle}</h1>
+            <p
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#fe6e5a] leading-tight mb-5"
+              dangerouslySetInnerHTML={{
+                __html: event.subtitle || "Taglia i costi.<br/>Non partire da solo."
+              }}
+            />
             <p className="text-base sm:text-lg text-[#6f5a52] mb-6 leading-relaxed max-w-lg">
               {event.description || "Dividi benzina e spese in 30 secondi. Piu aspetti, meno opzioni trovi."}
             </p>
@@ -139,13 +140,13 @@ export function EventPage({ slug, onBack }: EventPageProps) {
       </section>
 
       {/* Form Section */}
-      <section className="max-w-2xl mx-auto px-4 sm:px-8 pb-16">
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-[#fafafa] rounded-3xl p-6 sm:p-10 shadow-sm border border-gray-100">
 
           {/* STEP 1: Role Selection */}
           {step === "role" && (
             <>
-              <p className="text-sm text-[#6f5a52] mb-5 font-medium">Seleziona il tuo ruolo</p>
+              <p className="text-xl text-[#2f231f] mb-5 font-bold">Seleziona il tuo ruolo</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <button
                   onClick={() => handleRoleSelect("driver")}
@@ -341,7 +342,7 @@ export function EventPage({ slug, onBack }: EventPageProps) {
       {/* Footer */}
       <footer className="py-8 border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-center gap-2">
-          <img src={logo} alt="Hoppin" className="h-4 w-auto opacity-40" />
+          <img src={logo} alt="Hoppin" className="h-4 w-auto opacity-60" />
           <span className="text-xs text-[#6f5a52]/50">
             &copy; {new Date().getFullYear()} Hoppin
           </span>

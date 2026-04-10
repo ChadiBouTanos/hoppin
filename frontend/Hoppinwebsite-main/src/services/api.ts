@@ -1,5 +1,5 @@
 import { CreateTripPayload } from "../App";
-import { Trip, TripMatch, User, HoppinEvent, EventRegistrationPayload } from "../types";
+import { Trip, TripMatch, User, HoppinEvent, EventRegistrationPayload, CreateHoppinEvent } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://hoppin.cloud/api';
 
@@ -176,7 +176,7 @@ export const api = {
   // ─── Events ───
 
   getEvents: async (): Promise<HoppinEvent[]> => {
-    const response = await fetch(`${API_URL}/events/`);
+    const response = await fetch(`${API_URL}i`);
     return handleResponse(response);
   },
 
@@ -194,10 +194,7 @@ export const api = {
     return handleResponse(response);
   },
 
-  createEvent: async (
-    eventData: { title: string; description: string; imageUrl: string; eventDates?: string[] },
-    token: string
-  ): Promise<HoppinEvent> => {
+  createEvent: async (eventData: CreateHoppinEvent, token: string): Promise<HoppinEvent> => {
     const response = await fetch(`${API_URL}/events/`, {
       method: 'POST',
       headers: {

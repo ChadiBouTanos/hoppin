@@ -1,5 +1,5 @@
 ﻿import { useMemo, useState } from "react";
-import { Trip, TripMatch, HoppinEvent } from "../types";
+import { Trip, TripMatch, HoppinEvent, CreateHoppinEvent } from "../types";
 import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2, Plus, Image, CalendarPlus } from "lucide-react";
 import { FLEXIBILITY_OPTIONS } from "./CreateTripFlow";
 
@@ -11,7 +11,7 @@ type AdminPageProps = {
   onDeleteMatch: (matchId: string) => void;
   onDeleteTrip: (tripId: string) => void;
   events?: HoppinEvent[];
-  onCreateEvent?: (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => void;
+  onCreateEvent?: (data: CreateHoppinEvent) => void;
   onDeleteEvent?: (id: string) => void;
   onEventClick?: (slug: string) => void;
 };
@@ -24,6 +24,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
   const [activeTab, setActiveTab] = useState<"trips" | "events">("trips");
   const [showEventForm, setShowEventForm] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState("");
+  const [newDisplayedEventTitle, setNewDisplayedEventTitle] = useState("");
+  const [newEventSubTitle, setNewEventSubTitle] = useState("");
   const [newEventDescription, setNewEventDescription] = useState("");
   const [newEventImageUrl, setNewEventImageUrl] = useState("");
   const [newEventDates, setNewEventDates] = useState("");
@@ -297,6 +299,26 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                       />
                     </div>
                     <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1">Titolo Visualizzato in Event Page *</label>
+                      <input
+                        type="text"
+                        value={newDisplayedEventTitle}
+                        onChange={(e) => setNewDisplayedEventTitle(e.target.value)}
+                        placeholder="es. Vai al Festival della Musica 2026?"
+                        className="input-field"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-[#6f5a52] mb-1">Sottotitolo *</label>
+                      <input
+                        type="text"
+                        value={newEventSubTitle}
+                        onChange={(e) => setNewEventSubTitle(e.target.value)}
+                        placeholder="es. Conferenza annuale"
+                        className="input-field"
+                      />
+                    </div>
+                    <div>
                       <label className="block text-sm text-[#6f5a52] mb-1">Descrizione</label>
                       <textarea
                         value={newEventDescription}
@@ -343,6 +365,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                         onClick={() => {
                           setShowEventForm(false);
                           setNewEventTitle("");
+                          setNewDisplayedEventTitle("");
+                          setNewEventSubTitle("");
                           setNewEventDescription("");
                           setNewEventImageUrl("");
                           setNewEventDates("");
@@ -363,11 +387,15 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                             .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
                           onCreateEvent?.({
                             title: newEventTitle.trim(),
+                            displayedTitle: newDisplayedEventTitle.trim(),
+                            subtitle: newEventSubTitle.trim(),
                             description: newEventDescription.trim(),
                             imageUrl: newEventImageUrl.trim(),
                             eventDates: dates.length > 0 ? dates : undefined,
                           });
                           setNewEventTitle("");
+                          setNewDisplayedEventTitle("");
+                          setNewEventSubTitle("");
                           setNewEventDescription("");
                           setNewEventImageUrl("");
                           setNewEventDates("");
@@ -418,10 +446,10 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                         <div className="p-4">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-[#2f231f] truncate">{ev.title}</h3>
-                              <p className="text-xs text-[#6f5a52] mt-1 line-clamp-2">{ev.description}</p>
+                              <h3 className="font-semibold text-lg text-[#2f231f] truncate">{ev.title}</h3>
+                              <p className="text-base text-[#6f5a52] mt-1 line-clamp-2">{ev.description}</p>
                             </div>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 ${
+                            <span className={`px-2 py-0.5 rounded-full text-[12px] font-bold flex-shrink-0 ${
                               ev.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
                             }`}>
                               {ev.isActive ? "Attivo" : "Inattivo"}
@@ -429,9 +457,9 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                           </div>
                           <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/60">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] text-[#6f5a52]">/{ev.slug}</span>
+                              <span className="text-[12px] text-[#6f5a52]">/{ev.slug}</span>
                               {ev.registrationCount !== undefined && ev.registrationCount > 0 && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#fe6e5a]/10 text-[#fe6e5a] font-bold">
+                                <span className="text-[12px] px-1.5 py-0.5 rounded-full bg-[#fe6e5a]/10 text-[#fe6e5a] font-bold">
                                   {ev.registrationCount} iscritti
                                 </span>
                               )}
