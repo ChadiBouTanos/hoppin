@@ -28,7 +28,8 @@
       "Bash(python -c \"import paramiko; print\\(''ok''\\)\")",
       "Bash(apt list:*)",
       "Bash(pacman -Q sshpass)",
-      "Bash(brew list:*)"
+      "Bash(brew list:*)",
+      "Bash(netstat -ano)"
     ]
   }
 }

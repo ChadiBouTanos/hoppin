@@ -13,12 +13,13 @@ type AdminPageProps = {
   events?: HoppinEvent[];
   onCreateEvent?: (data: { title: string; description: string; imageUrl: string; eventDates?: string[] }) => void;
   onDeleteEvent?: (id: string) => void;
+  onEventClick?: (slug: string) => void;
 };
 
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 type SortBy = "datetime" | "arrival" | "departure";
 
-export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip, events = [], onCreateEvent, onDeleteEvent }: AdminPageProps) {
+export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip, events = [], onCreateEvent, onDeleteEvent, onEventClick }: AdminPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"trips" | "events">("trips");
   const [showEventForm, setShowEventForm] = useState(false);
@@ -390,12 +391,26 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {events.map((ev) => (
-                      <div key={ev.id} className="glass-card overflow-hidden group" onClick={() => window.location.href = `https://hoppin.cloud/eventi/${ev.slug}`}>
+                      <div
+                        key={ev.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => onEventClick?.(ev.slug)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onEventClick?.(ev.slug);
+                          }
+                        }}
+                        className="glass-card overflow-hidden group cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#fe6e5a]/40"
+                      >
                         {ev.imageUrl && (
                           <div className="h-36 overflow-hidden">
                             <img
                               src={ev.imageUrl}
                               alt={ev.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
@@ -422,7 +437,8 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                               )}
                             </div>
                             <button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 if (window.confirm(`Eliminare l'evento "${ev.title}"?`)) {
                                   onDeleteEvent?.(ev.id);
                                 }

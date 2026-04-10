@@ -4,8 +4,9 @@
     {
       "name": "hoppin-dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--host"],
-      "port": 3000,
+      "runtimeArgs": ["vite", "--host", "--port", "3010", "--strictPort"],
+      "port": 3010,
+      "autoPort": false,
       "cwd": "frontend/Hoppinwebsite-main"
     }
   ]

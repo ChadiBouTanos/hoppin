@@ -147,7 +147,7 @@ export default function App() {
   const handleUserSession = (userData: User) => {
     setUser(userData);
     localStorage.setItem("hoppin_user", JSON.stringify(userData));
-    setCurrentPage(userData.isAdmin ? "admin" : "home");
+    setCurrentPage(userData.isAdmin ? "admin" : "landing");
   };
 
   const handleSignUp = async (userData: Omit<User, "id" | "isAdmin" | "token"> & { password: string }) => {
@@ -303,7 +303,7 @@ export default function App() {
               : "bg-gray-50"
       }`}
     >
-      {user && currentPage !== "event" && (
+      {user?.isAdmin && currentPage !== "event" && currentPage !== "landing" && (
         <nav className="glass-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -457,12 +457,15 @@ export default function App() {
         </div>
       ) : (
         <>
-          {currentPage === "landing" && !user && (
+          {currentPage === "landing" && (
             <LandingPage
-              onLogin={() => setCurrentPage("login")}
-              onSignUp={() => setCurrentPage("signup")}
+              onLogin={user ? undefined : () => setCurrentPage("login")}
+              onSignUp={user ? undefined : () => setCurrentPage("signup")}
               events={events}
               onEventClick={handleNavigateToEvent}
+              user={user}
+              onLogout={handleLogout}
+              onGoToAdmin={user?.isAdmin ? () => setCurrentPage("admin") : undefined}
             />
           )}
           {currentPage === "home" && (
@@ -496,6 +499,7 @@ export default function App() {
               events={events}
               onCreateEvent={handleCreateEvent}
               onDeleteEvent={handleDeleteEvent}
+              onEventClick={handleNavigateToEvent}
             />
           )}
 

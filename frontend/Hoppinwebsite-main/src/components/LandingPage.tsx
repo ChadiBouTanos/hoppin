@@ -18,22 +18,33 @@ import {
   Linkedin,
 } from 'lucide-react';
 import logo from '../images/logo.png';
-import { HoppinEvent } from '../types';
+import { HoppinEvent, User } from '../types';
 
 interface LandingPageProps {
   onLogin?: () => void;
   onSignUp?: () => void;
   events?: HoppinEvent[];
   onEventClick?: (slug: string) => void;
+  user?: User | null;
+  onLogout?: () => void;
+  onGoToAdmin?: () => void;
 }
+
+/* ──────────────────── mobile / reduced motion detection ──────────────────── */
+const isCoarsePointer =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)').matches;
 
 /* ──────────────────── tiny hook: animate numbers on scroll ──────────────────── */
 function useCountUp(end: number, duration = 1600) {
-  const [value, setValue] = useState(0);
+  // On mobile / reduced-motion devices we skip the IntersectionObserver and the
+  // requestAnimationFrame loop entirely — the value is already at its final state.
+  const [value, setValue] = useState(isCoarsePointer ? end : 0);
   const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
+  const started = useRef(isCoarsePointer);
 
   useEffect(() => {
+    if (isCoarsePointer) return;
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -62,9 +73,11 @@ function useCountUp(end: number, duration = 1600) {
 /* ──────────────────── fade-in-on-scroll wrapper ──────────────────── */
 function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // Mobile / reduced-motion: render visible immediately, no observer.
+  const [visible, setVisible] = useState(isCoarsePointer);
 
   useEffect(() => {
+    if (isCoarsePointer) return;
     const el = ref.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -79,11 +92,15 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
     <div
       ref={ref}
       className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(32px)',
-        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
-      }}
+      style={
+        isCoarsePointer
+          ? undefined
+          : {
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateY(0)' : 'translateY(32px)',
+              transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+            }
+      }
     >
       {children}
     </div>
@@ -93,7 +110,8 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 /* ════════════════════════════════════════════════════════════════════════════════
    LANDING PAGE
    ════════════════════════════════════════════════════════════════════════════════ */
-export function LandingPage({ onLogin, onSignUp, events = [], onEventClick }: LandingPageProps) {
+export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user, onLogout, onGoToAdmin }: LandingPageProps) {
+  const isLoggedIn = !!user;
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 
@@ -114,13 +132,13 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick }: La
   const stat3 = useCountUp(125);
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
-      {/* ─── background blobs ─── */}
+    <div className="min-h-screen relative overflow-x-hidden bg-gradient-to-b from-[#fff7ee] via-white to-[#fff1dc]/40 md:bg-none">
+      {/* ─── background blobs (desktop only — too expensive on mobile GPU) ─── */}
       <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute -top-32 -left-20 w-[600px] h-[600px] rounded-full bg-[#fe6e5a]/15 blur-[120px]" />
-        <div className="absolute top-[20vh] right-[-8%] w-[500px] h-[500px] rounded-full bg-[#ffd6aa]/40 blur-[100px]" />
-        <div className="absolute top-[60vh] left-[20%] w-[400px] h-[400px] rounded-full bg-[#fff1dc]/70 blur-[100px]" />
-        <div className="absolute bottom-0 right-[10%] w-[500px] h-[500px] rounded-full bg-[#fe6e5a]/8 blur-[120px]" />
+        <div className="hidden md:block absolute -top-32 -left-20 w-[600px] h-[600px] rounded-full bg-[#fe6e5a]/15 blur-[120px]" />
+        <div className="hidden md:block absolute top-[20vh] right-[-8%] w-[500px] h-[500px] rounded-full bg-[#ffd6aa]/40 blur-[100px]" />
+        <div className="hidden md:block absolute top-[60vh] left-[20%] w-[400px] h-[400px] rounded-full bg-[#fff1dc]/70 blur-[100px]" />
+        <div className="hidden md:block absolute bottom-0 right-[10%] w-[500px] h-[500px] rounded-full bg-[#fe6e5a]/8 blur-[120px]" />
       </div>
 
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
@@ -158,15 +176,35 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick }: La
             <button onClick={() => scrollTo('contact')} className="btn-primary">
               Contattaci
             </button>
-            {onLogin && (
-              <button onClick={onLogin} className="btn-ghost text-sm font-semibold">
-                Accedi
-              </button>
-            )}
-            {onSignUp && (
-              <button onClick={onSignUp} className="btn-primary">
-                Registrati
-              </button>
+            {isLoggedIn ? (
+              <>
+                <span className="text-sm font-semibold text-[#6f5a52] hidden lg:inline">
+                  {user?.firstName}
+                </span>
+                {onGoToAdmin && (
+                  <button onClick={onGoToAdmin} className="btn-ghost text-sm font-semibold">
+                    Pannello Admin
+                  </button>
+                )}
+                {onLogout && (
+                  <button onClick={onLogout} className="btn-ghost text-sm font-semibold text-red-600">
+                    Esci
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                {onLogin && (
+                  <button onClick={onLogin} className="btn-ghost text-sm font-semibold">
+                    Accedi
+                  </button>
+                )}
+                {onSignUp && (
+                  <button onClick={onSignUp} className="btn-primary">
+                    Registrati
+                  </button>
+                )}
+              </>
             )}
           </div>
 
@@ -197,21 +235,44 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick }: La
                 {item.label}
               </button>
             ))}
-            {onLogin && (
-              <button
-                onClick={() => { setMobileMenu(false); onLogin(); }}
-                className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
-              >
-                Accedi
-              </button>
-            )}
-            {onSignUp && (
-              <button
-                onClick={() => { setMobileMenu(false); onSignUp(); }}
-                className="block w-full text-left font-semibold text-[#fe6e5a] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
-              >
-                Registrati
-              </button>
+            {isLoggedIn ? (
+              <>
+                {onGoToAdmin && (
+                  <button
+                    onClick={() => { setMobileMenu(false); onGoToAdmin(); }}
+                    className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+                  >
+                    Pannello Admin
+                  </button>
+                )}
+                {onLogout && (
+                  <button
+                    onClick={() => { setMobileMenu(false); onLogout(); }}
+                    className="block w-full text-left font-semibold text-red-600 py-3 px-3 rounded-xl active:bg-red-50 transition-colors text-base"
+                  >
+                    Esci
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                {onLogin && (
+                  <button
+                    onClick={() => { setMobileMenu(false); onLogin(); }}
+                    className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+                  >
+                    Accedi
+                  </button>
+                )}
+                {onSignUp && (
+                  <button
+                    onClick={() => { setMobileMenu(false); onSignUp(); }}
+                    className="block w-full text-left font-semibold text-[#fe6e5a] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+                  >
+                    Registrati
+                  </button>
+                )}
+              </>
             )}
           </div>
         )}
@@ -449,6 +510,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick }: La
                         <img
                           src={ev.imageUrl}
                           alt={ev.title}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
