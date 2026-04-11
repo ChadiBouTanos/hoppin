@@ -131,6 +131,19 @@ export default function App() {
     }
   };
 
+  const handleUpdateEvent = async (eventId: string, event: Partial<CreateHoppinEvent>) => {
+    if (!user?.token) { setError("Devi essere admin per modificare eventi."); return; }
+    setError(null);
+    try {
+      await api.updateEvent(eventId, event, user.token);
+      const updatedEvents = await api.getEvents();
+      setEvents(updatedEvents);
+    } catch (err: any) {
+      console.error("Update event error:", err);
+      setError(err.message || "Errore nella modifica dell'evento");
+    }
+  };
+
   const handleDeleteEvent = async (eventId: string) => {
     if (!user?.token) { setError("Devi essere admin per eliminare eventi."); return; }
     setError(null);
@@ -498,6 +511,7 @@ export default function App() {
               onDeleteTrip={handleDeleteTrip}
               events={events}
               onCreateEvent={handleCreateEvent}
+              onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
               onEventClick={handleNavigateToEvent}
             />

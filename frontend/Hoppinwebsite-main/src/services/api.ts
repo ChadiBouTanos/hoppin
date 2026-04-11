@@ -176,7 +176,7 @@ export const api = {
   // ─── Events ───
 
   getEvents: async (): Promise<HoppinEvent[]> => {
-    const response = await fetch(`${API_URL}i`);
+    const response = await fetch(`${API_URL}/events/`);
     return handleResponse(response);
   },
 
@@ -197,6 +197,18 @@ export const api = {
   createEvent: async (eventData: CreateHoppinEvent, token: string): Promise<HoppinEvent> => {
     const response = await fetch(`${API_URL}/events/`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(eventData),
+    });
+    return handleResponse(response);
+  },
+
+  updateEvent: async (eventId: string, eventData: Partial<CreateHoppinEvent>, token: string): Promise<HoppinEvent> => {
+    const response = await fetch(`${API_URL}/events/by-id/${eventId}/`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

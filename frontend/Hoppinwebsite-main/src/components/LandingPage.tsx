@@ -155,20 +155,20 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
 
           {/* desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollTo('problem')} className="text-sm font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
+            <button onClick={() => scrollTo('problem')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
               Il Problema
             </button>
-            <button onClick={() => scrollTo('solution')} className="text-sm font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
+            <button onClick={() => scrollTo('solution')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
               Soluzione
             </button>
-            <button onClick={() => scrollTo('how')} className="text-sm font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
+            <button onClick={() => scrollTo('how')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
               Come Funziona
             </button>
-            <button onClick={() => scrollTo('team')} className="text-sm font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
+            <button onClick={() => scrollTo('team')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
               Team
             </button>
             {events.length > 0 && (
-              <button onClick={() => scrollTo('eventi')} className="text-sm font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
+              <button onClick={() => scrollTo('eventi')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
                 Eventi
               </button>
             )}
@@ -177,16 +177,16 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             </button>
             {isLoggedIn ? (
               <>
-                <span className="text-sm font-semibold text-[#6f5a52] hidden lg:inline">
+                <span className="text-base font-semibold text-[#6f5a52] hidden lg:inline">
                   {user?.firstName}
                 </span>
                 {onGoToAdmin && (
-                  <button onClick={onGoToAdmin} className="btn-ghost text-sm font-semibold">
+                  <button onClick={onGoToAdmin} className="btn-ghost text-base font-semibold">
                     Pannello Admin
                   </button>
                 )}
                 {onLogout && (
-                  <button onClick={onLogout} className="btn-ghost text-sm font-semibold text-red-600">
+                  <button onClick={onLogout} className="btn-ghost text-base font-semibold text-red-600">
                     Esci
                   </button>
                 )}
@@ -194,7 +194,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             ) : (
               <>
                 {onLogin && (
-                  <button onClick={onLogin} className="btn-ghost text-sm font-semibold">
+                  <button onClick={onLogin} className="btn-ghost text-base font-semibold">
                     Accedi
                   </button>
                 )}
@@ -315,8 +315,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       <section id="problem" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
-            <div className="text-center mb-10 sm:mb-16">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">Il Problema</span>
+            <div className="text-center mt-4 mb-10 sm:mb-16">
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il Problema</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
                 1 grande evento = <span className="text-[#fe6e5a]">10.000+ auto</span>
               </h2>
@@ -367,8 +367,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       <section id="solution" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
-            <div className="glass-panel p-6 sm:p-10 md:p-16 text-center mb-10 sm:mb-16">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">La Soluzione</span>
+            <div className="glass-panel p-6 sm:p-10 md:p-16 text-center mt-4 mb-10 sm:mb-16">
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">La Soluzione</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">
                 Carpooling intelligente<br />per i tuoi eventi
               </h2>
@@ -418,8 +418,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       <section id="how" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
-            <div className="text-center mb-10 sm:mb-16">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">Come Funziona</span>
+            <div className="text-center mt-4 mb-10 sm:mb-16">
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Come Funziona</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
                 Da zero a evento sostenibile
               </h2>
@@ -486,8 +486,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         <section id="eventi" className="py-14 sm:py-20 md:py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <FadeIn>
-              <div className="text-center mb-10 sm:mb-16">
-                <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi</span>
+              <div className="text-center mt-4 mb-10 sm:mb-16">
+                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi</span>
                 <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
                   Trova un passaggio per i prossimi eventi
                 </h2>
@@ -506,13 +506,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
                   >
                     {ev.imageUrl ? (
                       <div className="h-44 sm:h-48 overflow-hidden">
-                        <img
-                          src={ev.imageUrl}
-                          alt={ev.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                        <img src={ev.imageUrl} alt={ev.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
                       </div>
                     ) : (
                       <div className="h-44 sm:h-48 bg-gradient-to-br from-[#fe6e5a]/20 to-[#ffd6aa]/40 flex items-center justify-center">
@@ -545,7 +539,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
           <FadeIn>
             <div className="glass-panel p-6 sm:p-10 md:p-16">
               <div className="text-center mb-8 sm:mb-12">
-                <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">Traction</span>
+                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Traction</span>
                 <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3">
                   Nati con le comunità locali
                 </h2>
@@ -580,7 +574,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center mb-10 sm:mb-16">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">Il Nostro Modello</span>
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il Nostro Modello</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
                 SaaS per grandi eventi
               </h2>
@@ -627,21 +621,12 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       <section id="team" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
-            <div className="text-center mb-10 sm:mb-16">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">
-                Il Team
-              </span>
-
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4">
-                Chi c'è dietro Hoppin
-              </h2>
-
-              <p className="text-base sm:text-lg text-[#4b3c37] font-medium max-w-2xl mx-auto">
-                Giovani imprenditori uniti dalla volontà di rivoluzionare la mobilità degli eventi.
-              </p>
+            <div className="text-center mt-4 mb-10 sm:mb-16">
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il Team</span>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4">Chi c'è dietro Hoppin</h2>
+              <p className="text-base sm:text-lg text-[#4b3c37] font-medium max-w-2xl mx-auto">Giovani imprenditori uniti dalla volontà di rivoluzionare la mobilità degli eventi.</p>
             </div>
           </FadeIn>
-
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
@@ -667,25 +652,14 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             ].map((member, i) => (
               <FadeIn key={i} delay={i * 120}>
                 <div className="glass-card p-4 sm:p-6 text-center hover:scale-[1.04] transition-transform duration-300">
-                  
                   {/* Avatar impersonale */}
                   <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden shadow-md bg-white">
-                    <img
-                      src={member.img}
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
                   </div>
-
                   {/* Nome */}
-                  <h4 className="font-bold text-[#2f231f] text-sm sm:text-base">
-                    {member.name}
-                  </h4>
-
+                  <h4 className="font-bold text-[#2f231f] text-sm sm:text-base">{member.name}</h4>
                   {/* Ruolo */}
-                  <p className="text-[11px] sm:text-xs text-[#6f5a52] mt-1 font-medium">
-                    {member.role}
-                  </p>
+                  <p className="text-[11px] sm:text-xs text-[#6f5a52] mt-1 font-medium">{member.role}</p>
                 </div>
               </FadeIn>
             ))}
@@ -698,71 +672,27 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="glass-panel p-6 sm:p-10 md:p-16 text-center">
-              <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-[#fe6e5a]">
-                Contattaci
-              </span>
-
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">
-                Pronto a rendere il tuo evento più sostenibile?
-              </h2>
-
-              <p className="text-base sm:text-lg text-[#6f5a52] max-w-xl mx-auto mb-8 sm:mb-10">
-                Scrivici per scoprire come Hoppin può trasformare la mobilità del tuo prossimo evento.
-              </p>
-
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Contattaci</span>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">Pronto a rendere il tuo evento più sostenibile?</h2>
+              <p className="text-base sm:text-lg text-[#6f5a52] max-w-xl mx-auto mb-8 sm:mb-10">Scrivici per scoprire come Hoppin può trasformare la mobilità del tuo prossimo evento.</p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-
                 {/* Email */}
-                <a
-                  href="mailto:hoppin.tem@gmail.com"
-                  className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center"
-                >
-                  <Mail className="w-5 h-5" />
-                  hoppin.tem@gmail.com
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <a href="mailto:hoppin.tem@gmail.com" className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
+                  <Mail className="w-5 h-5" />hoppin.tem@gmail.com<ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </a>
-
                 {/* LinkedIn */}
-                <a
-                  href="https://www.linkedin.com/company/hoppin-carpooling"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center"
-                >
-                  <Linkedin className="w-5 h-5" />
-                  LinkedIn
+                <a href="https://www.linkedin.com/company/hoppin-carpooling" target="_blank" rel="noopener noreferrer" className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
+                  <Linkedin className="w-5 h-5" />LinkedIn
                 </a>
-
                 {/* Instagram */}
-                <a
-                  href="https://www.instagram.com/hoppin.mobility/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.8}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9A4.5 4.5 0 0 1 16.5 21h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
-                    />
+                <a href="https://www.instagram.com/hoppin.mobility/" target="_blank" rel="noopener noreferrer" className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9A4.5 4.5 0 0 1 16.5 21h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                     <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
                   </svg>
                   Instagram
                 </a>
-
               </div>
             </div>
           </FadeIn>

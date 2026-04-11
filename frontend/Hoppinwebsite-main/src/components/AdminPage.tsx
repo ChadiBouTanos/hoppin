@@ -1,6 +1,6 @@
 ﻿import { useMemo, useState } from "react";
 import { Trip, TripMatch, HoppinEvent, CreateHoppinEvent } from "../types";
-import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2, Plus, Image, CalendarPlus } from "lucide-react";
+import { Car, Users, MapPin, Calendar, Clock, Search, Filter, Mail, Phone, Repeat, X, Archive, Trash2, Link2, Plus, Image, CalendarPlus, Pencil } from "lucide-react";
 import { FLEXIBILITY_OPTIONS } from "./CreateTripFlow";
 
 type AdminPageProps = {
@@ -12,6 +12,7 @@ type AdminPageProps = {
   onDeleteTrip: (tripId: string) => void;
   events?: HoppinEvent[];
   onCreateEvent?: (data: CreateHoppinEvent) => void;
+  onUpdateEvent?: (id: string, data: Partial<CreateHoppinEvent>) => void;
   onDeleteEvent?: (id: string) => void;
   onEventClick?: (slug: string) => void;
 };
@@ -19,10 +20,11 @@ type AdminPageProps = {
 type RoleFilter = "all" | "driver" | "passenger" | "both";
 type SortBy = "datetime" | "arrival" | "departure";
 
-export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip, events = [], onCreateEvent, onDeleteEvent, onEventClick }: AdminPageProps) {
+export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDeleteMatch, onDeleteTrip, events = [], onCreateEvent, onUpdateEvent, onDeleteEvent, onEventClick }: AdminPageProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"trips" | "events">("trips");
   const [showEventForm, setShowEventForm] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [newEventTitle, setNewEventTitle] = useState("");
   const [newDisplayedEventTitle, setNewDisplayedEventTitle] = useState("");
   const [newEventSubTitle, setNewEventSubTitle] = useState("");
@@ -277,7 +279,27 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold">Eventi</h2>
                   <button
-                    onClick={() => setShowEventForm(!showEventForm)}
+                    onClick={() => {
+                      if (showEventForm) {
+                        setShowEventForm(false);
+                        setEditingEventId(null);
+                        setNewEventTitle("");
+                        setNewDisplayedEventTitle("");
+                        setNewEventSubTitle("");
+                        setNewEventDescription("");
+                        setNewEventImageUrl("");
+                        setNewEventDates("");
+                      } else {
+                        setEditingEventId(null);
+                        setNewEventTitle("");
+                        setNewDisplayedEventTitle("");
+                        setNewEventSubTitle("");
+                        setNewEventDescription("");
+                        setNewEventImageUrl("");
+                        setNewEventDates("");
+                        setShowEventForm(true);
+                      }
+                    }}
                     className="btn-primary text-sm"
                   >
                     <Plus className="w-4 h-4" />
@@ -287,7 +309,9 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
 
                 {showEventForm && (
                   <div className="glass-card p-6 mb-6 space-y-4">
-                    <h3 className="font-semibold text-sm text-[#6f5a52] uppercase tracking-wider">Crea Nuovo Evento</h3>
+                    <h3 className="font-semibold text-sm text-[#6f5a52] uppercase tracking-wider">
+                      {editingEventId ? "Modifica Evento" : "Crea Nuovo Evento"}
+                    </h3>
                     <div>
                       <label className="block text-sm text-[#6f5a52] mb-1">Titolo *</label>
                       <input
@@ -364,6 +388,7 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                       <button
                         onClick={() => {
                           setShowEventForm(false);
+                          setEditingEventId(null);
                           setNewEventTitle("");
                           setNewDisplayedEventTitle("");
                           setNewEventSubTitle("");
@@ -385,25 +410,34 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                             .split("\n")
                             .map((d) => d.trim())
                             .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
-                          onCreateEvent?.({
+                          const payload = {
                             title: newEventTitle.trim(),
                             displayedTitle: newDisplayedEventTitle.trim(),
                             subtitle: newEventSubTitle.trim(),
                             description: newEventDescription.trim(),
                             imageUrl: newEventImageUrl.trim(),
-                            eventDates: dates.length > 0 ? dates : undefined,
-                          });
+                            eventDates: dates.length > 0 ? dates : [],
+                          };
+                          if (editingEventId) {
+                            onUpdateEvent?.(editingEventId, payload);
+                          } else {
+                            onCreateEvent?.({
+                              ...payload,
+                              eventDates: dates.length > 0 ? dates : undefined,
+                            });
+                          }
                           setNewEventTitle("");
                           setNewDisplayedEventTitle("");
                           setNewEventSubTitle("");
                           setNewEventDescription("");
                           setNewEventImageUrl("");
                           setNewEventDates("");
+                          setEditingEventId(null);
                           setShowEventForm(false);
                         }}
                         className="btn-primary text-sm"
                       >
-                        Crea Evento
+                        {editingEventId ? "Salva Modifiche" : "Crea Evento"}
                       </button>
                     </div>
                   </div>
@@ -464,18 +498,40 @@ export function AdminPage({ trips, matches, onCreateMatch, onArchiveMatch, onDel
                                 </span>
                               )}
                             </div>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (window.confirm(`Eliminare l'evento "${ev.title}"?`)) {
-                                  onDeleteEvent?.(ev.id);
-                                }
-                              }}
-                              className="btn-icon text-red-400 hover:text-red-600 hover:bg-red-50"
-                              title="Elimina evento"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingEventId(ev.id);
+                                  setNewEventTitle(ev.title);
+                                  setNewDisplayedEventTitle(ev.displayedTitle || "");
+                                  setNewEventSubTitle(ev.subtitle || "");
+                                  setNewEventDescription(ev.description || "");
+                                  setNewEventImageUrl(ev.imageUrl || "");
+                                  setNewEventDates((ev.eventDates || []).join("\n"));
+                                  setShowEventForm(true);
+                                  if (typeof window !== "undefined") {
+                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                  }
+                                }}
+                                className="btn-icon text-[#6f5a52] hover:text-[#fe6e5a] hover:bg-[#fe6e5a]/10"
+                                title="Modifica evento"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (window.confirm(`Eliminare l'evento "${ev.title}"?`)) {
+                                    onDeleteEvent?.(ev.id);
+                                  }
+                                }}
+                                className="btn-icon text-red-400 hover:text-red-600 hover:bg-red-50"
+                                title="Elimina evento"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
