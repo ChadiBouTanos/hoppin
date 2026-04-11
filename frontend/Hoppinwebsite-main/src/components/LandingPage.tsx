@@ -142,8 +142,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       </div>
 
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
             ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/60'
             : 'bg-transparent'
           }`}
@@ -155,54 +154,22 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
 
           {/* desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollTo('problem')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
-              Il Problema
-            </button>
-            <button onClick={() => scrollTo('solution')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
-              Soluzione
-            </button>
-            <button onClick={() => scrollTo('how')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
-              Come Funziona
-            </button>
-            <button onClick={() => scrollTo('team')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
-              Team
-            </button>
-            {events.length > 0 && (
-              <button onClick={() => scrollTo('eventi')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">
-                Eventi
-              </button>
-            )}
-            <button onClick={() => scrollTo('contact')} className="btn-primary">
-              Contattaci
-            </button>
+            {events.length > 0 && (<button onClick={() => scrollTo('eventi')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Eventi</button>)}
+            <button onClick={() => scrollTo('problem')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Il Problema</button>
+            <button onClick={() => scrollTo('solution')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Soluzione</button>
+            <button onClick={() => scrollTo('how')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Come Funziona</button>
+            <button onClick={() => scrollTo('team')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Team</button>
+            <button onClick={() => scrollTo('contact')} className="btn-primary">Contattaci</button>
             {isLoggedIn ? (
               <>
-                <span className="text-base font-semibold text-[#6f5a52] hidden lg:inline">
-                  {user?.firstName}
-                </span>
-                {onGoToAdmin && (
-                  <button onClick={onGoToAdmin} className="btn-ghost text-base font-semibold">
-                    Pannello Admin
-                  </button>
-                )}
-                {onLogout && (
-                  <button onClick={onLogout} className="btn-ghost text-base font-semibold text-red-600">
-                    Esci
-                  </button>
-                )}
+                <span className="text-base font-semibold text-[#6f5a52] hidden lg:inline">{user?.firstName}</span>
+                {onGoToAdmin && (<button onClick={onGoToAdmin} className="btn-ghost text-base font-semibold">Pannello Admin</button>)}
+                {onLogout && (<button onClick={onLogout} className="btn-ghost text-base font-semibold text-red-600">Esci</button>)}
               </>
             ) : (
               <>
-                {onLogin && (
-                  <button onClick={onLogin} className="btn-ghost text-base font-semibold">
-                    Accedi
-                  </button>
-                )}
-                {onSignUp && (
-                  <button onClick={onSignUp} className="btn-primary">
-                    Registrati
-                  </button>
-                )}
+                {onLogin && (<button onClick={onLogin} className="btn-ghost text-base font-semibold">Accedi</button>)}
+                {onSignUp && (<button onClick={onSignUp} className="btn-primary">Registrati</button>)}
               </>
             )}
           </div>
@@ -219,11 +186,11 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         {mobileMenu && (
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-white/60 px-5 py-5 space-y-1">
             {[
+              ...(events.length > 0 ? [{ id: 'eventi', label: 'Eventi' }] : []),
               { id: 'problem', label: 'Il Problema' },
               { id: 'solution', label: 'Soluzione' },
               { id: 'how', label: 'Come Funziona' },
               { id: 'team', label: 'Team' },
-              ...(events.length > 0 ? [{ id: 'eventi', label: 'Eventi' }] : []),
               { id: 'contact', label: 'Contattaci' },
             ].map((item) => (
               <button
@@ -310,6 +277,58 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
           <ChevronDown className="w-6 h-6 text-[#6f5a52]/40" />
         </div>
       </section>
+
+      {/* ═══════════════════════ EVENTS ═══════════════════════ */}
+      {events.length > 0 && (
+        <section id="eventi" className="py-14 sm:py-20 md:py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <FadeIn>
+              <div className="text-center mt-4 mb-10 sm:mb-16">
+                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi</span>
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
+                  Trova un passaggio per i prossimi eventi
+                </h2>
+                <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
+                  Seleziona un evento e indica se offri o cerchi un passaggio. Ti metteremo in contatto con gli altri partecipanti.
+                </p>
+              </div>
+            </FadeIn>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {events.filter(ev => ev.isActive).map((ev, i) => (
+                <FadeIn key={ev.id} delay={i * 120}>
+                  <button
+                    onClick={() => onEventClick?.(ev.slug)}
+                    className="glass-card overflow-hidden text-left w-full group hover:scale-[1.02] transition-transform duration-300"
+                  >
+                    {ev.imageUrl ? (
+                      <div className="h-44 sm:h-48 overflow-hidden">
+                        <img src={ev.imageUrl} alt={ev.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                      </div>
+                    ) : (
+                      <div className="h-44 sm:h-48 bg-gradient-to-br from-[#fe6e5a]/20 to-[#ffd6aa]/40 flex items-center justify-center">
+                        <CalendarCheck className="w-12 h-12 text-[#fe6e5a]/40" />
+                      </div>
+                    )}
+                    <div className="p-5 sm:p-6">
+                      <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 group-hover:text-[#fe6e5a] transition-colors">
+                        {ev.title}
+                      </h3>
+                      <p className="text-sm text-[#6f5a52] line-clamp-2 leading-relaxed mb-4">
+                        {ev.description}
+                      </p>
+                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#fe6e5a]">
+                        Trova un passaggio
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                  </button>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════ PROBLEM ═══════════════════════ */}
       <section id="problem" className="py-14 sm:py-20 md:py-20">
@@ -480,58 +499,6 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
           </div>
         </div>
       </section>
-
-      {/* ═══════════════════════ EVENTS ═══════════════════════ */}
-      {events.length > 0 && (
-        <section id="eventi" className="py-14 sm:py-20 md:py-20">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <FadeIn>
-              <div className="text-center mt-4 mb-10 sm:mb-16">
-                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi</span>
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
-                  Trova un passaggio per i prossimi eventi
-                </h2>
-                <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
-                  Seleziona un evento e indica se offri o cerchi un passaggio. Ti metteremo in contatto con gli altri partecipanti.
-                </p>
-              </div>
-            </FadeIn>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {events.filter(ev => ev.isActive).map((ev, i) => (
-                <FadeIn key={ev.id} delay={i * 120}>
-                  <button
-                    onClick={() => onEventClick?.(ev.slug)}
-                    className="glass-card overflow-hidden text-left w-full group hover:scale-[1.02] transition-transform duration-300"
-                  >
-                    {ev.imageUrl ? (
-                      <div className="h-44 sm:h-48 overflow-hidden">
-                        <img src={ev.imageUrl} alt={ev.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
-                      </div>
-                    ) : (
-                      <div className="h-44 sm:h-48 bg-gradient-to-br from-[#fe6e5a]/20 to-[#ffd6aa]/40 flex items-center justify-center">
-                        <CalendarCheck className="w-12 h-12 text-[#fe6e5a]/40" />
-                      </div>
-                    )}
-                    <div className="p-5 sm:p-6">
-                      <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 group-hover:text-[#fe6e5a] transition-colors">
-                        {ev.title}
-                      </h3>
-                      <p className="text-sm text-[#6f5a52] line-clamp-2 leading-relaxed mb-4">
-                        {ev.description}
-                      </p>
-                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#fe6e5a]">
-                        Trova un passaggio
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                  </button>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ═══════════════════════ TRACTION / NUMBERS ═══════════════════════ */}
       <section className="py-14 sm:py-20 md:py-20">
