@@ -644,8 +644,8 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
               <p className="text-base sm:text-lg text-[#6f5a52] max-w-xl mx-auto mb-8 sm:mb-10">Scrivici per scoprire come Hoppin può trasformare la mobilità del tuo prossimo evento.</p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 {/* Email */}
-                <a href="mailto:hoppin.tem@gmail.com" className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
-                  <Mail className="w-5 h-5" />hoppin.tem@gmail.com<ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <a href="mailto:hoppin.team@gmail.com" className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
+                  <Mail className="w-5 h-5" />hoppin.team@gmail.com<ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </a>
                 {/* LinkedIn */}
                 <a href="https://www.linkedin.com/company/hoppin-carpooling" target="_blank" rel="noopener noreferrer" className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
@@ -675,24 +675,10 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
               &copy; {new Date().getFullYear()} Hoppin. Tutti i diritti riservati.
             </span>
           </div>
-
           {/* Email */}
-          <a
-            href="mailto:hoppin.tem@gmail.com"
-            className="text-xs sm:text-sm text-[#6f5a52] hover:text-[#2f231f] transition-colors"
-          >
-            hoppin.tem@gmail.com
-          </a>
-
+          <a href="mailto:hoppin.team@gmail.com" className="text-xs sm:text-sm text-[#6f5a52] hover:text-[#2f231f] transition-colors">hoppin.team@gmail.com</a>
           {/* Instagram */}
-          <a
-            href="https://www.instagram.com/hoppin.mobility/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs sm:text-sm text-[#6f5a52] hover:text-[#2f231f] transition-colors"
-          >
-            Instagram — @hoppin.mobility
-          </a>
+          <a href="https://www.instagram.com/hoppin.mobility/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-[#6f5a52] hover:text-[#2f231f] transition-colors">Instagram — @hoppin.mobility</a>
         </div>
       </footer>
     </div>
