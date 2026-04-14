@@ -31,7 +31,10 @@
       "Bash(brew list:*)",
       "Bash(netstat -ano)",
       "Bash(.venv/.venv/Scripts/python.exe manage.py makemigrations trips)",
-      "Bash(py --version)"
+      "Bash(py --version)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)"
     ]
   }
 }
