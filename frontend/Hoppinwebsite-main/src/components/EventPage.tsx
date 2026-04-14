@@ -34,6 +34,78 @@ export function EventPage({ slug, onBack }: EventPageProps) {
       .finally(() => setLoading(false));
   }, [slug]);
 
+  // Dynamic SEO meta tags per evento
+  useEffect(() => {
+    if (!event) return;
+
+    const setMeta = (selector: string, attr: string, value: string) => {
+      let el = document.head.querySelector<HTMLMetaElement | HTMLLinkElement>(selector);
+      if (!el) {
+        if (selector.startsWith('link')) {
+          el = document.createElement('link');
+          const rel = selector.match(/rel="([^"]+)"/)?.[1];
+          if (rel) (el as HTMLLinkElement).rel = rel;
+        } else {
+          el = document.createElement('meta');
+          const name = selector.match(/name="([^"]+)"/)?.[1];
+          const prop = selector.match(/property="([^"]+)"/)?.[1];
+          if (name) (el as HTMLMetaElement).name = name;
+          if (prop) (el as HTMLMetaElement).setAttribute('property', prop);
+        }
+        document.head.appendChild(el);
+      }
+      el.setAttribute(attr, value);
+    };
+
+    const plainSubtitle = (event.subtitle || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const title = `${event.title} - Carpooling | Hoppin`;
+    const description = plainSubtitle
+      ? `${plainSubtitle} — Trova un passaggio per ${event.title} con Hoppin.`
+      : `Vai a ${event.title} in carpooling. Condividi il viaggio, riduci costi e emissioni.`;
+    const url = `https://hoppin.cloud/eventi/${event.slug}`;
+    const image = event.imageUrl || 'https://hoppin.cloud/favicon.png';
+
+    document.title = title;
+    setMeta('meta[name="description"]', 'content', description);
+    setMeta('link[rel="canonical"]', 'href', url);
+    setMeta('meta[property="og:title"]', 'content', title);
+    setMeta('meta[property="og:description"]', 'content', description);
+    setMeta('meta[property="og:url"]', 'content', url);
+    setMeta('meta[property="og:image"]', 'content', image);
+    setMeta('meta[property="og:type"]', 'content', 'event');
+    setMeta('meta[name="twitter:title"]', 'content', title);
+    setMeta('meta[name="twitter:description"]', 'content', description);
+    setMeta('meta[name="twitter:image"]', 'content', image);
+
+    // JSON-LD Event schema
+    const ldId = 'ld-event-schema';
+    let ld = document.getElementById(ldId) as HTMLScriptElement | null;
+    if (!ld) {
+      ld = document.createElement('script');
+      ld.id = ldId;
+      ld.type = 'application/ld+json';
+      document.head.appendChild(ld);
+    }
+    const startDate = event.eventDates?.[0];
+    ld.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.title,
+      description: plainSubtitle || event.description,
+      url,
+      image,
+      ...(startDate ? { startDate } : {}),
+      organizer: { '@type': 'Organization', name: 'Hoppin', url: 'https://hoppin.cloud' },
+    });
+
+    return () => {
+      // Ripristina default al leave
+      document.title = 'Hoppin - Carpooling per eventi | Come arrivare agli eventi condividendo il viaggio';
+      const ldEl = document.getElementById(ldId);
+      if (ldEl) ldEl.remove();
+    };
+  }, [event]);
+
   const handleRoleSelect = (r: "driver" | "passenger") => {
     setRole(r);
     setStep("form");

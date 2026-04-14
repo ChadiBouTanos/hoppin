@@ -15,11 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.conf import settings
 import os
 from django.contrib import admin
 from django.urls import path, include
+from trips.models import Event
 from trips.views import (
     notify_share,
     EventListCreateView,
@@ -28,6 +29,46 @@ from trips.views import (
     EventRegistrationCreateView,
     EventRegistrationListView,
 )
+
+SITE_URL = 'https://hoppin.cloud'
+
+
+def sitemap_xml(request):
+    """Sitemap dinamica con homepage + tutti gli eventi attivi."""
+    from xml.sax.saxutils import escape
+    urls = [
+        {'loc': SITE_URL + '/', 'priority': '1.0', 'changefreq': 'weekly', 'lastmod': None},
+    ]
+    for ev in Event.objects.filter(is_active=True).only('slug', 'created_at'):
+        urls.append({
+            'loc': f'{SITE_URL}/eventi/{ev.slug}',
+            'priority': '0.8',
+            'changefreq': 'weekly',
+            'lastmod': ev.created_at.strftime('%Y-%m-%d') if ev.created_at else None,
+        })
+
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        parts.append('  <url>')
+        parts.append(f'    <loc>{escape(u["loc"])}</loc>')
+        if u['lastmod']:
+            parts.append(f'    <lastmod>{u["lastmod"]}</lastmod>')
+        parts.append(f'    <changefreq>{u["changefreq"]}</changefreq>')
+        parts.append(f'    <priority>{u["priority"]}</priority>')
+        parts.append('  </url>')
+    parts.append('</urlset>')
+    return HttpResponse('\n'.join(parts), content_type='application/xml')
+
+
+def robots_txt(request):
+    body = (
+        "User-agent: *\n"
+        "Allow: /\n\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n"
+    )
+    return HttpResponse(body, content_type='text/plain')
+
 
 def serve_logo(request):
     """
@@ -50,6 +91,8 @@ def serve_logo(request):
 
 urlpatterns = [
     path('images/logo.png', serve_logo, name='logo'),
+    path('sitemap.xml', sitemap_xml, name='sitemap'),
+    path('robots.txt', robots_txt, name='robots'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/trips/', include('trips.urls')),
