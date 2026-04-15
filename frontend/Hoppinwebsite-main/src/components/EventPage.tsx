@@ -58,10 +58,8 @@ export function EventPage({ slug, onBack }: EventPageProps) {
     };
 
     const plainSubtitle = (event.subtitle || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    const title = `${event.title} - Carpooling | Hoppin`;
-    const description = plainSubtitle
-      ? `${plainSubtitle} — Trova un passaggio per ${event.title} con Hoppin.`
-      : `Vai a ${event.title} in carpooling. Condividi il viaggio, riduci costi e emissioni.`;
+    const title = `Come raggiungere ${event.title} in carpooling | Hoppin`;
+    const description = `Cerchi un passaggio per ${event.title}? Scopri come arrivare in carpooling: condividi il viaggio con altri partecipanti, dividi costi di benzina e pedaggio, riduci traffico ed emissioni. Registrati gratis su Hoppin.`;
     const url = `https://hoppin.cloud/eventi/${event.slug}`;
     const image = event.imageUrl || 'https://hoppin.cloud/favicon.png';
 
@@ -408,6 +406,59 @@ export function EventPage({ slug, onBack }: EventPageProps) {
               </a>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* SEO Content Section — "Come raggiungere X in carpooling" */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#2f231f] mb-4">
+            Come raggiungere {event.title} in carpooling
+          </h2>
+          <p className="text-base text-[#6f5a52] mb-5 leading-relaxed">
+            Stai cercando come arrivare a <strong>{event.title}</strong>? Hoppin ti aiuta a
+            trovare un passaggio condiviso con altri partecipanti che partono dalla tua zona.
+            Il carpooling è il modo più semplice e conveniente per raggiungere
+            {event.eventDates && event.eventDates.length > 0 ? ` ${event.title}` : ` l'evento`}:
+            dividi benzina, pedaggi e parcheggio, riduci il traffico e viaggi in compagnia.
+          </p>
+
+          <h3 className="text-xl font-bold text-[#2f231f] mb-3 mt-6">
+            Perché scegliere il carpooling per {event.title}
+          </h3>
+          <ul className="space-y-2 mb-5 text-[#6f5a52]">
+            <li className="flex gap-2">
+              <span className="text-[#fe6e5a] font-bold">•</span>
+              <span><strong>Risparmia</strong> fino al 75% sui costi del viaggio dividendo spese di carburante e pedaggi</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-[#fe6e5a] font-bold">•</span>
+              <span><strong>Meno stress da parcheggio</strong> — un'auto in meno vicino alla location dell'evento</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-[#fe6e5a] font-bold">•</span>
+              <span><strong>Riduci le emissioni</strong> di CO₂ e contribuisci a un evento più sostenibile</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-[#fe6e5a] font-bold">•</span>
+              <span><strong>Conosci altre persone</strong> che vanno al tuo stesso evento</span>
+            </li>
+          </ul>
+
+          <h3 className="text-xl font-bold text-[#2f231f] mb-3 mt-6">
+            Come funziona
+          </h3>
+          <ol className="space-y-2 mb-5 text-[#6f5a52] list-decimal list-inside">
+            <li>Compila il modulo qui sopra indicando città di partenza e ruolo (driver o passeggero)</li>
+            <li>Ti mettiamo in contatto con persone che fanno la tua stessa tratta verso {event.title}</li>
+            <li>Organizzate insieme orari e punto di ritrovo via WhatsApp</li>
+            <li>Partite insieme, dividete i costi e arrivate{event.eventDates && event.eventDates.length > 0 ? ` a ${event.title}` : ' all\'evento'} rilassati</li>
+          </ol>
+
+          <p className="text-sm text-[#6f5a52]/80 italic mt-6">
+            Hoppin è una piattaforma gratuita di carpooling dedicata agli eventi. Trova
+            un passaggio per {event.title} o offri posti in auto ad altri partecipanti.
+          </p>
         </div>
       </section>
 
