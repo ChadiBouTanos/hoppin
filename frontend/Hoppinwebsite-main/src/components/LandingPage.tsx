@@ -5,6 +5,8 @@ import {
   Leaf,
   ThumbsUp,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   TreePine,
   ParkingCircle,
@@ -18,6 +20,7 @@ import {
   Linkedin,
 } from 'lucide-react';
 import logo from '../images/logo.png';
+import teamPhoto from '../images/team.jpeg';
 import { HoppinEvent, User } from '../types';
 
 interface LandingPageProps {
@@ -25,6 +28,7 @@ interface LandingPageProps {
   onSignUp?: () => void;
   events?: HoppinEvent[];
   onEventClick?: (slug: string) => void;
+  onGoToEvents?: () => void;
   user?: User | null;
   onLogout?: () => void;
   onGoToAdmin?: () => void;
@@ -110,10 +114,17 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
 /* ════════════════════════════════════════════════════════════════════════════════
    LANDING PAGE
    ════════════════════════════════════════════════════════════════════════════════ */
-export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user, onLogout, onGoToAdmin }: LandingPageProps) {
+export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, onGoToEvents, user, onLogout, onGoToAdmin }: LandingPageProps) {
   const isLoggedIn = !!user;
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const eventsSectionRef = useRef<HTMLElement>(null);
+  const eventsCarouselRef = useRef<HTMLDivElement>(null);
+  const trustCarouselRef = useRef<HTMLDivElement>(null);
+  const [eventsScrollLeft, setEventsScrollLeft] = useState(0);
+  const [eventsMaxScroll, setEventsMaxScroll] = useState(0);
+  const [trustScrollLeft, setTrustScrollLeft] = useState(0);
+  const [trustMaxScroll, setTrustMaxScroll] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -125,11 +136,202 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenu(false);
   };
-
+  
   /* ── stats counter hooks ── */
   const stat1 = useCountUp(2500);
   const stat2 = useCountUp(270);
   const stat3 = useCountUp(125);
+
+  const trustItems = [
+    {
+      title: 'TEF Ignition 2026',
+      description: 'Startup selezionata nel programma TEF Ignition',
+      type: 'recognition' as const,
+      link: 'https://tef.tech/',
+    },
+    {
+      title: 'Corriere della Sera',
+      description: 'Milano: l’app del Politecnico che dà un passaggio a studenti e lavoratori',
+      type: 'press' as const,
+      link: 'https://milano.corriere.it/notizie/cronaca/25_dicembre_25/milano-l-app-del-politecnico-che-da-un-passaggio-a-studenti-e-lavoratori-per-risparmiare-tempo-e-denaro-f0ba5e45-8ab6-4cb4-8f6c-4bc77d569xlk.shtml',
+    },
+    {
+      title: 'IULM - MasterX',
+      description: 'Articolo e pubblicazione accademica su Hoppin',
+      type: 'press' as const,
+      link: 'https://masterx.iulm.it/wp-content/uploads/2026/01/QUINDI-23-GENNAIO-2026-okok.pdf',
+    },
+  ];
+
+  const activeEvents = events.filter(ev => ev.isActive);
+  const eventsScrollProgress = eventsMaxScroll > 0 ? eventsScrollLeft / eventsMaxScroll : 0;
+  const eventsCurrentIndex = activeEvents.length > 0
+    ? Math.min(
+      activeEvents.length,
+      Math.max(1, Math.round(eventsScrollProgress * (activeEvents.length - 1)) + 1),
+    )
+    : 0;
+  const trustScrollProgress = trustMaxScroll > 0 ? trustScrollLeft / trustMaxScroll : 0;
+  const trustCurrentIndex = trustItems.length > 0
+    ? Math.min(
+      trustItems.length,
+      Math.max(1, Math.round(trustScrollProgress * (trustItems.length - 1)) + 1),
+    )
+    : 0;
+
+  const getCarouselStep = (scroller: HTMLDivElement | null, cardSelector: string) => {
+    if (!scroller) return 320;
+    const firstCard = scroller.querySelector<HTMLElement>(cardSelector);
+    if (!firstCard) return Math.max(280, Math.round(scroller.clientWidth * 0.85));
+    const scrollerStyle = window.getComputedStyle(scroller);
+    const gap = Number.parseFloat(scrollerStyle.gap || scrollerStyle.columnGap || '0') || 0;
+    return firstCard.offsetWidth + gap;
+  };
+
+  const scrollCarouselByStep = (scroller: HTMLDivElement | null, direction: -1 | 1, cardSelector: string) => {
+    if (!scroller) return;
+    scroller.scrollBy({
+      left: getCarouselStep(scroller, cardSelector) * direction,
+      behavior: 'smooth',
+    });
+  };
+
+  const scrollEventsByStep = (direction: -1 | 1) => {
+    scrollCarouselByStep(eventsCarouselRef.current, direction, '[data-event-card]');
+  };
+
+  const scrollTrustByStep = (direction: -1 | 1) => {
+    scrollCarouselByStep(trustCarouselRef.current, direction, '[data-trust-card]');
+  };
+
+  const scrollToEventIndex = (index: number) => {
+    const scroller = eventsCarouselRef.current;
+    if (!scroller) return;
+    const safeIndex = Math.max(0, Math.min(index, activeEvents.length - 1));
+    scroller.scrollTo({
+      left: getCarouselStep(scroller, '[data-event-card]') * safeIndex,
+      behavior: 'smooth',
+    });
+  };
+
+  const scrollToTrustIndex = (index: number) => {
+    const scroller = trustCarouselRef.current;
+    if (!scroller) return;
+    const safeIndex = Math.max(0, Math.min(index, trustItems.length - 1));
+    scroller.scrollTo({
+      left: getCarouselStep(scroller, '[data-trust-card]') * safeIndex,
+      behavior: 'smooth',
+    });
+  };
+
+  const onCarouselKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    scroller: HTMLDivElement | null,
+    cardSelector: string,
+  ) => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      scrollCarouselByStep(scroller, 1, cardSelector);
+    }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      scrollCarouselByStep(scroller, -1, cardSelector);
+    }
+  };
+
+  const onEventsScrollerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    onCarouselKeyDown(event, eventsCarouselRef.current, '[data-event-card]');
+  };
+
+  const onTrustScrollerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    onCarouselKeyDown(event, trustCarouselRef.current, '[data-trust-card]');
+  };
+
+  useEffect(() => {
+    const scroller = eventsCarouselRef.current;
+    if (!scroller) return;
+
+    const syncScrollMetrics = () => {
+      const max = Math.max(scroller.scrollWidth - scroller.clientWidth, 0);
+      setEventsMaxScroll(max);
+      setEventsScrollLeft(Math.min(scroller.scrollLeft, max));
+    };
+
+    syncScrollMetrics();
+    scroller.addEventListener('scroll', syncScrollMetrics, { passive: true });
+    window.addEventListener('resize', syncScrollMetrics);
+
+    const resizeObserver = new ResizeObserver(syncScrollMetrics);
+    resizeObserver.observe(scroller);
+
+    return () => {
+      scroller.removeEventListener('scroll', syncScrollMetrics);
+      window.removeEventListener('resize', syncScrollMetrics);
+      resizeObserver.disconnect();
+    };
+  }, [activeEvents.length]);
+
+  useEffect(() => {
+    const section = eventsSectionRef.current;
+    const scroller = eventsCarouselRef.current;
+    if (!section || !scroller || activeEvents.length < 2) return;
+
+    let lastWindowScrollY = window.scrollY;
+    let rafId = 0;
+
+    const isSectionVisible = () => {
+      const rect = section.getBoundingClientRect();
+      return rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.15;
+    };
+
+    const onWindowScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        const currentWindowScrollY = window.scrollY;
+        const deltaY = currentWindowScrollY - lastWindowScrollY;
+        lastWindowScrollY = currentWindowScrollY;
+
+        if (Math.abs(deltaY) < 1 || !isSectionVisible()) return;
+        const max = Math.max(scroller.scrollWidth - scroller.clientWidth, 0);
+        if (max <= 0) return;
+
+        const next = Math.max(0, Math.min(max, scroller.scrollLeft + deltaY * 1.05));
+        scroller.scrollLeft = next;
+      });
+    };
+
+    window.addEventListener('scroll', onWindowScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onWindowScroll);
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, [activeEvents.length]);
+
+  useEffect(() => {
+    const scroller = trustCarouselRef.current;
+    if (!scroller) return;
+
+    const syncScrollMetrics = () => {
+      const max = Math.max(scroller.scrollWidth - scroller.clientWidth, 0);
+      setTrustMaxScroll(max);
+      setTrustScrollLeft(Math.min(scroller.scrollLeft, max));
+    };
+
+    syncScrollMetrics();
+    scroller.addEventListener('scroll', syncScrollMetrics, { passive: true });
+    window.addEventListener('resize', syncScrollMetrics);
+
+    const resizeObserver = new ResizeObserver(syncScrollMetrics);
+    resizeObserver.observe(scroller);
+
+    return () => {
+      scroller.removeEventListener('scroll', syncScrollMetrics);
+      window.removeEventListener('resize', syncScrollMetrics);
+      resizeObserver.disconnect();
+    };
+  }, [trustItems.length]);
 
   return (
     <div className="min-h-screen relative overflow-x-hidden bg-gradient-to-b from-[#fff7ee] via-white to-[#fff1dc]/40 md:bg-none">
@@ -147,19 +349,31 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             : 'bg-transparent'
           }`}
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 grid grid-cols-[auto_1fr_auto] items-center gap-4">
           <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2">
             <img src={logo} alt="Hoppin" className="h-8 w-auto" />
           </button>
 
           {/* desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
-            {events.length > 0 && (<button onClick={() => scrollTo('eventi')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Eventi</button>)}
-            <button onClick={() => scrollTo('problem')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Il Problema</button>
-            <button onClick={() => scrollTo('solution')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Soluzione</button>
-            <button onClick={() => scrollTo('how')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Come Funziona</button>
-            <button onClick={() => scrollTo('team')} className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors">Team</button>
-            <button onClick={() => scrollTo('contact')} className="btn-primary">Contattaci</button>
+          <div className="hidden md:flex items-center justify-center gap-8">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="text-base font-semibold text-[#2f231f]"
+            >
+              Per organizzatori
+            </button>
+            <button
+              onClick={() => (onGoToEvents ? onGoToEvents() : scrollTo('eventi'))}
+              className="text-base font-semibold text-[#6f5a52] hover:text-[#2f231f] transition-colors"
+            >
+              Eventi
+            </button>
+            <button onClick={() => scrollTo('contact')} className="btn-primary">
+              Richiedi demo
+            </button>
+          </div>
+
+          <div className="hidden md:flex items-center justify-end gap-4">
             {isLoggedIn ? (
               <>
                 <span className="text-base font-semibold text-[#6f5a52] hidden lg:inline">{user?.firstName}</span>
@@ -175,7 +389,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
           </div>
 
           {/* mobile hamburger */}
-          <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden flex flex-col gap-1.5 p-3 -mr-2 active:bg-black/5 rounded-xl">
+          <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden col-start-3 flex flex-col gap-1.5 p-3 -mr-2 active:bg-black/5 rounded-xl">
             <span className={`block w-6 h-0.5 bg-[#2f231f] transition-all duration-300 ${mobileMenu ? 'rotate-45 translate-y-2' : ''}`} />
             <span className={`block w-6 h-0.5 bg-[#2f231f] transition-all duration-300 ${mobileMenu ? 'opacity-0' : ''}`} />
             <span className={`block w-6 h-0.5 bg-[#2f231f] transition-all duration-300 ${mobileMenu ? '-rotate-45 -translate-y-2' : ''}`} />
@@ -185,22 +399,18 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         {/* mobile menu */}
         {mobileMenu && (
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-white/60 px-5 py-5 space-y-1">
-            {[
-              ...(events.length > 0 ? [{ id: 'eventi', label: 'Eventi' }] : []),
-              { id: 'problem', label: 'Il Problema' },
-              { id: 'solution', label: 'Soluzione' },
-              { id: 'how', label: 'Come Funziona' },
-              { id: 'team', label: 'Team' },
-              { id: 'contact', label: 'Contattaci' },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
-              >
-                {item.label}
-              </button>
-            ))}
+            <button
+              onClick={() => { setMobileMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="block w-full text-left font-semibold text-[#2f231f] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+            >
+              Per organizzatori
+            </button>
+            <button
+              onClick={() => { setMobileMenu(false); onGoToEvents ? onGoToEvents() : scrollTo('eventi'); }}
+              className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
+            >
+              Eventi
+            </button>
             {isLoggedIn ? (
               <>
                 {onGoToAdmin && (
@@ -245,28 +455,27 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
       </nav>
 
       {/* ═══════════════════════ HERO ═══════════════════════ */}
-      <section className="relative pt-24 sm:pt-32 md:pt-44 pb-16 sm:pb-20 md:pb-32 max-w-6xl mx-auto px-4 sm:px-6">
+      <section className="pt-28 sm:pt-36 md:pt-44 pb-14 sm:pb-20">
         <FadeIn>
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#fe6e5a]/10 border border-[#fe6e5a]/20 text-xs sm:text-sm font-semibold text-[#fe6e5a] mb-5 sm:mb-6">
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Carpooling per eventi
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a] mb-5 sm:mb-6">
+              Mobilità per grandi eventi
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#2f231f] mb-4 sm:mb-6">
-              Meno auto.<br />
-              Arrivi migliori.<br />
-              <span className="text-[#fe6e5a]">Eventi migliori.</span>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#2f231f] mb-4 sm:mb-6 max-w-5xl">
+              Riduci le auto in ingresso prima che il traffico diventi un problema
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-[#6f5a52] max-w-2xl mb-8 sm:mb-10 leading-relaxed">
-              Hoppin offre agli organizzatori di eventi una piattaforma di carpooling su misura che riduce la congestione
-              e genera un impatto di sostenibilità misurabile.
+            <p className="text-base sm:text-lg md:text-xl text-[#6f5a52] max-w-4xl mb-8 sm:mb-10 leading-relaxed">
+              Hoppin aiuta gli organizzatori ad attivare il carpooling tra partecipanti subito dopo l'acquisto del ticket. Meno auto in ingresso, meno pressione sui parcheggi, più controllo sui flussi.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button onClick={() => scrollTo('eventi')} className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
-                Scopri di più
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              <button onClick={() => scrollTo('contact')} className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
+                Richiedi una demo
               </button>
-              <button onClick={() => scrollTo('how')} className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
-                Come funziona
+              <button
+                onClick={() => (onGoToEvents ? onGoToEvents() : scrollTo('eventi'))}
+                className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center"
+              >
+                Esplora gli eventi attivi
               </button>
             </div>
           </div>
@@ -278,70 +487,17 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         </div>
       </section>
 
-      {/* ═══════════════════════ EVENTS ═══════════════════════ */}
-      {events.length > 0 && (
-        <section id="eventi" className="py-14 sm:py-20 md:py-20">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <FadeIn>
-              <div className="text-center mt-4 mb-10 sm:mb-16">
-                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi</span>
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
-                  Trova un passaggio per i prossimi eventi
-                </h2>
-                <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
-                  Seleziona un evento e indica se offri o cerchi un passaggio. Ti metteremo in contatto con gli altri partecipanti.
-                </p>
-              </div>
-            </FadeIn>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {events.filter(ev => ev.isActive).map((ev, i) => (
-                <FadeIn key={ev.id} delay={i * 120}>
-                  <button
-                    onClick={() => onEventClick?.(ev.slug)}
-                    className="glass-card overflow-hidden text-left w-full group hover:scale-[1.02] transition-transform duration-300"
-                  >
-                    {ev.imageUrl ? (
-                      <div className="h-44 sm:h-48 overflow-hidden">
-                        <img src={ev.imageUrl} alt={ev.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
-                      </div>
-                    ) : (
-                      <div className="h-44 sm:h-48 bg-gradient-to-br from-[#fe6e5a]/20 to-[#ffd6aa]/40 flex items-center justify-center">
-                        <CalendarCheck className="w-12 h-12 text-[#fe6e5a]/40" />
-                      </div>
-                    )}
-                    <div className="p-5 sm:p-6">
-                      <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 group-hover:text-[#fe6e5a] transition-colors">
-                        {ev.title}
-                      </h3>
-                      <p className="text-sm text-[#6f5a52] line-clamp-2 leading-relaxed mb-4">
-                        {ev.description}
-                      </p>
-                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#fe6e5a]">
-                        Trova un passaggio
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                  </button>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ═══════════════════════ PROBLEM ═══════════════════════ */}
-      <section id="problem" className="py-14 sm:py-20 md:py-20">
+      <section id="about" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center mt-4 mb-10 sm:mb-16">
-              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il Problema</span>
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il problema</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
-                1 grande evento = <span className="text-[#fe6e5a]">10.000+ auto</span>
+                Il problema non è l'evento. È come ci arrivano le persone.
               </h2>
               <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
-                Il trasporto è il tallone d'Achille degli eventi. Congestione, emissioni e parcheggi al collasso
-                danneggiano la reputazione e l'esperienza dei partecipanti.
+                Traffico in ingresso, parcheggi saturi e accessi congestionati peggiorano l'esperienza e aumentano la complessità organizzativa. Le soluzioni tradizionali — navette, ZTL, piani traffico — intervengono quando il caos è già iniziato.
               </p>
             </div>
           </FadeIn>
@@ -350,21 +506,21 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             {[
               {
                 icon: <TreePine className="w-6 h-6 sm:w-7 sm:h-7" />,
-                stat: '70-80%',
-                label: 'delle emissioni degli eventi',
-                desc: 'sono dovute al trasporto dei partecipanti',
+                stat: '5k-50k',
+                label: 'Congestione in ingresso',
+                desc: "Migliaia di auto che arrivano nello stesso intervallo di tempo saturano gli accessi e generano code che danneggiano l'esperienza prima ancora di entrare.",
               },
               {
                 icon: <TrafficCone className="w-6 h-6 sm:w-7 sm:h-7" />,
-                stat: '25%',
-                label: 'delle auto bloccate',
-                desc: 'nel traffico generato dagli eventi',
+                stat: 'B2B',
+                label: 'Parcheggi sotto pressione',
+                desc: 'La capacità dei parcheggi viene raggiunta o superata a ogni grande evento. Il risultato è caos organizzativo, residenti danneggiati e reputazione a rischio.',
               },
               {
                 icon: <ParkingCircle className="w-6 h-6 sm:w-7 sm:h-7" />,
-                stat: '100%',
-                label: 'capacità parcheggi',
-                desc: 'raggiunta o superata ad ogni evento',
+                stat: 'Prima',
+                label: 'Soluzioni troppo tardive',
+                desc: 'ZTL, navette e piani traffico agiscono a problema esploso. Non riducono il numero di auto: le gestiscono dopo che il danno è già fatto.',
               },
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 150}>
@@ -389,11 +545,10 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             <div className="glass-panel p-6 sm:p-10 md:p-16 text-center mt-4 mb-10 sm:mb-16">
               <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">La Soluzione</span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">
-                Carpooling intelligente<br />per i tuoi eventi
+                Il momento giusto per attivare il carpooling è subito dopo il ticket
               </h2>
               <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
-                Hoppin connette i partecipanti verificati per condividere il viaggio verso l'evento,
-                riducendo congestione ed emissioni con una piattaforma dedicata.
+                Hoppin si inserisce nel flusso post-acquisto, quando il partecipante sta ancora pianificando il viaggio. È lì che si riduce il numero di auto, non il giorno dell'evento.
               </p>
             </div>
           </FadeIn>
@@ -402,20 +557,20 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             {[
               {
                 icon: <Car className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Logistica',
-                desc: 'Meno auto, meno traffico, arrivi scaglionati. Semplifica la gestione della mobilità del tuo evento.',
+                title: 'Attivazione post-acquisto',
+                desc: "La pagina Hoppin viene integrata nel percorso dell'evento subito dopo il biglietto. Il partecipante può cercare o offrire un passaggio mentre pianifica ancora.",
                 color: 'bg-blue-50 text-blue-600',
               },
               {
                 icon: <Leaf className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Sostenibilità',
-                desc: 'Riduci le emissioni di CO₂ in modo misurabile. Report di impatto ambientale per ogni evento.',
+                title: 'Meno auto in ingresso',
+                desc: "Ogni match riduce un'auto. Con volumi alti, l'effetto sui flussi in ingresso diventa misurabile e documentabile per l'organizzatore.",
                 color: 'bg-green-100 text-green-700',
               },
               {
                 icon: <ThumbsUp className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Reputazione',
-                desc: "Posiziona il tuo evento come sostenibile e innovativo. Un valore aggiunto per sponsor e partecipanti.",
+                title: "Dati sui flussi per l'organizzatore",
+                desc: "L'organizzatore ottiene visibilità su quante persone condividono il viaggio, da dove partono e in quali fasce orarie arrivano.",
                 color: 'bg-purple-50 text-purple-600',
               },
             ].map((item, i) => (
@@ -433,7 +588,144 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         </div>
       </section>
 
-      {/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
+      {/* ═══════════════════════ EVENTS ═══════════════════════ */}
+      {true && (
+        <section id="eventi" ref={eventsSectionRef} className="pt-24 sm:pt-32 md:pt-40 pb-14 sm:pb-20 md:pb-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <FadeIn>
+              <div className="text-center mt-4 mb-10 sm:mb-16">
+                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Eventi pilota</span>
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
+                  Come appare Hoppin lato partecipante
+                </h2>
+                <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
+                  Ogni organizzatore può attivare una pagina evento personalizzata. Questi sono alcuni esempi reali: mostrano come Hoppin convoglia la domanda, raccoglie dati e facilita la condivisione del viaggio.
+                </p>
+              </div>
+            </FadeIn>
+
+            {activeEvents.length > 0 ? (
+              <>
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm text-[#6f5a52]">
+                      Scorri la pagina o usa i controlli per muoverti tra gli eventi.
+                    </p>
+                    <p className="text-xs text-[#6f5a52]/80 mt-1">
+                      Suggerimento: puoi anche trascinare le card o usare i tasti freccia.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => scrollEventsByStep(-1)}
+                      disabled={eventsScrollLeft <= 0}
+                      aria-label="Scorri eventi verso sinistra"
+                      className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#2f231f]/15 bg-white/80 text-[#2f231f] transition-colors hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollEventsByStep(1)}
+                      disabled={eventsScrollLeft >= eventsMaxScroll - 1}
+                      aria-label="Scorri eventi verso destra"
+                      className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#2f231f]/15 bg-white/80 text-[#2f231f] transition-colors hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="overflow-hidden [mask-image:linear-gradient(to_right,black_0,black_94%,transparent)]">
+                  <div
+                    ref={eventsCarouselRef}
+                    role="region"
+                    aria-label="Carosello eventi"
+                    tabIndex={0}
+                    onKeyDown={onEventsScrollerKeyDown}
+                    className="flex gap-4 sm:gap-6 py-1 overflow-x-auto scrollbar-hide snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [touch-action:pan-x]"
+                  >
+                    {activeEvents.map((ev) => (
+                      <button
+                        key={ev.id}
+                        onClick={() => onEventClick?.(ev.slug)}
+                        data-event-card
+                        className="glass-card overflow-hidden text-left w-[280px] sm:w-[340px] flex-shrink-0 group hover:scale-[1.02] transition-transform duration-300 snap-start"
+                      >
+                        {ev.imageUrl ? (
+                          <div className="h-44 sm:h-48 overflow-hidden">
+                            <img src={ev.imageUrl} alt={ev.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+                          </div>
+                        ) : (
+                          <div className="h-44 sm:h-48 bg-gradient-to-br from-[#fe6e5a]/20 to-[#ffd6aa]/40 flex items-center justify-center">
+                            <CalendarCheck className="w-12 h-12 text-[#fe6e5a]/40" />
+                          </div>
+                        )}
+                        <div className="p-5 sm:p-6">
+                          <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 group-hover:text-[#fe6e5a] transition-colors">
+                            {ev.title}
+                          </h3>
+                          <p className="text-sm text-[#6f5a52] line-clamp-2 leading-relaxed mb-4">
+                            {ev.description}
+                          </p>
+                          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#fe6e5a]">
+                            Apri pagina evento
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {eventsMaxScroll > 0 && (
+                  <div className="mt-5 px-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xs font-semibold text-[#6f5a52] min-w-[44px] text-right">
+                        {eventsCurrentIndex}/{activeEvents.length}
+                      </span>
+                      <div className="h-1.5 flex-1 rounded-full bg-[#2f231f]/10 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-[#fe6e5a] transition-all duration-200"
+                          style={{ width: `${Math.max(eventsScrollProgress * 100, 4)}%` }}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {activeEvents.map((eventItem, index) => {
+                        const isActive = index + 1 === eventsCurrentIndex;
+                        return (
+                          <button
+                            key={`events-dot-${eventItem.id}`}
+                            type="button"
+                            onClick={() => scrollToEventIndex(index)}
+                            aria-label={`Vai all'evento ${index + 1}: ${eventItem.title}`}
+                            aria-pressed={isActive}
+                            className={`h-2.5 rounded-full transition-all ${isActive
+                              ? 'w-8 bg-[#fe6e5a]'
+                              : 'w-2.5 bg-[#2f231f]/25 hover:bg-[#2f231f]/40'
+                              }`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="glass-panel p-6 sm:p-10 text-center max-w-2xl mx-auto">
+                <CalendarCheck className="w-10 h-10 text-[#fe6e5a] mx-auto mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold text-[#2f231f] mb-2">Nuovi eventi in arrivo</h3>
+                <p className="text-base text-[#6f5a52]">
+                  Stiamo preparando le prossime pagine evento-specifiche.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      
+{/* ═══════════════════════ HOW IT WORKS ═══════════════════════ */}
       <section id="how" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
@@ -453,20 +745,19 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
             <FadeIn>
               <h3 className="text-base sm:text-lg font-bold text-[#2f231f] mb-6 sm:mb-8 text-center">Per l'organizzatore</h3>
             </FadeIn>
-            <div className="flex overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-5 gap-4 snap-x snap-mandatory sm:snap-none scrollbar-hide">
+            <div className="flex overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 gap-4 snap-x snap-mandatory sm:snap-none scrollbar-hide">
               {[
-                { icon: <Handshake className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Incontro iniziale', desc: 'Analizziamo le esigenze' },
-                { icon: <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Pianificazione', desc: 'Logistica condivisa' },
-                { icon: <Zap className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Deployment', desc: 'Sezione evento dedicata' },
-                { icon: <CalendarCheck className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Gestione on-site', desc: 'Management in tempo reale' },
-                { icon: <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Report', desc: 'Dati e impatto misurato' },
+                { icon: <Handshake className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Attiviamo la pagina evento', desc: 'Configuriamo una pagina dedicata con il branding dell\'evento, pronta a raccogliere domanda.' },
+                { icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'I partecipanti cercano o offrono un passaggio', desc: 'Subito dopo il ticket, ogni partecipante può registrarsi e trovare chi parte dalla sua zona.' },
+                { icon: <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />, label: 'Hoppin convoglia la domanda', desc: "L'algoritmo crea i match e raccoglie dati sui flussi in ingresso in tempo reale." },
+                { icon: <CalendarCheck className="w-5 h-5 sm:w-6 sm:h-6" />, label: "L'organizzatore ottiene controllo", desc: 'Dashboard con auto risparmiate, origini geografiche e fasce orarie di arrivo.' },
               ].map((step, i) => (
                 <FadeIn key={i} delay={i * 100}>
                   <div className="relative text-center min-w-[120px] snap-center">
                     <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#fe6e5a]/10 text-[#fe6e5a] mb-3 mx-auto">
                       {step.icon}
                     </div>
-                    {i < 4 && (
+                    {i < 3 && (
                       <div className="hidden sm:block absolute top-6 sm:top-7 left-[60%] w-[80%] h-px bg-[#fe6e5a]/20" />
                     )}
                     <h4 className="font-bold text-[#2f231f] text-xs sm:text-sm mb-1">{step.label}</h4>
@@ -500,90 +791,6 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         </div>
       </section>
 
-      {/* ═══════════════════════ TRACTION / NUMBERS ═══════════════════════ */}
-      <section className="py-14 sm:py-20 md:py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <FadeIn>
-            <div className="glass-panel p-6 sm:p-10 md:p-16">
-              <div className="text-center mb-8 sm:mb-12">
-                <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Traction</span>
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3">
-                  Nati con le comunità locali
-                </h2>
-              </div>
-              <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
-                <div>
-                  <div className="text-2xl sm:text-5xl md:text-6xl font-bold text-[#fe6e5a]">
-                    <span ref={stat1.ref}>{stat1.value.toLocaleString()}</span>+
-                  </div>
-                  <p className="text-[#6f5a52] mt-1 sm:mt-2 font-semibold text-xs sm:text-base">Utenti raggiunti</p>
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-5xl md:text-6xl font-bold text-[#fe6e5a]">
-                    <span ref={stat2.ref}>{stat2.value}</span>+
-                  </div>
-                  <p className="text-[#6f5a52] mt-1 sm:mt-2 font-semibold text-xs sm:text-base">Iscrizioni</p>
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-5xl md:text-6xl font-bold text-[#fe6e5a]">
-                    <span ref={stat3.ref}>{stat3.value}</span>+
-                  </div>
-                  <p className="text-[#6f5a52] mt-1 sm:mt-2 font-semibold text-xs sm:text-base">Percorsi creati</p>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ═══════════════════════ BUSINESS MODEL ═══════════════════════ */}
-      <section className="py-14 sm:py-20 md:py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <FadeIn>
-            <div className="text-center mb-10 sm:mb-16">
-              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Il Nostro Modello</span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
-                SaaS per grandi eventi
-              </h2>
-              <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
-                Vendiamo agli organizzatori un sistema dedicato per semplificare
-                i problemi di mobilità dei loro eventi.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
-            {[
-              {
-                icon: <Users className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Per gli organizzatori',
-                desc: 'Una piattaforma white-label personalizzata per ogni evento con dashboard di gestione dedicata.',
-              },
-              {
-                icon: <Car className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Per i partecipanti',
-                desc: 'Un\'esperienza utente fluida: cerca, trova e condividi il viaggio verso l\'evento in pochi tap.',
-              },
-              {
-                icon: <BarChart3 className="w-7 h-7 sm:w-8 sm:h-8" />,
-                title: 'Dati e impatto',
-                desc: 'Report dettagliati su riduzione CO₂, auto risparmiate e impatto ambientale certificato.',
-              },
-            ].map((item, i) => (
-              <FadeIn key={i} delay={i * 150}>
-                <div className="glass-card p-6 sm:p-8 h-full hover:scale-[1.02] transition-transform duration-300">
-                  <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#fe6e5a]/10 text-[#fe6e5a] mb-4 sm:mb-6">
-                    {item.icon}
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 sm:mb-3">{item.title}</h3>
-                  <p className="text-sm sm:text-base text-[#6f5a52] leading-relaxed">{item.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════════════════ TEAM ═══════════════════════ */}
       <section id="team" className="py-14 sm:py-20 md:py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -594,43 +801,147 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
               <p className="text-base sm:text-lg text-[#4b3c37] font-medium max-w-2xl mx-auto">Giovani imprenditori uniti dalla volontà di rivoluzionare la mobilità degli eventi.</p>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              {
-                name: "Leonardo Bulferi Bufferetti",
-                role: "Co-Founder",
-                img: "https://api.dicebear.com/7.x/shapes/svg?seed=Leonardo"
-              },
-              {
-                name: "Francesco Sala",
-                role: "Co-Founder",
-                img: "https://api.dicebear.com/7.x/shapes/svg?seed=Francesco"
-              },
-              {
-                name: "Carlo Molinari",
-                role: "Co-Founder",
-                img: "https://api.dicebear.com/7.x/shapes/svg?seed=Carlo"
-              },
-              {
-                name: "Nicolò Rota",
-                role: "Co-Founder",
-                img: "https://api.dicebear.com/7.x/shapes/svg?seed=Nicolo"
-              }
-            ].map((member, i) => (
-              <FadeIn key={i} delay={i * 120}>
-                <div className="glass-card p-4 sm:p-6 text-center hover:scale-[1.04] transition-transform duration-300">
-                  {/* Avatar impersonale */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 rounded-full overflow-hidden shadow-md bg-white">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
-                  </div>
-                  {/* Nome */}
-                  <h4 className="font-bold text-[#2f231f] text-sm sm:text-base">{member.name}</h4>
-                  {/* Ruolo */}
-                  <p className="text-[11px] sm:text-xs text-[#6f5a52] mt-1 font-medium">{member.role}</p>
-                </div>
-              </FadeIn>
-            ))}
+          <FadeIn delay={120}>
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-md bg-white">
+                <img
+                  src={teamPhoto}
+                  alt="Il team Hoppin"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-1">
+                {['Leonardo Bulferi Bufferetti', 'Carlo Molinari', 'Nicolò Rota', 'Francesco Sala'].map(name => (
+                  <span key={name} className="text-sm font-semibold text-[#2f231f]">{name}</span>
+                ))}
+              </div>
+              <p className="text-sm text-[#6f5a52] text-center max-w-md">
+                Quattro co-founder con background complementari, uniti dalla volontà di risolvere un problema concreto per chi organizza grandi eventi.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ═══════════════════════ TRUST / RICONOSCIMENTI ═══════════════════════ */}
+      <section id="trust" className="py-14 sm:py-20 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <FadeIn>
+            <div className="text-center mt-4 mb-10 sm:mb-16">
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Riconoscimenti</span>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-3 sm:mb-4">
+                Selezionati e citati da realtà rilevanti
+              </h2>
+              <p className="text-base sm:text-lg text-[#6f5a52] max-w-2xl mx-auto">
+                Programmi, università e media hanno riportato Hoppin come caso concreto nel tema mobilità.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm text-[#6f5a52]">
+                Scorri per vedere programmi e copertura media.
+              </p>
+              <p className="text-xs text-[#6f5a52]/80 mt-1">
+                Puoi usare swipe, drag o i tasti freccia.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollTrustByStep(-1)}
+                disabled={trustScrollLeft <= 0}
+                aria-label="Scorri riconoscimenti verso sinistra"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#2f231f]/15 bg-white/80 text-[#2f231f] transition-colors hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrustByStep(1)}
+                disabled={trustScrollLeft >= trustMaxScroll - 1}
+                aria-label="Scorri riconoscimenti verso destra"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#2f231f]/15 bg-white/80 text-[#2f231f] transition-colors hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
+
+          <div className="overflow-hidden [mask-image:linear-gradient(to_right,black_0,black_94%,transparent)]">
+            <div
+              ref={trustCarouselRef}
+              role="region"
+              aria-label="Carosello riconoscimenti"
+              tabIndex={0}
+              onKeyDown={onTrustScrollerKeyDown}
+              className="flex gap-4 sm:gap-6 py-1 overflow-x-auto scrollbar-hide snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [touch-action:pan-x]"
+            >
+              {trustItems.map((item) => (
+                <a
+                  key={item.title}
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-trust-card
+                  aria-label={`Apri ${item.title} in una nuova scheda`}
+                  className="glass-card p-5 sm:p-6 text-left w-[280px] sm:w-[340px] flex-shrink-0 group hover:scale-[1.02] transition-transform duration-300 snap-start"
+                >
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase ${item.type === 'press'
+                      ? 'bg-[#2f231f]/10 text-[#2f231f]'
+                      : 'bg-[#fe6e5a]/15 text-[#fe6e5a]'
+                      }`}
+                    >
+                      {item.type === 'press' ? 'Press' : 'Programma'}
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-[#6f5a52] transition-transform group-hover:translate-x-1 group-hover:text-[#fe6e5a]" />
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#2f231f] mb-2 group-hover:text-[#fe6e5a] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#6f5a52] leading-relaxed">
+                    {item.description}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {trustMaxScroll > 0 && (
+            <div className="mt-5 px-1">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-xs font-semibold text-[#6f5a52] min-w-[44px] text-right">
+                  {trustCurrentIndex}/{trustItems.length}
+                </span>
+                <div className="h-1.5 flex-1 rounded-full bg-[#2f231f]/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-[#fe6e5a] transition-all duration-200"
+                    style={{ width: `${Math.max(trustScrollProgress * 100, 4)}%` }}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {trustItems.map((item, index) => {
+                  const isActive = index + 1 === trustCurrentIndex;
+                  return (
+                    <button
+                      key={`trust-dot-${item.title}`}
+                      type="button"
+                      onClick={() => scrollToTrustIndex(index)}
+                      aria-label={`Vai al riconoscimento ${index + 1}: ${item.title}`}
+                      aria-pressed={isActive}
+                      className={`h-2.5 rounded-full transition-all ${isActive
+                        ? 'w-8 bg-[#fe6e5a]'
+                        : 'w-2.5 bg-[#2f231f]/25 hover:bg-[#2f231f]/40'
+                        }`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -639,26 +950,17 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="glass-panel p-6 sm:p-10 md:p-16 text-center">
-              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Contattaci</span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">Pronto a rendere il tuo evento più sostenibile?</h2>
-              <p className="text-base sm:text-lg text-[#6f5a52] max-w-xl mx-auto mb-8 sm:mb-10">Scrivici per scoprire come Hoppin può trasformare la mobilità del tuo prossimo evento.</p>
+              <span className="text-base sm:text-base font-bold tracking-widest uppercase text-[#fe6e5a]">Richiedi una demo</span>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#2f231f] mt-3 mb-4 sm:mb-6">Parliamo del tuo prossimo evento</h2>
+              <p className="text-base sm:text-lg text-[#6f5a52] max-w-xl mx-auto mb-8 sm:mb-10">Se stai organizzando un evento con migliaia di partecipanti e sai già che traffico e parcheggi sono un problema, confrontiamoci. Nessun impegno: capiremo insieme se Hoppin ha senso per te.</p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 {/* Email */}
                 <a href="mailto:hoppin.team@gmail.com" className="btn-primary btn-primary-lg group w-full sm:w-auto justify-center">
-                  <Mail className="w-5 h-5" />hoppin.team@gmail.com<ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  <Mail className="w-5 h-5" />Richiedi una demo<ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </a>
                 {/* LinkedIn */}
                 <a href="https://www.linkedin.com/company/hoppin-carpooling" target="_blank" rel="noopener noreferrer" className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
                   <Linkedin className="w-5 h-5" />LinkedIn
-                </a>
-                {/* Instagram */}
-                <a href="https://www.instagram.com/hoppin.mobility/" target="_blank" rel="noopener noreferrer" className="btn-secondary btn-primary-lg w-full sm:w-auto justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9A4.5 4.5 0 0 1 16.5 21h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
-                  </svg>
-                  Instagram
                 </a>
               </div>
             </div>
@@ -684,3 +986,4 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, user
     </div>
   );
 }
+
