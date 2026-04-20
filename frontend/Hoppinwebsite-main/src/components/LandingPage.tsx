@@ -5,6 +5,8 @@ import {
   Leaf,
   ThumbsUp,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ArrowRight,
   TreePine,
   ParkingCircle,
