@@ -382,7 +382,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, onGo
               </>
             ) : (
               <>
-                {onLogin && (<button onClick={onLogin} className="btn-ghost text-base font-semibold">Accedi</button>)}
+                {onLogin && (<button onClick={onLogin} className="btn-ghost text-base font-semibold">Log In</button>)}
                 {onSignUp && (<button onClick={onSignUp} className="btn-primary">Registrati</button>)}
               </>
             )}
@@ -437,7 +437,7 @@ export function LandingPage({ onLogin, onSignUp, events = [], onEventClick, onGo
                     onClick={() => { setMobileMenu(false); onLogin(); }}
                     className="block w-full text-left font-semibold text-[#6f5a52] py-3 px-3 rounded-xl active:bg-[#fe6e5a]/10 transition-colors text-base"
                   >
-                    Accedi
+                    Log In
                   </button>
                 )}
                 {onSignUp && (
