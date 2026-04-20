@@ -11,7 +11,8 @@ import { AdminPage } from "./components/AdminPage";
 import { QAPage } from "./components/QAPage";
 import { User, Trip, TripMatch, HoppinEvent, CreateHoppinEvent } from "./types";
 import { api } from "./services/api";
-import { EventPage } from "./components/EventPage";
+import { EventsPage } from "./components/EventsPage";
+import { EventDetailPage } from "./components/EventDetailPage";
 
 export type CreateTripPayload = {
   role: "driver" | "passenger" | "both";
@@ -28,19 +29,25 @@ export type CreateTripPayload = {
   eventId?: string;
 };
 
-// ─── URL-based routing for event pages ───
-function getInitialRoute(): { page: "landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event"; eventSlug?: string } {
+type RoutePage = "landing" | "events" | "event" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa";
+type RouteState = { page: RoutePage; eventSlug?: string };
+
+// URL-based routing for public pages
+function getInitialRoute(): RouteState {
   const path = window.location.pathname;
-  const match = path.match(/^\/eventi\/([a-z0-9-]+)\/?$/i);
-  if (match) {
-    return { page: "event", eventSlug: match[1] };
+  if (/^\/eventi\/?$/i.test(path)) {
+    return { page: "events" };
+  }
+  const eventMatch = path.match(/^\/eventi\/([a-z0-9-]+)\/?$/i);
+  if (eventMatch) {
+    return { page: "event", eventSlug: eventMatch[1] };
   }
   return { page: "landing" };
 }
 
 export default function App() {
   const initialRoute = getInitialRoute();
-  const [currentPage, setCurrentPage] = useState<"landing" | "home" | "signup" | "login" | "mytrips" | "alltrips" | "create" | "admin" | "qa" | "event">(initialRoute.page);
+  const [currentPage, setCurrentPage] = useState<RoutePage>(initialRoute.page);
 
   const [user, setUser] = useState<User | null>(() => {
     try {
@@ -112,10 +119,36 @@ export default function App() {
     api.getEvents().then(setEvents).catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const onPopState = () => {
+      const route = getInitialRoute();
+      setCurrentPage(route.page);
+      setSelectedEventSlug(route.eventSlug || null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  const navigateTo = (route: RouteState) => {
+    setCurrentPage(route.page);
+    setSelectedEventSlug(route.eventSlug || null);
+    if (route.page === "event" && route.eventSlug) {
+      window.history.pushState({}, "", `/eventi/${route.eventSlug}`);
+      return;
+    }
+    if (route.page === "events") {
+      window.history.pushState({}, "", "/eventi");
+      return;
+    }
+    if (route.page === "landing") {
+      window.history.pushState({}, "", "/");
+    }
+  };
+
+  const handleNavigateToLanding = () => navigateTo({ page: "landing" });
+  const handleNavigateToEvents = () => navigateTo({ page: "events" });
   const handleNavigateToEvent = (slug: string) => {
-    setSelectedEventSlug(slug);
-    setCurrentPage("event");
-    window.history.pushState({}, "", `/eventi/${slug}`);
+    navigateTo({ page: "event", eventSlug: slug });
   };
 
   const handleCreateEvent = async (event: CreateHoppinEvent) => {
@@ -160,7 +193,11 @@ export default function App() {
   const handleUserSession = (userData: User) => {
     setUser(userData);
     localStorage.setItem("hoppin_user", JSON.stringify(userData));
-    setCurrentPage(userData.isAdmin ? "admin" : "landing");
+    if (userData.isAdmin) {
+      setCurrentPage("admin");
+    } else {
+      handleNavigateToLanding();
+    }
   };
 
   const handleSignUp = async (userData: Omit<User, "id" | "isAdmin" | "token"> & { password: string }) => {
@@ -197,7 +234,7 @@ export default function App() {
     setUserTrips([]);
     setMatches([]);
     localStorage.removeItem("hoppin_user");
-    setCurrentPage("landing");
+    handleNavigateToLanding();
   };
 
   const handleCreateTrip = async (tripData: CreateTripPayload) => {
@@ -307,7 +344,7 @@ export default function App() {
   return (
     <div
       className={`min-h-screen ${
-        currentPage === "landing" || currentPage === "event"
+        currentPage === "landing" || currentPage === "events" || currentPage === "event"
           ? "public-shell"
           : user
             ? "logged-in-shell"
@@ -316,7 +353,7 @@ export default function App() {
               : "bg-gray-50"
       }`}
     >
-      {user?.isAdmin && currentPage !== "event" && currentPage !== "landing" && (
+      {user?.isAdmin && currentPage !== "event" && currentPage !== "events" && currentPage !== "landing" && (
         <nav className="glass-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -463,7 +500,7 @@ export default function App() {
         </div>
       )}
 
-      {isLoading && currentPage !== "home" && currentPage !== "landing" && currentPage !== "event" ? (
+      {isLoading && currentPage !== "home" && currentPage !== "landing" && currentPage !== "events" && currentPage !== "event" ? (
         <div className="p-8 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#fe6e5a]"></div>
           <p className="mt-2 text-muted">Loading...</p>
@@ -473,9 +510,20 @@ export default function App() {
           {currentPage === "landing" && (
             <LandingPage
               onLogin={user ? undefined : () => setCurrentPage("login")}
-              onSignUp={user ? undefined : () => setCurrentPage("signup")}
               events={events}
               onEventClick={handleNavigateToEvent}
+              onGoToEvents={handleNavigateToEvents}
+              user={user}
+              onLogout={handleLogout}
+              onGoToAdmin={user?.isAdmin ? () => setCurrentPage("admin") : undefined}
+            />
+          )}
+          {currentPage === "events" && (
+            <EventsPage
+              events={events}
+              onOpenEvent={handleNavigateToEvent}
+              onGoToOrganizers={handleNavigateToLanding}
+              onLogin={user ? undefined : () => setCurrentPage("login")}
               user={user}
               onLogout={handleLogout}
               onGoToAdmin={user?.isAdmin ? () => setCurrentPage("admin") : undefined}
@@ -490,8 +538,8 @@ export default function App() {
               isLoggedIn={!!user}
             />
           )}
-          {currentPage === "signup" && <SignUpPage onSignUp={handleSignUp} onBack={() => setCurrentPage("landing")} />}
-          {currentPage === "login" && <LoginPage onLogin={handleLogin} onBack={() => setCurrentPage("landing")} />}
+          {currentPage === "signup" && <SignUpPage onSignUp={handleSignUp} onBack={handleNavigateToLanding} />}
+          {currentPage === "login" && <LoginPage onLogin={handleLogin} onBack={handleNavigateToLanding} />}
           {currentPage === "mytrips" && user && (
             <MyTripsPage
               trips={user.isAdmin ? allTrips : userTrips}
@@ -518,12 +566,10 @@ export default function App() {
           )}
 
           {currentPage === "event" && selectedEventSlug && (
-            <EventPage
+            <EventDetailPage
               slug={selectedEventSlug}
-              onBack={() => {
-                setCurrentPage("landing");
-                window.history.pushState({}, "", "/");
-              }}
+              onBackToEvents={handleNavigateToEvents}
+              onGoToOrganizers={handleNavigateToLanding}
             />
           )}
 
